@@ -10,7 +10,8 @@ override_dh_auto_test:
 	xvfb-run -a dh_auto_test -- --no-suite blueprint-compiler
 
 override_dh_auto_install:
-	dh_auto_install -- --skip-subprojects blueprint-compiler
+	dh_auto_install
+	rm -f debian/mint-calendar-ce/usr/lib/python3/dist-packages/blueprintcompiler/reference_docs.json
 
 override_dh_gnome_clean:
 	dh_gnome_clean --no-control
