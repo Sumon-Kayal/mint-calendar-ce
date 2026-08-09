@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0] - 2026-08-02
+## [1.0] - 2026-10-02
 
 First release of **Mint Calendar CE** as an independently versioned project.
 
