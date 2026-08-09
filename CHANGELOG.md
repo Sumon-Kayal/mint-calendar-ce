@@ -2,116 +2,131 @@
 
 ## [1.0] - 2026-08-02
 
-First release of Mint Calendar CE as its own independently-versioned project. This entry
-describes what changed relative to **Linux Mint's own maintained `gnome-calendar` package,
-version `48.1+mint1`** — the baseline this fork started from.
+First release of **Mint Calendar CE** as an independently versioned project.
 
-### Feature base: GNOME Calendar 48 → 50
+This release is based on **GNOME Calendar v50.0**, with Linux Mint's compatibility patch carried forward and the application ported to the GTK4/libadwaita versions available in **Linux Mint 22 / Ubuntu 24.04**.
 
-Mint's `48.1+mint1` package is GNOME Calendar 48 with Mint's own patches on top. This fork
-rebases onto upstream GNOME Calendar's tagged **v50.0** stable release instead — two feature
-releases newer — while keeping Mint's own patch (below). An earlier iteration of this project
-tracked upstream's `main` branch mid-development (`51.beta`) rather than a tagged release;
-that was dropped in favor of the stable v50.0 tag.
+### 1. Upstream Base
 
-### Mint's compatibility patch: carried forward, verified
+Mint Calendar CE rebases Linux Mint's maintained `gnome-calendar` package (`48.1+mint1`) onto the tagged **GNOME Calendar v50.0** stable release.
 
-Reapplied Mint's desktop-environment-aware Settings launcher patch
-(`gcal_utils_launch_gnome_settings` in `src/utils/gcal-utils.c`) on top of the new v50.0 base.
-Checked directly against Mint's `48.1+mint1` source: the function body is byte-for-byte
-identical to Mint's own version.
+- Linux Mint's `48.1+mint1` package is based on GNOME Calendar 48 with Mint-specific patches.
+- Mint Calendar CE uses upstream GNOME Calendar **v50.0**, two feature releases newer.
+- An earlier iteration tracked upstream `main` during development (`51.beta`), but this was replaced with the stable v50.0 tag.
 
-### Making v50 actually run on Mint 22 / Ubuntu 24.04
+### 2. Linux Mint Compatibility Patch
 
-This is the part that took the most real work. GNOME Calendar v50.0 needs GTK4 `>= 4.21.2` and
-libadwaita `>= 1.8~alpha` — neither of which Mint 22 / Ubuntu 24.04 (Noble) ship, and Mint's own
-`48.1+mint1` predates entirely (it's built against the older GTK4/libadwaita those releases do
-have). Two other routes were tried and ruled out first: `ppa:savoury1/gtk4` doesn't provide a
-newer GTK4 for Noble (confirmed via a real CI run — it 404s for that suite; its actual purpose
-is backporting an *old* GTK4 to ancient LTS releases), and building against Ubuntu 26.04
-directly worked but produced a `.deb` that couldn't install on actual Mint 22.
+Linux Mint's desktop-environment-aware Settings launcher patch was carried forward:
 
-Instead, the v50.0 feature set was ported down to Mint 22 / Ubuntu 24.04's real GTK4 (4.14.x)
-and libadwaita (1.5.0), matching what Mint's own `48.1+mint1` package already targets:
+- Function: `gcal_utils_launch_gnome_settings`
+- File: `src/utils/gcal-utils.c`
+- The implementation was checked directly against Mint's `48.1+mint1` source.
+- The function body is byte-for-byte identical to Mint's maintained version.
 
-- `Adw.ButtonRow` → `Adw.ActionRow` (5 call sites: reminders section, event editor's delete
-  row, "Add Calendar" row, edit-calendar page's export/remove rows)
-- `Adw.ToggleGroup` / `Adw.Toggle` → a linked `GtkToggleButton` pair (AM/PM picker, all-day /
-  time-slot switch)
-- `Adw.Spinner` → `Gtk.Spinner` (sync indicator, import dialog)
-- `Adw.InlineViewSwitcher` → `Adw.ViewSwitcher` with `policy: narrow`
-- `Adw.ShortcutsDialog` → plain `Gtk.ShortcutsWindow` — which also surfaced that the
-  `app.shortcuts` action was never wired to a handler at all; added
-  `gcal_application_show_shortcuts()` so the shortcuts menu item actually works
-- `GtkListBox:tab-behavior` and `GtkSettings:gtk-interface-reduced-motion` — removed; the
-  latter falls back to the older, broader `gtk-enable-animations` check already present
-- `gtk_filter_list_model_set_watch_items()` — backported rather than dropped: the
-  writable-calendars model now watches each calendar's `read-only` property directly via
-  `GtkExpressionWatch` (core GTK4 API since 4.0), so it still auto-refreshes when a calendar's
-  read-only flag changes in place
+### 3. GTK4 / libadwaita Compatibility
 
-Full technical detail in [BUILD.md](BUILD.md). Checked file-by-file against a clean upstream
-v50.0 checkout to confirm this list is complete and nothing else was silently dropped in the
-process.
+GNOME Calendar v50.0 requires newer libraries than Linux Mint 22 / Ubuntu 24.04 provide:
 
-### blueprint-compiler: a build-tool version gap, caught by a real CI run
+- GTK4 `>= 4.21.2`
+- libadwaita `>= 1.8~alpha`
 
-Source-level checking has its limits — this one only showed up once an actual CI build ran.
-Ubuntu 24.04 ships `blueprint-compiler` 0.12.0, whose parser doesn't recognize the
-`not-swapped` signal flag used throughout the codebase (30 `.blp` files use it — this comes
-straight from upstream v50.0, not from anything this fork changed). `ninja` failed on its very
-first blueprint-compiling step, before any C code built at all.
+Mint 22 / Ubuntu 24.04 instead provide the GTK4 4.14.x and libadwaita 1.5.0 stack targeted by this release.
 
-Unlike GTK4/libadwaita, `blueprint-compiler` only runs at build time — nothing about which
-version compiled a `.blp` file is retained in the installed app — so the fix didn't need to
-touch any `.blp` source. Added a meson wrap
-([`subprojects/blueprint-compiler.wrap`](subprojects/blueprint-compiler.wrap)) pinning a
-known-good v0.16.0 fetched from GNOME's GitLab, and required `>= 0.14.0` on every
-`find_program('blueprint-compiler')` call across `src/gui/`'s `meson.build` files, so meson
-automatically falls back to the pinned version wherever the system one is too old — this is
-the pattern blueprint-compiler's own documentation recommends for exactly this situation.
-`debian/control` updated to match: dropped the now-unused `blueprint-compiler` Build-Depend,
-added `git` (to fetch the wrap) and `python3-gi` / `gir1.2-gtk-4.0` (blueprint-compiler's own
-runtime dependencies). One real consequence: the build now needs network access on first
-configure to fetch the wrap, which wasn't required before.
+Two alternative approaches were investigated and rejected:
 
-### Rebrand
+- `ppa:savoury1/gtk4` does not provide a newer GTK4 for Noble; this was confirmed through CI.
+- Building directly on Ubuntu 26.04 produced a `.deb` that could not install on an actual Mint 22 system.
 
-Application ID, icons, and desktop launcher entry moved to `org.mint.calendar.ce` /
-**"Mint Calendar CE"**, with a flat, Mint-Y-Dark-inspired icon palette (dark neutral body,
-Mint green accent) in place of upstream's purple gradient. Gives this fork its own GSettings
-schema (`org.mint.calendar.ce`) rather than reusing upstream's `org.gnome.calendar`, so
-settings stay independent if both this app and stock GNOME Calendar are ever installed on the
-same system.
+Instead, the v50.0 feature set was ported to the libraries available on Mint 22 / Ubuntu 24.04.
 
-### Packaging
+#### Compatibility changes
 
-Ships as a native `.deb` only — Flatpak packaging (`build-aux/org.gnome.Calendar.json`) and
-the runtime Flatpak-sandbox check in the About dialog were removed; upstream never shipped a
-Snap, so there was nothing to remove there. CI builds and publishes the `.deb` on every `v*`
-tag push, with CodeQL security scanning on every change, both running on a plain `ubuntu-24.04`
-runner — matching real Mint 22 / Ubuntu 24.04, no PPA or alternate base needed.
+- `Adw.ButtonRow` → `Adw.ActionRow`
+  - 5 call sites, including the reminders section, event editor delete row, Add Calendar row, and edit-calendar export/remove rows.
+- `Adw.ToggleGroup` / `Adw.Toggle` → linked `GtkToggleButton` pair
+  - Used by the AM/PM picker and all-day/time-slot switch.
+- `Adw.Spinner` → `Gtk.Spinner`
+  - Used by the sync indicator and import dialog.
+- `Adw.InlineViewSwitcher` → `Adw.ViewSwitcher` with `policy: narrow`.
+- `Adw.ShortcutsDialog` → `Gtk.ShortcutsWindow`.
+  - This also exposed that the `app.shortcuts` action was not wired to a handler.
+  - Added `gcal_application_show_shortcuts()` so the shortcuts menu item works.
+- `GtkListBox:tab-behavior` → removed for GTK4 4.14 compatibility.
+- `GtkSettings:gtk-interface-reduced-motion` → removed.
+  - Animation handling falls back to the older `gtk-enable-animations` setting.
+- `gtk_filter_list_model_set_watch_items()` → backported.
+  - The writable-calendars model now watches each calendar's `read-only` property directly through `GtkExpressionWatch`, retaining automatic refresh behavior.
 
-### Translations
+The compatibility work was checked file-by-file against a clean upstream v50.0 checkout. Full technical details are documented in [BUILD.md](BUILD.md).
 
-All 77 languages from GNOME Calendar's own community translations are carried over unchanged.
-None of the compatibility work above touched any translatable string text — only the
-surrounding widget markup — so every existing translation still matches the current source
-exactly. The one string that isn't translated is the app's own name ("Mint Calendar CE" in the
-title bar / launcher), which was never part of GNOME Calendar's translated string set even
-before this fork existed.
+### 4. Blueprint Compiler
 
-## How this compares
+A real CI build exposed a separate build-tool compatibility issue.
 
-| | Linux Mint's `gnome-calendar` (48.1+mint1) | GNOME Calendar (stock) | Mint Calendar CE |
+Ubuntu 24.04 ships `blueprint-compiler` 0.12.0, while the v50.0 source uses the `not-swapped` signal flag across 30 `.blp` files.
+
+The important distinction is that Blueprint Compiler is a **build-time dependency**. Its version does not become a runtime dependency of the installed application.
+
+#### Fix
+
+- Added [`subprojects/blueprint-compiler.wrap`](subprojects/blueprint-compiler.wrap).
+- Pinned Blueprint Compiler to **v0.16.0** from GNOME GitLab.
+- Updated every `find_program('blueprint-compiler')` call under `src/gui/` to require `>= 0.14.0`.
+- Meson therefore falls back to the pinned v0.16.0 compiler whenever the system compiler is too old.
+- Removed the now-unused `blueprint-compiler` Build-Depends from `debian/control`.
+- Added `git`, `python3-gi`, and `gir1.2-gtk-4.0` to support fetching and running the wrapped compiler.
+
+One consequence is that the first Meson configure now requires network access to fetch the Blueprint subproject when it is not already available locally.
+
+### 5. Rebranding
+
+Mint Calendar CE now has its own application identity.
+
+- Application ID: `org.mint.calendar.ce`
+- Name: **Mint Calendar CE**
+- Own GSettings schema: `org.mint.calendar.ce`
+- Own icons and desktop launcher.
+- Replaced upstream's purple gradient icon with a flat, Mint-Y-Dark-inspired design using a dark neutral body and Mint green accent.
+
+The independent GSettings schema prevents configuration from being shared with stock GNOME Calendar if both applications are installed.
+
+### 6. Packaging
+
+Mint Calendar CE 1.0 ships as a native **`.deb` package**.
+
+Changes include:
+
+- Removed upstream Flatpak packaging: `build-aux/org.gnome.Calendar.json`.
+- Removed the runtime Flatpak-sandbox check from the About dialog.
+- No Snap packaging existed upstream, so nothing was required there.
+- CI builds and publishes the `.deb` on every `v*` tag push.
+- CodeQL security scanning runs on every change.
+- Both workflows use a plain `ubuntu-24.04` runner to match the real Mint 22 / Ubuntu 24.04 target environment.
+- No PPA or alternate Ubuntu base is required.
+
+### 7. Translations
+
+All **77 languages** from GNOME Calendar's community translations are carried over unchanged.
+
+- Compatibility changes did not alter translatable string text.
+- Existing translations therefore remain aligned with the current source.
+- The application name, **Mint Calendar CE**, is intentionally not translated because the application name was not part of GNOME Calendar's translated string set.
+
+### 8. Release Comparison
+
+| | Linux Mint `gnome-calendar` 48.1+mint1 | GNOME Calendar 50 | Mint Calendar CE 1.0 |
 |---|---|---|---|
 | Based on | GNOME Calendar 48 | GNOME Calendar 50 | GNOME Calendar 50 |
-| Linux Mint's compatibility patch | Yes | No | Yes |
-| Branding | Stock GNOME | Stock GNOME | Mint-branded, Mint-Y-Dark icon |
-| Runs on current Mint 22 | Yes | No (needs newer GTK4/libadwaita) | Yes |
+| Linux Mint compatibility patch | Yes | No | Yes |
+| Branding | Stock GNOME | Stock GNOME | Mint-branded |
+| Mint-Y-Dark-inspired icon | No | No | Yes |
+| Runs on current Mint 22 | Yes | No — requires newer GTK4/libadwaita | Yes |
 | Own GSettings schema | — | — | Yes (`org.mint.calendar.ce`) |
 | Official Mint project | Yes | — | No — independent/community |
-| Where to get it | Mint's own repos | GNOME / Flathub | This project's [Releases page](https://github.com/Sumon-Kayal/mint-calendar-ce/releases) |
+| Distribution | Mint repositories | GNOME / Flathub | Project releases |
 
-In short: GNOME Calendar 50's feature set, with the same Mint compatibility patch Mint's own
-48.1 package uses, ported to actually run on Mint 22 today, under independent Mint branding.
+### Summary
+
+Mint Calendar CE 1.0 combines the **GNOME Calendar 50 feature set** with Linux Mint's compatibility patch and a complete compatibility port to the GTK4/libadwaita versions available on **Linux Mint 22 / Ubuntu 24.04**.
+
+It is independently branded, independently versioned, packaged as a native `.deb`, and retains the existing GNOME Calendar translations.
