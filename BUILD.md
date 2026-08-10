@@ -97,10 +97,23 @@ and `python3-gi` / `gir1.2-gtk-4.0` (blueprint-compiler's own runtime dependenci
 `debian/control`'s Build-Depends, and dropped the plain `blueprint-compiler` entry there since
 it's not actually what gets used anymore.
 
-One real consequence: the build now needs network access to fetch the wrap subproject on
-first configure (`meson setup` does this automatically). That wasn't true before. If you need
-a fully offline build, run `meson subprojects download` once while online, or vendor the
-`subprojects/blueprint-compiler/` directory ahead of time.
+One more knock-on fix: `debhelper`'s meson support still installs via plain `ninja install`
+rather than `meson install` (a known, still-open debhelper limitation — Debian bug #1006805),
+but it *also* tries to pass `--skip-subprojects blueprint-compiler` along with that call, to
+keep the wrap subproject's own files out of this package. Plain `ninja` has never had that
+flag, so the combination fails outright. `debian/rules`' `override_dh_auto_install` now calls
+`meson install --skip-subprojects blueprint-compiler` directly instead of going through
+`dh_auto_install`'s default path.
+
+One real consequence: the build now needs network access to fetch the wrap subproject. For a
+plain `meson setup`, this happens automatically on first configure. `dpkg-buildpackage` is
+different: it runs meson with `--wrap-mode=nodownload` (a deliberate safety default, so package
+builds can't reach out to arbitrary git URLs mid-build), which blocks the automatic fetch —
+`nodownload` only blocks *downloading*, not *using* a wrap already on disk. `release-deb.yml`
+handles this with an explicit `meson subprojects download` step before `dpkg-buildpackage` runs,
+while the job still has network access; do the same locally before a `.deb` build (`## Debian
+package build` below), or run it once and vendor the resulting `subprojects/blueprint-compiler/`
+directory for a fully offline build.
 
 ## Its own GSettings schema
 
@@ -146,6 +159,10 @@ sudo apt-get install -y build-essential devscripts equivs dpkg-dev fakeroot
 # Pull in this package's Build-Depends (see debian/control)
 sudo mk-build-deps --install --remove \
   --tool="apt-get -y --no-install-recommends" debian/control
+
+# dpkg-buildpackage runs meson with --wrap-mode=nodownload, so fetch the
+# blueprint-compiler wrap now, while network access is still fine to use
+meson subprojects download
 
 # Build
 dpkg-buildpackage -us -uc -b

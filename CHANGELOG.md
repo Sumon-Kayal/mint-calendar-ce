@@ -78,6 +78,24 @@ The important distinction is that Blueprint Compiler is a **build-time dependenc
 
 One consequence is that the first Meson configure now requires network access to fetch the Blueprint subproject when it is not already available locally.
 
+#### Two more issues a follow-up CI run caught
+
+The wrap fix above got the compile itself all the way to success — 350/350 targets, all 10
+tests passing — but two packaging-step issues only showed up once that CI run actually reached
+them:
+
+- `dpkg-buildpackage` runs meson with `--wrap-mode=nodownload`, which blocks the wrap from
+  being fetched mid-build (`nodownload` only blocks *downloading*, not *using* an
+  already-fetched wrap). Added an explicit `meson subprojects download` step to
+  `release-deb.yml`, run before `dpkg-buildpackage`, while the job still has network access.
+- `debhelper`'s meson support installs via plain `ninja install` rather than `meson install`
+  (a known, still-open debhelper limitation — Debian bug #1006805), but tries to pass
+  `--skip-subprojects blueprint-compiler` along with that call anyway, to keep the wrap
+  subproject's own files out of this package. Plain `ninja` has never supported that flag, so
+  the combination failed outright (`unrecognized option '--skip-subprojects'`). Fixed by
+  having `debian/rules`' `override_dh_auto_install` call `meson install --skip-subprojects
+  blueprint-compiler` directly instead of going through `dh_auto_install`'s default path.
+
 ### 5. Rebranding
 
 Mint Calendar CE now has its own application identity.
