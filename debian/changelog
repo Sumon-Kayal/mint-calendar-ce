@@ -78,6 +78,18 @@ mint-calendar-ce (1.0) noble; urgency=medium
     python3-gi / gir1.2-gtk-4.0 (blueprint-compiler's own runtime
     dependencies). Building now needs network access on first configure
     to fetch the wrap, which wasn't true before.
+  * A follow-up CI run confirmed the compile itself works (350/350
+    targets, 10/10 tests), then caught two packaging-step issues:
+    dpkg-buildpackage runs meson with --wrap-mode=nodownload, which
+    blocks the wrap from being fetched mid-build, fixed by adding an
+    explicit "meson subprojects download" step to release-deb.yml
+    before dpkg-buildpackage runs; and debhelper's meson support calls
+    plain "ninja install" (not "meson install" — a known, still-open
+    debhelper limitation, Debian bug #1006805) while still trying to
+    pass it --skip-subprojects, a meson install-only flag ninja has
+    never had, which failed outright. Fixed by having
+    override_dh_auto_install call "meson install --skip-subprojects
+    blueprint-compiler" directly.
 
  -- Sumon Kayal <sumankayalsuman4@proton.me>  Sun, 02 Aug 2026 00:00:00 +0530
 
