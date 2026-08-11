@@ -365,6 +365,11 @@ gcal_application_activate (GApplication *application)
   GCAL_EXIT;
 }
 
+/**
+ * Initializes application actions and starts the calendar context.
+ *
+ * @param app The application to initialize.
+ */
 static void
 gcal_application_startup (GApplication *app)
 {
@@ -407,7 +412,7 @@ gcal_application_startup (GApplication *app)
 }
 
 /**
- * Processes command-line options and opens the requested event or files.
+ * Processes command-line options, activates the application, and opens requested files.
  *
  * @param app Application receiving the command-line request.
  * @param command_line Command-line invocation to process.
@@ -512,7 +517,7 @@ gcal_application_command_line (GApplication            *app,
  * Processes local command-line options before application startup.
  *
  * @param options Parsed local command-line options.
- * @return 0 if the version was printed; -1 to continue normal option handling.
+ * @return 0 if the version was printed, or -1 to continue normal option handling.
  */
 static gint
 gcal_application_handle_local_options (GApplication *app,
@@ -534,9 +539,11 @@ gcal_application_handle_local_options (GApplication *app,
 /**
  * Registers the application with D-Bus and exports its shell search provider.
  *
- * @param object_path The D-Bus object path used for application registration.
+ * @param application The application to register.
+ * @param connection The D-Bus connection used for registration and export.
+ * @param object_path The D-Bus object path for the application.
  * @param error Location for a returned error.
- * @returns `TRUE` if registration and search-provider export succeed, `FALSE` otherwise.
+ * @return `TRUE` if registration and export succeed, `FALSE` otherwise.
  */
 static gboolean
 gcal_application_dbus_register (GApplication     *application,
@@ -662,7 +669,7 @@ gcal_application_init (GcalApplication *self)
 }
 
 /**
- * Creates a calendar application instance configured for command-line and file handling.
+ * Creates a calendar application configured to handle command-line requests and files.
  *
  * @return A new #GcalApplication.
  */
