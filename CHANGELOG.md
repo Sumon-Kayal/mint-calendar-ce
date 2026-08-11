@@ -73,6 +73,25 @@ Two alternative approaches were investigated and rejected:
 
 Instead, the v50.0 feature set was ported to the libraries available on Mint 22 / Ubuntu 24.04.
 
+#### Development history: Ubuntu 26.04
+
+An earlier development/testing stage used **Ubuntu 26.04** as a build environment while
+working through the GNOME Calendar v50.0 port. This established that the newer GNOME
+stack could be built successfully, but the resulting `.deb` was not installable on the
+actual **Linux Mint 22** target because of the newer platform/library requirements.
+
+That result was used to define the final compatibility strategy:
+
+1. Use the GNOME Calendar **v50.0** source as the feature base.
+2. Target the **Linux Mint 22 / Ubuntu 24.04** platform rather than Ubuntu 26.04.
+3. Port the v50.0 code to the GTK4 and libadwaita versions actually available on the
+   target system.
+4. Build and validate the native `.deb` on Ubuntu 24.04 so the build environment matches
+   the intended Mint 22 runtime more closely.
+
+The Ubuntu 26.04 stage is therefore retained as part of the project's development history,
+not as the supported build or runtime target for this release.
+
 #### Compatibility changes
 
 - `Adw.ButtonRow` → `Adw.ActionRow`
