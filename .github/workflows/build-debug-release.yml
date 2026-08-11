@@ -200,9 +200,20 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
-          dpkg-deb -I dist/*.deb
-          dpkg-deb -f dist/*.deb Package Version Architecture
+          # Select the mint-calendar-ce package (exclude dbgsym)
+          selected_deb=""
+          for deb in dist/*.deb; do
+            pkg_name="$(dpkg-deb -f "$deb" Package)"
+            if [ "$pkg_name" = "mint-calendar-ce" ]; then
+              selected_deb="$deb"
+              break
+            fi
+          done
 
+          test -n "$selected_deb"
+          dpkg-deb -I "$selected_deb"
+          dpkg-deb -f "$selected_deb" Package Version Architecture
+    
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -210,6 +221,6 @@ jobs:
         run: |
           gh release create "$RELEASE_TAG" dist/*.deb \
             --repo "${{ github.repository }}" \
-            --title "${{ github.ref_name }}" \
+            --title "$RELEASE_TAG" \
             --generate-notes
             
