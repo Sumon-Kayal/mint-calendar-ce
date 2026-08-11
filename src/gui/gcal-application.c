@@ -321,8 +321,10 @@ gcal_application_get_property (GObject    *object,
     }
 }
 
-/*
- * GApplication overrides
+/**
+ * Activates the application and presents its calendar window.
+ *
+ * Applies any pending initial date and event selection.
  */
 
 static void
@@ -516,6 +518,7 @@ gcal_application_command_line (GApplication            *app,
 /**
  * Processes local command-line options before application startup.
  *
+ * @param app Application instance.
  * @param options Parsed local command-line options.
  * @return 0 if the version was printed, or -1 to continue normal option handling.
  */
@@ -669,7 +672,7 @@ gcal_application_init (GcalApplication *self)
 }
 
 /**
- * Creates a calendar application configured to handle command-line requests and files.
+ * Creates a calendar application configured to handle command-line requests and file opening.
  *
  * @return A new #GcalApplication.
  */
