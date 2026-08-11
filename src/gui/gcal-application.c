@@ -541,7 +541,10 @@ gcal_application_dbus_register (GApplication     *application,
   if (!G_APPLICATION_CLASS (gcal_application_parent_class)->dbus_register (application, connection, object_path, error))
     GCAL_RETURN (FALSE);
 
-  search_provider_path = g_strconcat (object_path, PROFILE, "/SearchProvider", NULL);
+  if (g_strcmp0 (PROFILE, "") == 0)
+    search_provider_path = g_strconcat (object_path, "/SearchProvider", NULL);
+  else
+    search_provider_path = g_strconcat (object_path, "/", PROFILE, "/SearchProvider", NULL);
 
   if (!gcal_shell_search_provider_dbus_export (self->search_provider, connection, search_provider_path, error))
     GCAL_RETURN (FALSE);
@@ -568,7 +571,10 @@ gcal_application_dbus_unregister (GApplication    *application,
 
   self = GCAL_APPLICATION (application);
 
-  search_provider_path = g_strconcat (object_path, PROFILE, "/SearchProvider", NULL);
+  if (g_strcmp0 (PROFILE, "") == 0)
+    search_provider_path = g_strconcat (object_path, "/SearchProvider", NULL);
+  else
+    search_provider_path = g_strconcat (object_path, "/", PROFILE, "/SearchProvider", NULL);
   gcal_shell_search_provider_dbus_unexport (self->search_provider, connection, search_provider_path);
 
   G_APPLICATION_CLASS (gcal_application_parent_class)->dbus_unregister (application, connection, object_path);

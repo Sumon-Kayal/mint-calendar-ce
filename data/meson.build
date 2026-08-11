@@ -36,6 +36,7 @@ desktop = i18n.merge_file(
 search_provider_conf = configuration_data()
 search_provider_conf.set('appid', application_id)
 search_provider_conf.set('profile',  profile)
+search_provider_conf.set('profile_path',  profile_path)
 configure_file(
   configuration: search_provider_conf,
   input: files('org.gnome.Calendar.search-provider.ini.in'),

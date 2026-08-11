@@ -37,10 +37,12 @@ if get_option('profile') == 'development'
   find_program('git')
   rev_txt = run_command('git','rev-parse','--short','HEAD', check: true).stdout().strip()
   profile = 'Devel'
+  profile_path = '/Devel'
   name_suffix = ' (Development)'
   rev = '-@0@'.format(rev_txt)
 else
   profile = ''
+  profile_path = ''
   name_suffix = ''
   rev = ''
 endif
