@@ -212,3 +212,4 @@ jobs:
             --repo "${{ github.repository }}" \
             --title "${{ github.ref_name }}" \
             --generate-notes
+            
