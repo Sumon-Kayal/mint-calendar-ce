@@ -501,6 +501,13 @@ gcal_application_command_line (GApplication            *app,
   GCAL_RETURN (0);
 }
 
+/**
+ * Handles local command-line options before application startup.
+ *
+ * @param app The application instance.
+ * @param options The parsed local options.
+ * @return 0 when the version is printed, or -1 to continue normal option handling.
+ */
 static gint
 gcal_application_handle_local_options (GApplication *app,
                                        GVariantDict *options)
@@ -542,6 +549,13 @@ gcal_application_dbus_register (GApplication     *application,
   GCAL_RETURN (TRUE);
 }
 
+/**
+ * Unregisters the application and unexports its shell search provider from D-Bus.
+ *
+ * @param application The application to unregister.
+ * @param connection The D-Bus connection.
+ * @param object_path The application's D-Bus object path.
+ */
 static void
 gcal_application_dbus_unregister (GApplication    *application,
                                   GDBusConnection *connection,
@@ -623,7 +637,11 @@ gcal_application_init (GcalApplication *self)
   self->search_provider = gcal_shell_search_provider_new (self->context);
 }
 
-/* Public API */
+/**
+ * Creates a calendar application instance configured for command-line and file handling.
+ *
+ * @return A new #GcalApplication.
+ */
 GcalApplication*
 gcal_application_new (void)
 {
