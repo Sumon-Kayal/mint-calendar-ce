@@ -13,6 +13,11 @@
 A community-maintained, Linux Mint-flavored fork of [GNOME Calendar](https://apps.gnome.org/Calendar/),
 distributed independently — not an official Linux Mint or GNOME project.
 
+
+> **Status:** v1.0 — stable  
+> **Target:** Linux Mint 22 / Ubuntu 24.04  
+> **Package:** Native `.deb`
+
 ## How this compares
 
 | | Linux Mint's `gnome-calendar` | GNOME Calendar (stock) | Mint Calendar CE |
@@ -26,6 +31,27 @@ distributed independently — not an official Linux Mint or GNOME project.
 In short: the newer GNOME Calendar, with the same Mint compatibility patch Mint's own package
 uses, under independent Mint branding.
 
+
+## What's new in v1.0
+
+- GNOME Calendar 50.0 feature base
+- Linux Mint compatibility work carried forward
+- Mint 22 / Ubuntu 24.04 compatibility port
+- Independent native `.deb` packaging
+- Independent application, D-Bus, GSettings, AppStream, and package identities
+- Coexistence with the original Linux Mint `gnome-calendar` package
+- Mint Calendar CE branding
+- Preserved GNOME Calendar translations
+
+See [CHANGELOG.md](CHANGELOG.md) for the complete history.
+
+
+## Requirements
+
+- Linux Mint 22.x
+- Ubuntu 24.04 / compatible Ubuntu 24.04-based systems
+- GTK4/libadwaita stack provided by the target platform
+
 ## Installing
 
 Distributed as a `.deb`. Grab the latest from the
@@ -37,7 +63,7 @@ sudo apt install ./mint-calendar-ce_*.deb
 
 The v50.0 feature set has been ported to build against Mint 22 / Ubuntu 24.04's own GTK4
 and libadwaita stack directly — no PPA, container, or newer base is required. See
-[BUILD.md](BUILD.md) for the compatibility work, dependency list, and build details. See [CHANGELOG.md](CHANGELOG.md) for the project history and release notes.
+[BUILD.md](BUILD.md) for the compatibility work, dependency list, and build details.
 
 The package is designed to coexist with Linux Mint's original `gnome-calendar` package.
 Mint Calendar CE uses its own executable, application ID, desktop entry, D-Bus service,
@@ -46,8 +72,20 @@ does not intentionally replace or claim the original package's installed files.
 
 The build and release automation — GitHub Actions building the `.deb`, validating package
 ownership/identity, and publishing tagged releases, with CodeQL security scanning on every
-change — runs on an `ubuntu-24.04` runner.
+change. **CodeQL: passing.** The workflows run on an `ubuntu-24.04` runner.
 
+
+
+## Uninstalling
+
+To remove Mint Calendar CE:
+
+```sh
+sudo apt remove mint-calendar-ce
+```
+
+Removing Mint Calendar CE does not intentionally remove Linux Mint's original
+`gnome-calendar` package.
 
 ## Package coexistence
 
