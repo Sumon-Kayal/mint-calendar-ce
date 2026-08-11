@@ -2,9 +2,9 @@
 
 ## [Unreleased]
 
-First release of **Mint Calendar CE** as an independently versioned project.
+First release of Mint Calendar CE as an independently versioned project.
 
-This release is based on **GNOME Calendar v50.0**, with Linux Mint's compatibility patch carried forward and the application ported to the GTK4/libadwaita versions available in **Linux Mint 22 / Ubuntu 24.04**.
+This release is based on GNOME Calendar v50.0, with Linux Mint's compatibility patch carried forward and the application ported to the GTK4/libadwaita versions available in Linux Mint 22 / Ubuntu 24.04.
 
 ### 0. Package Isolation and Coexistence
 
@@ -27,7 +27,8 @@ same system-visible application identities.
   mechanically renamed because they are not installed package ownership paths.
 
 The package/debug workflow compares the generated CE `.deb` file list against the
-installed `gnome-calendar` package and fails if an installed path overlaps.
+installed `gnome-calendar` package and fails if an installed path overlaps. This validation
+is part of the v1.0 release process.
 
 ### 0.1 Search Provider Profile Fix
 
@@ -90,7 +91,7 @@ That result was used to define the final compatibility strategy:
    the intended Mint 22 runtime more closely.
 
 The Ubuntu 26.04 stage is therefore retained as part of the project's development history,
-not as the supported build or runtime target for this release.
+not as the supported build or runtime target for v1.0.
 
 #### Compatibility changes
 
@@ -196,7 +197,32 @@ All **77 languages** from GNOME Calendar's community translations are carried ov
 | Official Mint project | Yes | — | No — independent/community |
 | Distribution | Mint repositories | GNOME / Flathub | Project releases |
 
+### 9. v1.0 Release Milestone
+
+Mint Calendar CE 1.0 marks the transition from development fork to an independently
+distributed package.
+
+The v1.0 release includes:
+
+- GNOME Calendar v50.0 as the upstream feature base.
+- Linux Mint's maintained compatibility work carried forward.
+- GTK4/libadwaita compatibility for Linux Mint 22 / Ubuntu 24.04.
+- Native `.deb` packaging.
+- Independent system-visible application and package identities.
+- Coexistence support with the original Linux Mint `gnome-calendar` package.
+- Correct release and development search-provider D-Bus paths.
+- Preserved GNOME Calendar translations.
+- Automated build, test, package validation, and security scanning.
+
+Ubuntu 26.04 remains documented as an earlier development milestone and is not the v1.0
+target platform.
+
 ### Summary
+
+Mint Calendar CE 1.0 combines the **GNOME Calendar 50 feature set** with Linux Mint's compatibility patch and a complete compatibility port to the GTK4/libadwaita versions available on **Linux Mint 22 / Ubuntu 24.04**.
+
+It is independently branded, independently versioned, packaged as a native `.deb`, and retains the existing GNOME Calendar translations.
+
 
 Mint Calendar CE 1.0 combines the **GNOME Calendar 50 feature set** with Linux Mint's compatibility patch and a complete compatibility port to the GTK4/libadwaita versions available on **Linux Mint 22 / Ubuntu 24.04**.
 
