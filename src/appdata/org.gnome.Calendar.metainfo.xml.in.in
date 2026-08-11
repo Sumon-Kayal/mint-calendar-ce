@@ -102,10 +102,10 @@
     <control>touch</control>
   </supports>
 
-  <translation type="gettext">gnome-calendar</translation>
+  <translation type="gettext">mint-calendar-ce</translation>
   <launchable type="desktop-id">@appid@.desktop</launchable>
   <provides>
-    <binary>gnome-calendar</binary>
+    <binary>mint-calendar-ce</binary>
   </provides>
 
   <content_rating type="oars-1.1" />
