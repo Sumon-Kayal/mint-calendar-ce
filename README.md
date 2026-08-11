@@ -1,15 +1,18 @@
 <div align="center">
-  <img src="data/icons/hicolor/scalable/apps/org.mint.calendar.ce.svg" width="128" height="128">
 
-  # Mint Calendar CE 
-  #      v1.0
+<img src="data/icons/hicolor/scalable/apps/org.mint.calendar.ce.svg" width="128" height="128" alt="Mint Calendar CE">
 
-  [![CodeQL](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml/badge.svg)](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml)
+# Mint Calendar CE
 
-  Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
-  GNOME Calendar applied on top.
+**v1.0**
 
-  <img width="922" src="https://static.gnome.org/appdata/gnome-50/org.gnome.Calendar/month-view.png">
+[![CodeQL](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml/badge.svg)](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml)
+
+Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
+GNOME Calendar applied on top.
+
+<img src="https://static.gnome.org/appdata/gnome-50/org.gnome.Calendar/month-view.png" width="922" alt="Mint Calendar CE">
+
 </div>
 
 A community-maintained, Linux Mint-flavored fork of [GNOME Calendar](https://apps.gnome.org/Calendar/),
