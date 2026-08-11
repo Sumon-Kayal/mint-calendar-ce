@@ -628,7 +628,7 @@ GcalApplication*
 gcal_application_new (void)
 {
   return g_object_new (gcal_application_get_type (),
-                       "resource-base-path", "/org/gnome/calendar",
+                       "resource-base-path", "/org/mint/calendar/ce",
                        "application-id", APPLICATION_ID,
                        "flags", G_APPLICATION_HANDLES_COMMAND_LINE | G_APPLICATION_HANDLES_OPEN,
                        NULL);
