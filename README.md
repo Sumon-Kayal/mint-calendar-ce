@@ -37,7 +37,7 @@ sudo apt install ./mint-calendar-ce_*.deb
 
 The v50.0 feature set has been ported to build against Mint 22 / Ubuntu 24.04's own GTK4
 and libadwaita stack directly — no PPA, container, or newer base is required. See
-[BUILD.md](BUILD.md) for the compatibility work, dependency list, and build details.
+[BUILD.md](BUILD.md) for the compatibility work, dependency list, and build details. See [CHANGELOG.md](CHANGELOG.md) for the project history and release notes.
 
 The package is designed to coexist with Linux Mint's original `gnome-calendar` package.
 Mint Calendar CE uses its own executable, application ID, desktop entry, D-Bus service,
@@ -78,6 +78,7 @@ installed at the same time. Final releases are still validated by installing the
 
 - Homepage: <https://github.com/Sumon-Kayal/mint-calendar-ce>
 - Report an issue: <https://github.com/Sumon-Kayal/mint-calendar-ce/issues>
+- Changelog: [CHANGELOG.md](CHANGELOG.md)
 - Contact: <sumankayalsuman4@proton.me>
 
 ## Credits
