@@ -406,6 +406,13 @@ gcal_application_startup (GApplication *app)
   GCAL_EXIT;
 }
 
+/**
+ * Processes command-line options and opens the requested event or files.
+ *
+ * @param app Application receiving the command-line request.
+ * @param command_line Command-line invocation to process.
+ * @returns Zero after processing the request.
+ */
 static gint
 gcal_application_command_line (GApplication            *app,
                                GApplicationCommandLine *command_line)
@@ -502,11 +509,10 @@ gcal_application_command_line (GApplication            *app,
 }
 
 /**
- * Handles local command-line options before application startup.
+ * Processes local command-line options before application startup.
  *
- * @param app The application instance.
- * @param options The parsed local options.
- * @return 0 when the version is printed, or -1 to continue normal option handling.
+ * @param options Parsed local command-line options.
+ * @return 0 if the version was printed; -1 to continue normal option handling.
  */
 static gint
 gcal_application_handle_local_options (GApplication *app,
@@ -525,6 +531,13 @@ gcal_application_handle_local_options (GApplication *app,
   return -1;
 }
 
+/**
+ * Registers the application with D-Bus and exports its shell search provider.
+ *
+ * @param object_path The D-Bus object path used for application registration.
+ * @param error Location for a returned error.
+ * @returns `TRUE` if registration and search-provider export succeed, `FALSE` otherwise.
+ */
 static gboolean
 gcal_application_dbus_register (GApplication     *application,
                                 GDBusConnection  *connection,
@@ -634,6 +647,11 @@ gcal_application_class_init (GcalApplicationClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
+/**
+ * Initializes the application context and shell search provider.
+ *
+ * @param self The application to initialize.
+ */
 static void
 gcal_application_init (GcalApplication *self)
 {
