@@ -18,9 +18,9 @@ GNOME Calendar applied on top.
 A community-maintained, Linux Mint-flavored fork of [GNOME Calendar](https://apps.gnome.org/Calendar/),
 distributed independently — not an official Linux Mint or GNOME project.
 
-> **Status:** v1.0 — stable  
-> **Released:** 15 August 2026  
-> **Target:** Linux Mint 22 / Ubuntu 24.04  
+> **Status:** v1.0 — release candidate  
+> **Target:** Linux Mint 22 / Ubuntu 24.04
+> **Planned release:** 15 August 2026
 > **Package:** Native `.deb`
 
 ## How this compares
