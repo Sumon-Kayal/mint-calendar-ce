@@ -1,10 +1,44 @@
 # Changelog
 
-## [1.0] - 2026-10-02
+## [Unreleased]
 
 First release of **Mint Calendar CE** as an independently versioned project.
 
 This release is based on **GNOME Calendar v50.0**, with Linux Mint's compatibility patch carried forward and the application ported to the GTK4/libadwaita versions available in **Linux Mint 22 / Ubuntu 24.04**.
+
+### 0. Package Isolation and Coexistence
+
+The package identity was completed so Mint Calendar CE can be installed alongside
+Linux Mint's original `gnome-calendar` package without intentionally claiming the
+same system-visible application identities.
+
+- Binary: `mint-calendar-ce`
+- Application ID: `org.mint.calendar.ce`
+- Desktop file: `org.mint.calendar.ce.desktop`
+- D-Bus service: `org.mint.calendar.ce.service`
+- Search provider: `org.mint.calendar.ce.search-provider.ini`
+- GSettings schema: `org.mint.calendar.ce`
+- GSettings path: `/org/mint/calendar/ce/`
+- AppStream ID: `org.mint.calendar.ce`
+- gettext domain: `mint-calendar-ce`
+- Private package data directory: `/usr/share/mint-calendar-ce`
+- Embedded application resources remain internally namespaced where appropriate;
+  internal `gcal_*` symbols and historical GNOME resource references were not
+  mechanically renamed because they are not installed package ownership paths.
+
+The package/debug workflow compares the generated CE `.deb` file list against the
+installed `gnome-calendar` package and fails if an installed path overlaps.
+
+### 0.1 Search Provider Profile Fix
+
+Development and release search-provider paths are now consistent across the
+generated `.ini` file and the C registration/unregistration code:
+
+- Release: `/org/mint/calendar/ce/SearchProvider`
+- Development: `/org/mint/calendar/ce/Devel/SearchProvider`
+
+This fixes the development-profile `DevelDevel` / `ceDevel` path mismatch found during
+review.
 
 ### 1. Upstream Base
 

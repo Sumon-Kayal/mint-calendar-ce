@@ -74,8 +74,9 @@ These are checked against the current source (no leftover references to the newe
 remain — verified both by search and by diffing this tree's `src/` against a clean upstream
 v50.0 checkout, file by file) and the feature-parity question was checked deliberately: every
 file that differs from upstream maps to one of the items above, so nothing else should have
-been silently dropped in the process. That said, **none of this has been confirmed by an
-actual compile yet** — see "Before opening a release" below.
+been silently dropped in the process. The compatibility port has since been exercised by CI:
+the build reached **350/350 targets with all 10 tests passing**. The remaining release gate is
+the real Mint installation/coexistence test of the generated `.deb`.
 
 ## blueprint-compiler needs to be newer than Ubuntu 24.04 ships
 
@@ -121,6 +122,65 @@ This fork uses its own GSettings schema (`org.mint.calendar.ce`, path
 `/org/mint/calendar/ce/`) instead of reusing upstream's `org.gnome.calendar`. If both this
 app and real GNOME Calendar are ever installed on the same system, they now have independent
 settings rather than silently sharing one GSettings key space.
+
+## Independent package identity and coexistence
+
+Mint Calendar CE is intended to be installable alongside Linux Mint's original
+`gnome-calendar` package. System-visible identities are deliberately separate:
+
+| Resource | Original GNOME Calendar | Mint Calendar CE |
+|---|---|---|
+| Binary | `gnome-calendar` | `mint-calendar-ce` |
+| Application ID | `org.gnome.Calendar` | `org.mint.calendar.ce` |
+| Desktop entry | `org.gnome.Calendar.desktop` | `org.mint.calendar.ce.desktop` |
+| D-Bus service | `org.gnome.Calendar.service` | `org.mint.calendar.ce.service` |
+| Search provider | `org.gnome.Calendar.search-provider.ini` | `org.mint.calendar.ce.search-provider.ini` |
+| GSettings schema | `org.gnome.Calendar` | `org.mint.calendar.ce` |
+| GSettings path | `/org/gnome/calendar/` | `/org/mint/calendar/ce/` |
+| AppStream ID | `org.gnome.Calendar` | `org.mint.calendar.ce` |
+| gettext domain | `gnome-calendar` | `mint-calendar-ce` |
+| Private data directory | `gnome-calendar` | `mint-calendar-ce` |
+
+The internal `gcal_*` C symbols and embedded `/org/gnome/calendar/...` resource
+paths are not mechanically renamed. They are internal implementation/resource
+identifiers and do not by themselves create Debian filesystem ownership conflicts.
+
+### Search-provider profile paths
+
+The search-provider object path is kept identical between the generated metadata
+and the runtime D-Bus registration code:
+
+```text
+Release:     /org/mint/calendar/ce/SearchProvider
+Development: /org/mint/calendar/ce/Devel/SearchProvider
+```
+
+Both registration and unregistration use the same development profile path, and
+the `.ini` template uses the matching `profile_path`.
+
+### Coexistence test
+
+After building the `.deb`, install the distro GNOME Calendar first, then install CE:
+
+```sh
+sudo apt install gnome-calendar
+sudo apt install ./mint-calendar-ce_*.deb
+```
+
+Compare the package file lists:
+
+```sh
+dpkg -L gnome-calendar > /tmp/gnome-calendar.txt
+dpkg -L mint-calendar-ce > /tmp/mint-calendar-ce.txt
+
+comm -12   <(sort /tmp/gnome-calendar.txt)   <(sort /tmp/mint-calendar-ce.txt)
+```
+
+Expected output: **nothing**.
+
+Then launch both applications independently and verify desktop activation,
+D-Bus activation, search integration, and uninstalling CE without damaging the
+original GNOME Calendar package.
 
 ## Dev build (meson)
 
@@ -207,13 +267,11 @@ v50.0 checkout to confirm the compatibility fixes above are complete and nothing
 dropped in the process. The GTK4/libadwaita version floor is now confirmed satisfiable on
 Mint 22 / Ubuntu 24.04 directly (table above, checked against Ubuntu's package archive).
 
-A real CI run (CodeQL's Analyze job, which builds the tree to trace the compile) has since
-run against this — and caught something source inspection alone couldn't have: the
-blueprint-compiler version gap above. It failed at `ninja`'s very first blueprint-compiling
-step, before a single line of C compiled, which is the *only* real compile signal this tree
-has had so far. Not one C file has actually been built yet, and the blueprint-compiler fix
-itself (wrap + version-checked `find_program()`) hasn't been through CI yet either — treat the
-next CI run, or a local `meson setup && ninja && meson test`, as the real test. Give the
-`gtk_filter_list_model_set_watch_items()` backport in `gcal-utils.c` particular scrutiny once
-it does build, since that's new code written for this port rather than a straight widget
-substitution like the rest of the compatibility list above.
+CI has now exercised the compatibility build successfully: the tree reached
+350/350 build targets and all 10 tests passed. CodeQL and the other repository workflows are
+already used as the normal automated checks.
+
+Before publishing a release, perform the real Linux Mint coexistence test described above.
+The strongest package-level proof is that the generated `.deb` has no filesystem path in
+common with `dpkg-query -L gnome-calendar`, and that both applications can be launched and
+uninstalled independently.
