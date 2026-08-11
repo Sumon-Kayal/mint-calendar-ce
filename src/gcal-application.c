@@ -52,10 +52,10 @@ G_DEFINE_TYPE (GcalApplication, gcal_application, ADW_TYPE_APPLICATION);
 static gboolean show_version = FALSE;
 
 static GOptionEntry gcal_application_goptions[] = {
-  { 
+  {
     "quit", 'q', 0,
     G_OPTION_ARG_NONE, NULL,
-    N_("Quit GNOME Calendar"), NULL
+    N_("Quit Mint Calendar CE"), NULL
   },
   {
     "version", 'v', 0,
@@ -150,7 +150,7 @@ build_system_information (void)
 {
   GString *str = g_string_new (NULL);
 
-  g_string_append_printf (str, "GNOME Calendar (`%s`)\n\n", VERSION);
+  g_string_append_printf (str, "Mint Calendar CE (`%s`)\n\n", VERSION);
 
   g_string_append_printf (str,
                           "* GLib: %d.%d.%d (%d.%d.%d)\n",
@@ -229,7 +229,7 @@ gcal_application_show_about (GSimpleAction *simple,
   copyright = build_about_copyright (self);
   troubleshooting = build_system_information ();
 
-  about = adw_about_dialog_new_from_appdata ("/org/gnome/calendar/appdata", MAJOR_VERSION);
+  about = adw_about_dialog_new_from_appdata ("/org/mint/calendar/ce/appdata", MAJOR_VERSION);
 
   adw_about_dialog_set_designers (ADW_ABOUT_DIALOG (about), designers);
   adw_about_dialog_set_copyright (ADW_ABOUT_DIALOG (about), copyright);
@@ -273,7 +273,10 @@ gcal_application_quit (GSimpleAction *simple,
 {
   GcalApplication *self = GCAL_APPLICATION (user_data);
 
-  gtk_window_destroy (GTK_WINDOW (self->window));
+  if (self->window != NULL)
+    gtk_window_destroy (GTK_WINDOW (self->window));
+  else
+    g_application_quit (G_APPLICATION (self));
 }
 
 
