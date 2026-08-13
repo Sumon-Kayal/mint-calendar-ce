@@ -41,22 +41,21 @@ jobs:
       # Step 3: Run Formatters
       - name: Format C/C++ Code
         run: |
-          find . -regex '.*\.\(c\|cpp\|h\|hpp\)' -exec clang-format -i -style=LLVM {} + || true
+          find . -regex '.*\.\(c\|cpp\|h\|hpp\)' -exec clang-format -i -style=LLVM {} +
 
       - name: Format Python Code
         run: |
-          black . || true
+          black .
 
       - name: Format JS/TS Code
         run: |
-          npx --yes prettier@3.3.3 --write "**/*.{js,ts,jsx,tsx,json,md}" || true
+          npx --yes prettier@3.3.3 --write "**/*.{js,ts,jsx,tsx,json,md}"
 
       - name: Format Go Code (if applicable)
         run: |
           if command -v go &> /dev/null; then
-            GO_FILES=$(git ls-files '*.go')
-            if [ -n "$GO_FILES" ]; then
-              echo "$GO_FILES" | xargs gofmt -w
+            if [ -n "$(git ls-files -z '*.go')" ]; then
+              git ls-files -z '*.go' | xargs -0 gofmt -w
             fi
           fi        
 
