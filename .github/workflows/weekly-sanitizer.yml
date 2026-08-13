@@ -99,7 +99,7 @@ jobs:
             * Ran `gofmt` on Go files (if present)
 
             Please review and merge if tests pass!
-          base: ${{ github.event.inputs.target_branch || github.ref }}
+          base: ${{ github.event.inputs.target_branch || github.ref_name }}
           branch: "automated/format-codebase-${{ github.event.inputs.target_branch || github.ref_name }}"
           delete-branch: true
           labels: |
