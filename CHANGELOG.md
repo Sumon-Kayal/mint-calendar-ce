@@ -26,9 +26,9 @@ same system-visible application identities.
   internal `gcal_*` symbols and historical GNOME resource references were not
   mechanically renamed because they are not installed package ownership paths.
 
-The package/debug workflow compares the generated CE `.deb` file list against the
-installed `gnome-calendar` package and fails if an installed path overlaps. This validation
-is part of the v1.0 release process.
+A coexistence check comparing the generated CE `.deb` file list against the installed
+`gnome-calendar` package to confirm no installed paths overlap is planned as part of the
+v1.0 release validation process.
 
 ### 0.1 Search Provider Profile Fix
 
@@ -212,17 +212,12 @@ The v1.0 release includes:
 - Coexistence support with the original Linux Mint `gnome-calendar` package.
 - Correct release and development search-provider D-Bus paths.
 - Preserved GNOME Calendar translations.
-- Automated build, test, package validation, and security scanning.
+- Automated build, test, and security scanning.
 
 Ubuntu 26.04 remains documented as an earlier development milestone and is not the v1.0
 target platform.
 
 ### Summary
-
-Mint Calendar CE 1.0 combines the **GNOME Calendar 50 feature set** with Linux Mint's compatibility patch and a complete compatibility port to the GTK4/libadwaita versions available on **Linux Mint 22 / Ubuntu 24.04**.
-
-It is independently branded, independently versioned, packaged as a native `.deb`, and retains the existing GNOME Calendar translations.
-
 
 Mint Calendar CE 1.0 combines the **GNOME Calendar 50 feature set** with Linux Mint's compatibility patch and a complete compatibility port to the GTK4/libadwaita versions available on **Linux Mint 22 / Ubuntu 24.04**.
 

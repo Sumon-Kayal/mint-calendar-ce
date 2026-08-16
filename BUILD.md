@@ -170,10 +170,10 @@ sudo apt install ./mint-calendar-ce_*.deb
 Compare the package file lists:
 
 ```sh
-dpkg -L gnome-calendar > /tmp/gnome-calendar.txt
-dpkg -L mint-calendar-ce > /tmp/mint-calendar-ce.txt
+dpkg -L gnome-calendar | grep -v '/$' | sort > /tmp/gnome-calendar-sorted.txt
+dpkg -L mint-calendar-ce | grep -v '/$' | sort > /tmp/mint-calendar-ce-sorted.txt
 
-comm -12   <(sort /tmp/gnome-calendar.txt)   <(sort /tmp/mint-calendar-ce.txt)
+comm -12 /tmp/gnome-calendar-sorted.txt /tmp/mint-calendar-ce-sorted.txt
 ```
 
 Expected output: **nothing**.
@@ -273,5 +273,6 @@ already used as the normal automated checks.
 
 Before publishing a release, perform the real Linux Mint coexistence test described above.
 The strongest package-level proof is that the generated `.deb` has no filesystem path in
-common with `dpkg-query -L gnome-calendar`, and that both applications can be launched and
-uninstalled independently.
+common with the installed `gnome-calendar` package (compare the filtered, sorted output of
+`dpkg -L` for both packages using `comm`, as shown above), and that both applications can
+be launched and uninstalled independently.

@@ -18,9 +18,8 @@ GNOME Calendar applied on top.
 A community-maintained, Linux Mint-flavored fork of [GNOME Calendar](https://apps.gnome.org/Calendar/),
 distributed independently — not an official Linux Mint or GNOME project.
 
-> **Status:** v1.0 — release candidate  
+> **Status:** v1.0 — unreleased
 > **Target:** Linux Mint 22 / Ubuntu 24.04
-> **Planned release:** 15 August 2026
 > **Package:** Native `.deb`
 
 ## How this compares
@@ -74,8 +73,8 @@ Mint Calendar CE uses its own executable, application ID, desktop entry, D-Bus s
 GSettings schema, AppStream metadata, gettext domain, and private data directory, so it
 does not intentionally replace or claim the original package's installed files.
 
-The build and release automation — GitHub Actions building the `.deb`, validating package
-ownership/identity, and publishing tagged releases, with CodeQL security scanning on every
+The build and release automation — GitHub Actions building the `.deb`, running build and
+test validation, and publishing tagged releases, with CodeQL security scanning on every
 change — runs on an `ubuntu-24.04` runner.
 
 ## Uninstalling
@@ -173,10 +172,10 @@ That's the target platform. The compatibility work targets the GTK4 and libadwai
 provided by Mint 22 / Ubuntu 24.04. See [BUILD.md](BUILD.md) if you're building it yourself.
 
 **Has this actually been built and tested?**
-Yes. The project builds successfully, the automated test suite passes, CodeQL is passing,
-and the generated `.deb` is validated for package ownership conflicts. The v1.0 release
-should also be tested on a real Linux Mint 22 installation with the original
-`gnome-calendar` package installed before publication.
+Yes. The project builds successfully, the automated test suite passes, and CodeQL is passing.
+The v1.0 release should also be tested on a real Linux Mint 22 installation with the original
+`gnome-calendar` package installed, including validation that the generated `.deb` has no
+filesystem conflicts, before publication.
 
 **Why does it say v1.0 instead of matching GNOME Calendar's version number?**
 It versions independently now, since it's its own distributed product rather than a straight
