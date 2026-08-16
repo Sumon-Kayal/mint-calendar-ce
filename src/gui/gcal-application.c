@@ -197,6 +197,12 @@ build_system_information (void)
   return g_string_free (str, FALSE);
 }
 
+/**
+ * Presents the application's About dialog with contributor, system, and weather information.
+ * @param simple The action that triggered the dialog.
+ * @param parameter The action parameter.
+ * @param user_data The application instance.
+ */
 static void
 gcal_application_show_about (GSimpleAction *simple,
                              GVariant      *parameter,
@@ -248,6 +254,9 @@ gcal_application_show_about (GSimpleAction *simple,
   adw_dialog_present (about, GTK_WIDGET (self->window));
 }
 
+/**
+ * Presents the keyboard shortcuts dialog for the main calendar window.
+ */
 static void
 gcal_application_show_shortcuts (GSimpleAction *simple,
                                  GVariant      *parameter,
@@ -298,6 +307,11 @@ gcal_application_finalize (GObject *object)
   GCAL_EXIT;
 }
 
+/**
+ * Retrieves an application property.
+ *
+ * @param property_id Identifier of the property to retrieve.
+ */
 static void
 gcal_application_get_property (GObject    *object,
                                guint       property_id,
@@ -368,7 +382,7 @@ gcal_application_activate (GApplication *application)
 }
 
 /**
- * Initializes application actions and starts the calendar context.
+ * Initializes application actions, configures service inactivity handling, and starts the calendar context.
  *
  * @param app The application to initialize.
  */
@@ -617,6 +631,9 @@ gcal_application_open (GApplication  *application,
   GCAL_EXIT;
 }
 
+/**
+ * Initializes the application class and its readable properties.
+ */
 static void
 gcal_application_class_init (GcalApplicationClass *klass)
 {

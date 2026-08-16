@@ -765,6 +765,12 @@ gcal_event_widget_finalize (GObject *object)
   G_OBJECT_CLASS (gcal_event_widget_parent_class)->finalize (object);
 }
 
+/**
+ * Initializes the class definition for event widgets.
+ *
+ * Registers properties, activation behavior, keyboard shortcuts, template
+ * bindings, accessibility metadata, and layout configuration.
+ */
 static void
 gcal_event_widget_class_init (GcalEventWidgetClass *klass)
 {

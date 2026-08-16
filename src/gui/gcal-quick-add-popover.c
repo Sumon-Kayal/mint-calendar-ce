@@ -649,6 +649,10 @@ gcal_quick_add_popover_closed (GtkPopover *popover)
   bind_model (self);
 }
 
+/**
+ * Initializes the class metadata, properties, signals, template, and callbacks
+ * for #GcalQuickAddPopover.
+ */
 static void
 gcal_quick_add_popover_class_init (GcalQuickAddPopoverClass *klass)
 {

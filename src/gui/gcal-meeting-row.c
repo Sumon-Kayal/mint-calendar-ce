@@ -152,6 +152,12 @@ gcal_meeting_row_set_property (GObject      *object,
     }
 }
 
+/**
+ * Initializes the class metadata, properties, signals, template, and CSS name
+ * for meeting rows.
+ *
+ * @param klass Class structure to initialize.
+ */
 static void
 gcal_meeting_row_class_init (GcalMeetingRowClass *klass)
 {

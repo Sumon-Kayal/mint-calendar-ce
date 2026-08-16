@@ -622,6 +622,12 @@ update_weather (GcalWeatherService *self,
     }
 }
 
+/**
+ * Updates the weather location and refreshes the associated forecast data.
+ *
+ * @param self The weather service.
+ * @param location The new weather location, or `NULL` when unavailable.
+ */
 static void
 update_location (GcalWeatherService  *self,
                  GWeatherLocation    *location)

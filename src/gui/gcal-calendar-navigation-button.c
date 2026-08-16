@@ -116,6 +116,12 @@ gcal_calendar_navigation_button_set_property (GObject *object,
     }
 }
 
+/**
+ * Initializes the class, including its properties, lifecycle handlers, and
+ * widget template bindings.
+ *
+ * @param klass The class to initialize.
+ */
 static void
 gcal_calendar_navigation_button_class_init (GcalCalendarNavigationButtonClass *klass)
 {

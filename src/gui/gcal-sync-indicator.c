@@ -173,6 +173,11 @@ gcal_sync_indicator_set_property (GObject      *object,
     }
 }
 
+/**
+ * Initializes the class metadata and template for the synchronization indicator.
+ *
+ * @param klass The class to initialize.
+ */
 static void
 gcal_sync_indicator_class_init (GcalSyncIndicatorClass *klass)
 {

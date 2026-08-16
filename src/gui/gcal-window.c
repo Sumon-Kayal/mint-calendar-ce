@@ -1346,6 +1346,12 @@ gcal_window_unmap (GtkWidget *widget)
   GCAL_EXIT;
 }
 
+/**
+ * Initializes the class, its properties, lifecycle handlers, template resource,
+ * template children, and template callbacks.
+ *
+ * @param klass Class to initialize.
+ */
 static void
 gcal_window_class_init (GcalWindowClass *klass)
 {

@@ -737,6 +737,11 @@ gcal_event_popover_set_property (GObject      *object,
     }
 }
 
+/**
+ * Initializes the event popover class and its GTK template.
+ *
+ * @param klass The class to initialize.
+ */
 static void
 gcal_event_popover_class_init (GcalEventPopoverClass *klass)
 {

@@ -321,6 +321,9 @@ gcal_weather_settings_set_property (GObject      *object,
     }
 }
 
+/**
+ * Initializes the weather settings widget class and its template bindings.
+ */
 static void
 gcal_weather_settings_class_init (GcalWeatherSettingsClass *klass)
 {
