@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/architecture.mk
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,-O1 -Wl,-z,defs
+
+%:
+	dh $@
+
+override_dh_auto_test:
+	xvfb-run -a dh_auto_test -- --no-suite blueprint-compiler
+
+# dh_auto_install's meson buildsystem support still shells out to plain
+# `ninja install` (see Debian bug #1006805 — debhelper hasn't switched to
+# `meson install` yet), but it tries to pass --skip-subprojects along with
+# it anyway to keep the blueprint-compiler wrap subproject's own files out
+# of this package. Plain ninja has never had that flag, so that combination
+# fails outright ("unrecognized option '--skip-subprojects'"). Since
+# --skip-subprojects is real, but only for `meson install`, call that
+# directly instead of going through dh_auto_install's ninja path.
+override_dh_auto_install:
+	cd obj-$(DEB_HOST_GNU_TYPE) && \
+		DESTDIR=$(CURDIR)/debian/mint-calendar-ce meson install --skip-subprojects blueprint-compiler
+	rm -f debian/mint-calendar-ce/usr/lib/python3/dist-packages/blueprintcompiler/reference_docs.json
+
+override_dh_gnome_clean:
+	dh_gnome_clean --no-control

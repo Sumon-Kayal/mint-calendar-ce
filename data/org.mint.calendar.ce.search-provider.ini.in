@@ -1,0 +1,6 @@
+[Shell Search Provider]
+Icon=@appid@
+DesktopId=@appid@.desktop
+BusName=@appid@
+ObjectPath=/org/mint/calendar/ce@profile_path@/SearchProvider
+Version=2

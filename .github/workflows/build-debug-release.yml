@@ -1,0 +1,226 @@
+# Builds, debugs, validates, and releases Mint Calendar CE.
+#
+# Build validation runs on pushes/PRs/manual dispatches.
+# A GitHub Release is created only when a v* tag is pushed.
+#
+# The validation job deliberately checks the generated .deb against the
+# distro GNOME Calendar package so package ownership/path conflicts are caught
+# before a release is published.
+
+name: Build, Debug & Release (.deb)
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-debug:
+    name: Build & debug .deb (Ubuntu 24.04 / Noble)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Install packaging and debug tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            devscripts \
+            equivs \
+            lintian \
+            shellcheck \
+            file \
+            binutils \
+            dpkg-dev
+
+      - name: Install build dependencies from debian/control
+        run: |
+          sudo mk-build-deps --install --remove \
+            --tool="apt-get -o Debug::pkgProblemResolver=yes -y --no-install-recommends" \
+            debian/control
+
+      - name: Pre-fetch Meson subprojects
+        run: |
+          meson subprojects download
+
+      - name: Build binary package
+        run: |
+          dpkg-buildpackage -us -uc -b
+
+      - name: Collect .deb
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          find .. -maxdepth 1 -type f -name '*.deb' -print -exec cp {} dist/ \;
+          test -n "$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+
+      - name: Inspect package metadata
+        run: |
+          set -euo pipefail
+          for deb in dist/*.deb; do
+            echo "===== $deb ====="
+            dpkg-deb -I "$deb"
+            dpkg-deb -f "$deb" Package Version Architecture
+          done
+
+      - name: Check package contents for GNOME Calendar ownership conflicts
+        run: |
+          set -euo pipefail
+
+          deb="$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+          test -n "$deb"
+
+          echo "Installing distro GNOME Calendar metadata for comparison..."
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gnome-calendar
+
+          dpkg-query -L gnome-calendar | sort -u > /tmp/gnome-calendar-files.txt
+
+          dpkg-deb -c "$deb" \
+            | awk '{print $6}' \
+            | sed 's#/$##' \
+            | sort -u > /tmp/mint-calendar-ce-files.txt
+
+          echo "===== Files owned by GNOME Calendar ====="
+          cat /tmp/gnome-calendar-files.txt
+
+          echo "===== Files provided by Mint Calendar CE ====="
+          cat /tmp/mint-calendar-ce-files.txt
+
+          echo "===== Overlapping paths ====="
+          overlaps="$(comm -12 \
+            /tmp/gnome-calendar-files.txt \
+            /tmp/mint-calendar-ce-files.txt || true)"
+
+          if [ -n "$overlaps" ]; then
+            echo "::error::Mint Calendar CE contains files already owned by gnome-calendar:"
+            printf '%s\n' "$overlaps"
+            exit 1
+          fi
+
+          echo "No filesystem ownership conflicts found."
+
+      - name: Check CE identity paths
+        run: |
+          set -euo pipefail
+
+          deb="$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+
+          contents="$(dpkg-deb -c "$deb")"
+
+          required_paths=(
+            "./usr/bin/mint-calendar-ce"
+            "./usr/share/applications/org.mint.calendar.ce.desktop"
+            "./usr/share/dbus-1/services/org.mint.calendar.ce.service"
+            "./usr/share/gnome-shell/search-providers/org.mint.calendar.ce.search-provider.ini"
+            "./usr/share/glib-2.0/schemas/org.mint.calendar.ce.gschema.xml"
+            "./usr/share/metainfo/org.mint.calendar.ce.metainfo.xml"
+          )
+
+          for path in "${required_paths[@]}"; do
+            if ! grep -Fq "$path" <<< "$contents"; then
+              echo "::error::Expected CE path missing from package: $path"
+              exit 1
+            fi
+          done
+
+          echo "All expected CE identity/install paths are present."
+
+      - name: Check for forbidden GNOME Calendar install identities
+        run: |
+          set -euo pipefail
+
+          deb="$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+          contents="$(dpkg-deb -c "$deb")"
+
+          forbidden_paths=(
+            "./usr/bin/gnome-calendar"
+            "./usr/share/applications/org.gnome.Calendar.desktop"
+            "./usr/share/dbus-1/services/org.gnome.Calendar.service"
+            "./usr/share/gnome-shell/search-providers/org.gnome.Calendar.search-provider.ini"
+            "./usr/share/metainfo/org.gnome.Calendar.metainfo.xml"
+            "./usr/share/glib-2.0/schemas/org.gnome.Calendar.gschema.xml"
+          )
+
+          failed=0
+          for path in "${forbidden_paths[@]}"; do
+            if grep -Fq "$path" <<< "$contents"; then
+              echo "::error::Forbidden GNOME Calendar path found in CE package: $path"
+              failed=1
+            fi
+          done
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+
+          echo "No forbidden GNOME Calendar install identities found."
+
+      - name: Run Lintian
+        run: |
+          set -euo pipefail
+          lintian --no-tag-display-limit dist/*.deb
+
+      - name: Upload debug package artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mint-calendar-ce-deb-debug
+          path: dist/*.deb
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: Publish GitHub Release
+    needs: build-debug
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download .deb
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: mint-calendar-ce-deb-debug
+          path: dist
+
+      - name: Verify release package
+        run: |
+          set -euo pipefail
+          test -n "$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+          # Select the mint-calendar-ce package (exclude dbgsym)
+          selected_deb=""
+          for deb in dist/*.deb; do
+            pkg_name="$(dpkg-deb -f "$deb" Package)"
+            if [ "$pkg_name" = "mint-calendar-ce" ]; then
+              selected_deb="$deb"
+              break
+            fi
+          done
+
+          test -n "$selected_deb"
+          dpkg-deb -I "$selected_deb"
+          dpkg-deb -f "$selected_deb" Package Version Architecture
+    
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/*.deb \
+            --repo "${{ github.repository }}" \
+            --title "$RELEASE_TAG" \
+            --generate-notes
+            

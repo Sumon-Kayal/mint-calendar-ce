@@ -1,0 +1,56 @@
+Source: mint-calendar-ce
+Section: gnome
+Priority: optional
+Maintainer: Sumon Kayal <sumankayalsuman4@proton.me>
+Build-Depends: appstream,
+               debhelper-compat (= 13),
+               dh-sequence-gnome,
+               evolution-data-server <!nocheck>,
+               gir1.2-gtk-4.0,
+               git,
+               gsettings-desktop-schemas-dev (>= 3.21.2),
+               libadwaita-1-dev (>= 1.5.0),
+               libecal2.0-dev (>= 3.45.1),
+               libedataserver1.2-dev (>= 3.45.1),
+               libfribidi-dev,
+               libgeoclue-2-dev (>= 2.4),
+               libedataserverui4-dev (>= 3.45.1),
+               libglib2.0-dev (>= 2.80.0),
+               libgtk-4-dev (>= 4.14.2),
+               libgweather-4-dev (>= 4.1),
+               libical-dev (>= 1.0.1),
+               libsoup-3.0-dev,
+               meson (>= 0.58.0),
+               pkgconf,
+               python3-gi,
+               xauth <!nocheck>,
+               xvfb <!nocheck>,
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Vcs-Browser: https://github.com/Sumon-Kayal/mint-calendar-ce
+Vcs-Git: https://github.com/Sumon-Kayal/mint-calendar-ce.git
+Homepage: https://github.com/Sumon-Kayal/mint-calendar-ce
+
+Package: mint-calendar-ce
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         gsettings-desktop-schemas (>= 3.21.2)
+Recommends: evolution-data-server
+Description: Calendar application for Linux Mint Cinnamon (community fork)
+ Mint Calendar CE is a community-maintained, Linux
+ Mint-flavored fork of GNOME Calendar, tracking upstream GNOME Calendar
+ development and packaged independently for distribution outside the
+ GNOME and Linux Mint release channels. By reusing the components which
+ the GNOME desktop is built on, it integrates cleanly with Cinnamon on
+ an Ubuntu base.
+ .
+ This build ports the newer GNOME Calendar (v50) feature set down to run
+ against Mint 22 / Ubuntu 24.04 (Noble)'s own GTK4 (>= 4.14.2) and
+ libadwaita (>= 1.5.0) — no PPA, container, or newer base needed; see
+ the project README and BUILD.md for the specific compatibility fixes
+ this required.
+ .
+ All credit for the underlying application goes to the GNOME Calendar
+ authors and the Linux Mint team; this package is not affiliated with
+ either project.
