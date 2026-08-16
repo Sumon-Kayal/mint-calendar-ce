@@ -98,7 +98,7 @@
   <update_contact>sumankayalsuman4@proton.me</update_contact>
 
   <releases>
-    <release date="2026-08-02" version="1.0" type="stable">
+    <release version="1.0" type="development">
       <description>
         <p>
           First release of Mint Calendar CE under its own independent version
