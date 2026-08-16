@@ -259,7 +259,7 @@ gcal_application_show_shortcuts (GSimpleAction *simple,
 
   self = GCAL_APPLICATION (user_data);
 
-  builder = gtk_builder_new_from_resource ("/org/gnome/calendar/shortcuts-dialog.ui");
+  builder = gtk_builder_new_from_resource ("/org/mint/calendar/ce/shortcuts-dialog.ui");
   shortcuts_window = GTK_WIDGET (gtk_builder_get_object (builder, "shortcuts_window"));
 
   gtk_window_set_transient_for (GTK_WINDOW (shortcuts_window), GTK_WINDOW (self->window));
