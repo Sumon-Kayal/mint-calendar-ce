@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="data/icons/hicolor/scalable/apps/org.mint.calendar.ce.svg" width="128" height="128">
 
 # Mint Calendar CE
 
