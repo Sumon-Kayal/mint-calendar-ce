@@ -153,6 +153,12 @@ gcal_meeting_row_set_property (GObject *object,
     }
 }
 
+/**
+ * Initializes the class metadata, properties, signals, template, and CSS name
+ * for meeting rows.
+ *
+ * @param klass Class structure to initialize.
+ */
 static void
 gcal_meeting_row_class_init (GcalMeetingRowClass *klass)
 {
@@ -181,7 +187,7 @@ gcal_meeting_row_class_init (GcalMeetingRowClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-meeting-row.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-meeting-row.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalMeetingRow, join_button);
   gtk_widget_class_bind_template_child (widget_class, GcalMeetingRow, title);

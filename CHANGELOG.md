@@ -1,10 +1,45 @@
 # Changelog
 
-## [1.0] - 2026-10-02
+## [Unreleased]
 
-First release of **Mint Calendar CE** as an independently versioned project.
+First release of Mint Calendar CE as an independently versioned project.
 
-This release is based on **GNOME Calendar v50.0**, with Linux Mint's compatibility patch carried forward and the application ported to the GTK4/libadwaita versions available in **Linux Mint 22 / Ubuntu 24.04**.
+This release is based on GNOME Calendar v50.0, with Linux Mint's compatibility patch carried forward and the application ported to the GTK4/libadwaita versions available in Linux Mint 22 / Ubuntu 24.04.
+
+### 0. Package Isolation and Coexistence
+
+The package identity was completed so Mint Calendar CE can be installed alongside
+Linux Mint's original `gnome-calendar` package without intentionally claiming the
+same system-visible application identities.
+
+- Binary: `mint-calendar-ce`
+- Application ID: `org.mint.calendar.ce`
+- Desktop file: `org.mint.calendar.ce.desktop`
+- D-Bus service: `org.mint.calendar.ce.service`
+- Search provider: `org.mint.calendar.ce.search-provider.ini`
+- GSettings schema: `org.mint.calendar.ce`
+- GSettings path: `/org/mint/calendar/ce/`
+- AppStream ID: `org.mint.calendar.ce`
+- gettext domain: `mint-calendar-ce`
+- Private package data directory: `/usr/share/mint-calendar-ce`
+- Embedded application resources remain internally namespaced where appropriate;
+  internal `gcal_*` symbols and historical GNOME resource references were not
+  mechanically renamed because they are not installed package ownership paths.
+
+A coexistence check comparing the generated CE `.deb` file list against the installed
+`gnome-calendar` package to confirm no installed paths overlap is planned as part of the
+v1.0 release validation process.
+
+### 0.1 Search Provider Profile Fix
+
+Development and release search-provider paths are now consistent across the
+generated `.ini` file and the C registration/unregistration code:
+
+- Release: `/org/mint/calendar/ce/SearchProvider`
+- Development: `/org/mint/calendar/ce/Devel/SearchProvider`
+
+This fixes the development-profile `DevelDevel` / `ceDevel` path mismatch found during
+review.
 
 ### 1. Upstream Base
 
@@ -38,6 +73,25 @@ Two alternative approaches were investigated and rejected:
 - Building directly on Ubuntu 26.04 produced a `.deb` that could not install on an actual Mint 22 system.
 
 Instead, the v50.0 feature set was ported to the libraries available on Mint 22 / Ubuntu 24.04.
+
+#### Development history: Ubuntu 26.04
+
+An earlier development/testing stage used **Ubuntu 26.04** as a build environment while
+working through the GNOME Calendar v50.0 port. This established that the newer GNOME
+stack could be built successfully, but the resulting `.deb` was not installable on the
+actual **Linux Mint 22** target because of the newer platform/library requirements.
+
+That result was used to define the final compatibility strategy:
+
+1. Use the GNOME Calendar **v50.0** source as the feature base.
+2. Target the **Linux Mint 22 / Ubuntu 24.04** platform rather than Ubuntu 26.04.
+3. Port the v50.0 code to the GTK4 and libadwaita versions actually available on the
+   target system.
+4. Build and validate the native `.deb` on Ubuntu 24.04 so the build environment matches
+   the intended Mint 22 runtime more closely.
+
+The Ubuntu 26.04 stage is therefore retained as part of the project's development history,
+not as the supported build or runtime target for v1.0.
 
 #### Compatibility changes
 
@@ -142,6 +196,26 @@ All **77 languages** from GNOME Calendar's community translations are carried ov
 | Own GSettings schema           | —                                      | —                                   | Yes (`org.mint.calendar.ce`) |
 | Official Mint project          | Yes                                    | —                                   | No — independent/community   |
 | Distribution                   | Mint repositories                      | GNOME / Flathub                     | Project releases             |
+
+### 9. v1.0 Release Milestone
+
+Mint Calendar CE 1.0 marks the transition from development fork to an independently
+distributed package.
+
+The v1.0 release includes:
+
+- GNOME Calendar v50.0 as the upstream feature base.
+- Linux Mint's maintained compatibility work carried forward.
+- GTK4/libadwaita compatibility for Linux Mint 22 / Ubuntu 24.04.
+- Native `.deb` packaging.
+- Independent system-visible application and package identities.
+- Coexistence support with the original Linux Mint `gnome-calendar` package.
+- Correct release and development search-provider D-Bus paths.
+- Preserved GNOME Calendar translations.
+- Automated build, test, and security scanning.
+
+Ubuntu 26.04 remains documented as an earlier development milestone and is not the v1.0
+target platform.
 
 ### Summary
 

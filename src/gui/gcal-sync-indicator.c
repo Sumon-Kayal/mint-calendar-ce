@@ -172,6 +172,11 @@ gcal_sync_indicator_set_property (GObject *object,
     }
 }
 
+/**
+ * Initializes the class metadata and template for the synchronization indicator.
+ *
+ * @param klass The class to initialize.
+ */
 static void
 gcal_sync_indicator_class_init (GcalSyncIndicatorClass *klass)
 {
@@ -195,7 +200,7 @@ gcal_sync_indicator_class_init (GcalSyncIndicatorClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-sync-indicator.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-sync-indicator.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalSyncIndicator, refreshing_spinner);
   gtk_widget_class_bind_template_child (widget_class, GcalSyncIndicator, stack);

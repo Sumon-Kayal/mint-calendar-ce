@@ -64,21 +64,6 @@
     <keyword>Google Calendar</keyword>
   </keywords>
 
-  <screenshots>
-    <screenshot type="default">
-      <image>https://static.gnome.org/appdata/gnome-50/org.gnome.Calendar/month-view.png</image>
-      <caption>Month view</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://static.gnome.org/appdata/gnome-50/org.gnome.Calendar/week-view.png</image>
-      <caption>Week view</caption>
-    </screenshot>
-    <screenshot>
-      <image>https://static.gnome.org/appdata/gnome-50/org.gnome.Calendar/calendar-editor-dialog.png</image>
-      <caption>Event editor</caption>
-    </screenshot>
-  </screenshots>
-
   <branding>
     <color type="primary" scheme_preference="light">#c5e1a5</color>
     <color type="primary" scheme_preference="dark">#33691e</color>
@@ -102,10 +87,10 @@
     <control>touch</control>
   </supports>
 
-  <translation type="gettext">gnome-calendar</translation>
+  <translation type="gettext">mint-calendar-ce</translation>
   <launchable type="desktop-id">@appid@.desktop</launchable>
   <provides>
-    <binary>gnome-calendar</binary>
+    <binary>mint-calendar-ce</binary>
   </provides>
 
   <content_rating type="oars-1.1" />
@@ -113,7 +98,7 @@
   <update_contact>sumankayalsuman4@proton.me</update_contact>
 
   <releases>
-    <release date="2026-08-02" version="1.0" type="stable">
+    <release version="1.0" type="development" date="2026-08-20">
       <description>
         <p>
           First release of Mint Calendar CE under its own independent version

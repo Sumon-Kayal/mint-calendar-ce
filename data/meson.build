@@ -22,8 +22,8 @@ desktop_conf.set('icon', application_id)
 desktop = i18n.merge_file(
   type: 'desktop',
   input: configure_file(
-    input: files('org.gnome.Calendar.desktop.in.in'),
-    output: 'org.gnome.Calendar.desktop.in',
+    input: files('org.mint.calendar.ce.desktop.in.in'),
+    output: 'org.mint.calendar.ce.desktop.in',
     configuration: desktop_conf
   ),
   output: '@0@.desktop'.format(application_id),
@@ -36,9 +36,10 @@ desktop = i18n.merge_file(
 search_provider_conf = configuration_data()
 search_provider_conf.set('appid', application_id)
 search_provider_conf.set('profile',  profile)
+search_provider_conf.set('profile_path',  profile_path)
 configure_file(
   configuration: search_provider_conf,
-  input: files('org.gnome.Calendar.search-provider.ini.in'),
+  input: files('org.mint.calendar.ce.search-provider.ini.in'),
   install_dir: calendar_datadir / 'gnome-shell' / 'search-providers',
   output: '@0@.search-provider.ini'.format(application_id)
 )
@@ -72,7 +73,7 @@ compiled_schemas = custom_target(
 service_conf = configuration_data()
 service_conf.set('appid', application_id)
 service_conf.set('bindir', calendar_bindir)
-service = 'org.gnome.Calendar.service'
+service = 'org.mint.calendar.ce.service'
 
 configure_file(
           input: service + '.in',

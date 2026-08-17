@@ -617,6 +617,12 @@ update_weather (GcalWeatherService *self,
     }
 }
 
+/**
+ * Updates the weather location and refreshes the associated forecast data.
+ *
+ * @param self The weather service.
+ * @param location The new weather location, or `NULL` when unavailable.
+ */
 static void
 update_location (GcalWeatherService *self,
                  GWeatherLocation *location)
@@ -642,7 +648,7 @@ update_location (GcalWeatherService *self,
 
       self->gweather_info = gweather_info_new (location);
       gweather_info_set_contact_info (self->gweather_info,
-                                      "https://gitlab.gnome.org/GNOME/gnome-calendar/-/raw/master/gnome-calendar.doap");
+                                      "https://github.com/Sumon-Kayal/mint-calendar-ce");
 
       gweather_info_set_enabled_providers (self->gweather_info,
                                            GWEATHER_PROVIDER_METAR |

@@ -763,6 +763,12 @@ gcal_event_widget_finalize (GObject *object)
   G_OBJECT_CLASS (gcal_event_widget_parent_class)->finalize (object);
 }
 
+/**
+ * Initializes the class definition for event widgets.
+ *
+ * Registers properties, activation behavior, keyboard shortcuts, template
+ * bindings, accessibility metadata, and layout configuration.
+ */
 static void
 gcal_event_widget_class_init (GcalEventWidgetClass *klass)
 {
@@ -860,7 +866,7 @@ gcal_event_widget_class_init (GcalEventWidgetClass *klass)
       }
   }
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-event-widget.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-event-widget.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalEventWidget, drag_source);
   gtk_widget_class_bind_template_child (widget_class, GcalEventWidget, horizontal_box);

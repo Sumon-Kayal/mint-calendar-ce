@@ -4,13 +4,20 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name xml:lang="en">GNOME Calendar</name>
-  <shortdesc xml:lang="en">Calendar application for GNOME</shortdesc>
-  <description>GNOME Calendar is a simple and beautiful calendar application designed to perfectly fit the GNOME desktop. By reusing the components which the GNOME desktop is build on, Calendar nicely integrates with the GNOME ecosystem.</description>
+  <name xml:lang="en">Mint Calendar CE</name>
+  <shortdesc xml:lang="en">Community fork of GNOME Calendar for Linux Mint</shortdesc>
+  <description>Mint Calendar CE is a community-maintained, Linux Mint-flavored fork of GNOME Calendar, distributed independently — not an official Linux Mint or GNOME project. It carries forward Linux Mint's compatibility patch on top of the latest stable GNOME Calendar release, packaged under independent branding and system identities so it can coexist with the original package. Credit for the underlying application goes to the GNOME Calendar authors and the Linux Mint team.</description>
   <homepage rdf:resource="https://github.com/Sumon-Kayal/mint-calendar-ce" />
   <bug-database rdf:resource="https://github.com/Sumon-Kayal/mint-calendar-ce/issues" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#apps" />
   <programming-language>C</programming-language>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Sumon Kayal</foaf:name>
+      <foaf:mbox rdf:resource="mailto:sumankayalsuman4@proton.me" />
+    </foaf:Person>
+  </maintainer>
 
   <maintainer>
     <foaf:Person>

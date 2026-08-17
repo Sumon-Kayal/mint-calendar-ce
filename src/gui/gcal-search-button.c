@@ -404,7 +404,7 @@ gcal_search_button_class_init (GcalSearchButtonClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-search-button.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-search-button.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalSearchButton, entry);
   gtk_widget_class_bind_template_child (widget_class, GcalSearchButton, popover);

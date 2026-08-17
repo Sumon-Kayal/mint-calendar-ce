@@ -296,7 +296,7 @@ gcal_calendar_list_class_init (GcalCalendarListClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-calendar-list.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-calendar-list.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalCalendarList, calendar_listbox);
 
