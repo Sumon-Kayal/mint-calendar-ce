@@ -20,8 +20,8 @@
 
 #define G_LOG_DOMAIN "GcalImportFileRow"
 
-#include "config.h"
 #include "gcal-import-file-row.h"
+#include "config.h"
 #include "gcal-importer.h"
 #include "gcal-utils.h"
 
@@ -29,22 +29,22 @@
 
 struct _GcalImportFileRow
 {
-  AdwBin              parent;
+  AdwBin parent;
 
-  GtkListBox         *events_listbox;
-  GtkSizeGroup       *title_sizegroup;
+  GtkListBox *events_listbox;
+  GtkSizeGroup *title_sizegroup;
 
-  GCancellable       *cancellable;
-  GFile              *file;
-  GPtrArray          *ical_components;
-  GPtrArray          *ical_timezones;
+  GCancellable *cancellable;
+  GFile *file;
+  GPtrArray *ical_components;
+  GPtrArray *ical_timezones;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
-static void          read_calendar_finished_cb                   (GObject            *source_object,
-                                                                  GAsyncResult       *res,
-                                                                  gpointer            user_data);
+static void read_calendar_finished_cb (GObject *source_object,
+                                       GAsyncResult *res,
+                                       gpointer user_data);
 
 G_DEFINE_TYPE (GcalImportFileRow, gcal_import_file_row, ADW_TYPE_BIN)
 
@@ -62,9 +62,12 @@ enum
   N_SIGNALS,
 };
 
-static guint signals[N_SIGNALS] = { 0, };
-static GParamSpec *properties[N_PROPS] = { NULL, };
-
+static guint signals[N_SIGNALS] = {
+  0,
+};
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -72,10 +75,10 @@ static GParamSpec *properties[N_PROPS] = { NULL, };
 
 static void
 add_grid_row (GcalImportFileRow *self,
-              GtkGrid           *grid,
-              gint               row,
-              const gchar       *title,
-              const gchar       *value)
+              GtkGrid *grid,
+              gint row,
+              const gchar *title,
+              const gchar *value)
 {
   GtkWidget *title_label;
   GtkWidget *value_label;
@@ -109,8 +112,8 @@ add_grid_row (GcalImportFileRow *self,
 
 static void
 fill_grid_with_event_data (GcalImportFileRow *self,
-                           GtkGrid           *grid,
-                           ICalComponent     *ical_component)
+                           GtkGrid *grid,
+                           ICalComponent *ical_component)
 {
   g_autofree gchar *start_string = NULL;
   g_autofree gchar *description = NULL;
@@ -176,11 +179,11 @@ fill_grid_with_event_data (GcalImportFileRow *self,
                                      &description,
                                      NULL);
 
-  add_grid_row (self, grid, row++, _("Title"), i_cal_component_get_summary (ical_component));
-  add_grid_row (self, grid, row++, _("Location"), i_cal_component_get_location (ical_component));
-  add_grid_row (self, grid, row++, _("Starts"), start_string);
-  add_grid_row (self, grid, row++, _("Ends"), end_string);
-  add_grid_row (self, grid, row++, _("Description"), description);
+  add_grid_row (self, grid, row++, _ ("Title"), i_cal_component_get_summary (ical_component));
+  add_grid_row (self, grid, row++, _ ("Location"), i_cal_component_get_location (ical_component));
+  add_grid_row (self, grid, row++, _ ("Starts"), start_string);
+  add_grid_row (self, grid, row++, _ ("Ends"), end_string);
+  add_grid_row (self, grid, row++, _ ("Description"), description);
 
   g_clear_object (&ical_start);
   g_clear_object (&ical_end);
@@ -188,7 +191,7 @@ fill_grid_with_event_data (GcalImportFileRow *self,
 
 static void
 add_events_to_listbox (GcalImportFileRow *self,
-                       GPtrArray         *events)
+                       GPtrArray *events)
 {
   guint i;
 
@@ -221,7 +224,7 @@ add_events_to_listbox (GcalImportFileRow *self,
     }
 }
 
-static GPtrArray*
+static GPtrArray *
 filter_event_components (ICalComponent *component)
 {
   g_autoptr (GPtrArray) event_components = NULL;
@@ -241,7 +244,7 @@ filter_event_components (ICalComponent *component)
   return g_steal_pointer (&event_components);
 }
 
-static GPtrArray*
+static GPtrArray *
 filter_timezones (ICalComponent *component)
 {
   g_autoptr (GPtrArray) timezones = NULL;
@@ -259,7 +262,7 @@ filter_timezones (ICalComponent *component)
       ICalComponent *clone = i_cal_component_clone (aux);
 
       if (i_cal_timezone_set_component (zone, clone))
-         g_ptr_array_add (timezones, g_steal_pointer (&zone));
+        g_ptr_array_add (timezones, g_steal_pointer (&zone));
 
       g_clear_object (&clone);
       g_clear_object (&zone);
@@ -281,15 +284,14 @@ setup_file (GcalImportFileRow *self)
                              self);
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-read_calendar_finished_cb (GObject      *source_object,
+read_calendar_finished_cb (GObject *source_object,
                            GAsyncResult *res,
-                           gpointer      user_data)
+                           gpointer user_data)
 {
   g_autoptr (GPtrArray) event_components = NULL;
   g_autoptr (GPtrArray) timezones = NULL;
@@ -315,7 +317,6 @@ read_calendar_finished_cb (GObject      *source_object,
   g_signal_emit (self, signals[FILE_LOADED], 0, event_components);
 }
 
-
 /*
  * GObject overrides
  */
@@ -323,7 +324,7 @@ read_calendar_finished_cb (GObject      *source_object,
 static void
 gcal_import_file_row_finalize (GObject *object)
 {
-  GcalImportFileRow *self = (GcalImportFileRow *)object;
+  GcalImportFileRow *self = (GcalImportFileRow *) object;
 
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
@@ -336,9 +337,9 @@ gcal_import_file_row_finalize (GObject *object)
 }
 
 static void
-gcal_import_file_row_get_property (GObject    *object,
-                                   guint       prop_id,
-                                   GValue     *value,
+gcal_import_file_row_get_property (GObject *object,
+                                   guint prop_id,
+                                   GValue *value,
                                    GParamSpec *pspec)
 {
   GcalImportFileRow *self = GCAL_IMPORT_FILE_ROW (object);
@@ -359,10 +360,10 @@ gcal_import_file_row_get_property (GObject    *object,
 }
 
 static void
-gcal_import_file_row_set_property (GObject      *object,
-                                   guint         prop_id,
+gcal_import_file_row_set_property (GObject *object,
+                                   guint prop_id,
                                    const GValue *value,
-                                   GParamSpec   *pspec)
+                                   GParamSpec *pspec)
 {
   GcalImportFileRow *self = GCAL_IMPORT_FILE_ROW (object);
 
@@ -430,9 +431,9 @@ gcal_import_file_row_init (GcalImportFileRow *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-GtkWidget*
-gcal_import_file_row_new (GcalContext  *context,
-                          GFile        *file,
+GtkWidget *
+gcal_import_file_row_new (GcalContext *context,
+                          GFile *file,
                           GtkSizeGroup *title_sizegroup)
 {
   GcalImportFileRow *self;
@@ -443,10 +444,10 @@ gcal_import_file_row_new (GcalContext  *context,
                        NULL);
   self->title_sizegroup = title_sizegroup;
 
-  return (GtkWidget*) self;
+  return (GtkWidget *) self;
 }
 
-GPtrArray*
+GPtrArray *
 gcal_import_file_row_get_ical_components (GcalImportFileRow *self)
 {
   g_return_val_if_fail (GCAL_IS_IMPORT_FILE_ROW (self), NULL);
@@ -454,7 +455,7 @@ gcal_import_file_row_get_ical_components (GcalImportFileRow *self)
   return self->ical_components;
 }
 
-GPtrArray*
+GPtrArray *
 gcal_import_file_row_get_timezones (GcalImportFileRow *self)
 {
   g_return_val_if_fail (GCAL_IS_IMPORT_FILE_ROW (self), NULL);

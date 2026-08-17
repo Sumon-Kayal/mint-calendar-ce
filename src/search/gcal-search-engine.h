@@ -26,19 +26,19 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_SEARCH_ENGINE (gcal_search_engine_get_type())
+#define GCAL_TYPE_SEARCH_ENGINE (gcal_search_engine_get_type ())
 G_DECLARE_FINAL_TYPE (GcalSearchEngine, gcal_search_engine, GCAL, SEARCH_ENGINE, GObject)
 
-GcalSearchEngine*    gcal_search_engine_new                      (GcalContext        *context);
+GcalSearchEngine *gcal_search_engine_new (GcalContext *context);
 
-void                 gcal_search_engine_search                   (GcalSearchEngine   *self,
-                                                                  const gchar        *search_query,
-                                                                  GCancellable       *cancellable,
-                                                                  GAsyncReadyCallback callback,
-                                                                  gpointer            user_data);
+void gcal_search_engine_search (GcalSearchEngine *self,
+                                const gchar *search_query,
+                                GCancellable *cancellable,
+                                GAsyncReadyCallback callback,
+                                gpointer user_data);
 
-GListModel*         gcal_search_engine_search_finish             (GcalSearchEngine   *self,
-                                                                  GAsyncResult       *result,
-                                                                  GError            **error);
+GListModel *gcal_search_engine_search_finish (GcalSearchEngine *self,
+                                              GAsyncResult *result,
+                                              GError **error);
 
 G_END_DECLS

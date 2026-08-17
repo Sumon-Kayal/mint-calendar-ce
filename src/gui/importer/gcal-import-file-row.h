@@ -26,14 +26,14 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_IMPORT_FILE_ROW (gcal_import_file_row_get_type())
+#define GCAL_TYPE_IMPORT_FILE_ROW (gcal_import_file_row_get_type ())
 G_DECLARE_FINAL_TYPE (GcalImportFileRow, gcal_import_file_row, GCAL, IMPORT_FILE_ROW, AdwBin)
 
-GtkWidget*           gcal_import_file_row_new                    (GcalContext        *context,
-                                                                  GFile              *file,
-                                                                  GtkSizeGroup       *title_sizegroup);
+GtkWidget *gcal_import_file_row_new (GcalContext *context,
+                                     GFile *file,
+                                     GtkSizeGroup *title_sizegroup);
 
-GPtrArray*           gcal_import_file_row_get_ical_components    (GcalImportFileRow  *self);
-GPtrArray*           gcal_import_file_row_get_timezones          (GcalImportFileRow  *self);
+GPtrArray *gcal_import_file_row_get_ical_components (GcalImportFileRow *self);
+GPtrArray *gcal_import_file_row_get_timezones (GcalImportFileRow *self);
 
 G_END_DECLS

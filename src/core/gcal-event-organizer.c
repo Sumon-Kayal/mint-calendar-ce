@@ -55,9 +55,9 @@ gcal_event_organizer_finalize (GObject *object)
 }
 
 static void
-gcal_event_organizer_get_property (GObject    *object,
-                                   guint       property_id,
-                                   GValue     *value,
+gcal_event_organizer_get_property (GObject *object,
+                                   guint property_id,
+                                   GValue *value,
                                    GParamSpec *pspec)
 {
   GcalEventOrganizer *self = GCAL_EVENT_ORGANIZER (object);
@@ -99,8 +99,8 @@ gcal_event_organizer_class_init (GcalEventOrganizerClass *klass)
    * The display (common name) of the organizer.
    */
   properties[PROP_NAME] =
-    g_param_spec_string ("name", NULL, NULL, NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("name", NULL, NULL, NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventOrganizer:uri:
@@ -109,8 +109,8 @@ gcal_event_organizer_class_init (GcalEventOrganizerClass *klass)
    * This is the email address or, more generally, the URI of the organizer.
    */
   properties[PROP_URI] =
-    g_param_spec_string ("uri", NULL, NULL, NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("uri", NULL, NULL, NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventOrganizer:sent-by:
@@ -118,8 +118,8 @@ gcal_event_organizer_class_init (GcalEventOrganizerClass *klass)
    * The mailto of the user acting on behalf of @self.
    */
   properties[PROP_SENTBY] =
-    g_param_spec_string ("sent-by", NULL, NULL, NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("sent-by", NULL, NULL, NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventOrganizer:language:
@@ -127,8 +127,8 @@ gcal_event_organizer_class_init (GcalEventOrganizerClass *klass)
    * The language (used for text) of the organizer.
    */
   properties[PROP_LANGUAGE] =
-    g_param_spec_string ("language", NULL, NULL, NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("language", NULL, NULL, NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

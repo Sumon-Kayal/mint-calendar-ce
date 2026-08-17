@@ -37,16 +37,16 @@ typedef enum
 
 #define GCAL_SOURCE_DISCOVERER_ERROR (gcal_source_discoverer_error_quark ())
 
-GQuark               gcal_source_discoverer_error_quark          (void);
+GQuark gcal_source_discoverer_error_quark (void);
 
-void                 gcal_discover_sources_from_uri              (const gchar         *uri,
-                                                                  const gchar         *username,
-                                                                  const gchar         *password,
-                                                                  GCancellable        *cancellable,
-                                                                  GAsyncReadyCallback  callback,
-                                                                  gpointer             user_data);
+void gcal_discover_sources_from_uri (const gchar *uri,
+                                     const gchar *username,
+                                     const gchar *password,
+                                     GCancellable *cancellable,
+                                     GAsyncReadyCallback callback,
+                                     gpointer user_data);
 
-GPtrArray*           gcal_discover_sources_from_uri_finish       (GAsyncResult       *result,
-                                                                  GError            **error);
+GPtrArray *gcal_discover_sources_from_uri_finish (GAsyncResult *result,
+                                                  GError **error);
 
 G_END_DECLS

@@ -18,11 +18,11 @@
 
 #define G_LOG_DOMAIN "GcalCalendarManagementDialog"
 
-#include "gcal-context.h"
-#include "gcal-debug.h"
 #include "gcal-calendar-management-dialog.h"
 #include "gcal-calendar-management-page.h"
 #include "gcal-calendars-page.h"
+#include "gcal-context.h"
+#include "gcal-debug.h"
 #include "gcal-edit-calendar-page.h"
 #include "gcal-new-calendar-page.h"
 #include "gcal-utils.h"
@@ -53,25 +53,25 @@ typedef enum
 
 struct _GcalCalendarManagementDialog
 {
-  AdwDialog           parent;
+  AdwDialog parent;
 
-  AdwNavigationView  *navigation_view;
+  AdwNavigationView *navigation_view;
 
   /* flags */
-  ESource            *source;
-  ESource            *old_default_source;
-  GBinding           *title_bind;
+  ESource *source;
+  ESource *old_default_source;
+  GBinding *title_bind;
 
   /* auxiliary */
   GcalCalendarManagementPage *pages[N_PAGES];
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
-static void          on_page_switched_cb                         (GcalCalendarManagementPage   *page,
-                                                                  const gchar                  *next_page,
-                                                                  GcalCalendar                 *calendar,
-                                                                  GcalCalendarManagementDialog *self);
+static void on_page_switched_cb (GcalCalendarManagementPage *page,
+                                 const gchar *next_page,
+                                 GcalCalendar *calendar,
+                                 GcalCalendarManagementDialog *self);
 
 G_DEFINE_TYPE (GcalCalendarManagementDialog, gcal_calendar_management_dialog, ADW_TYPE_DIALOG)
 
@@ -82,8 +82,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties[N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -91,8 +92,8 @@ static GParamSpec *properties[N_PROPS] = { NULL, };
 
 static void
 set_page (GcalCalendarManagementDialog *self,
-          const gchar                  *page_name,
-          GcalCalendar                 *calendar)
+          const gchar *page_name,
+          GcalCalendar *calendar)
 {
   AdwNavigationPage *page;
 
@@ -112,9 +113,10 @@ set_page (GcalCalendarManagementDialog *self,
 static void
 setup_context (GcalCalendarManagementDialog *self)
 {
-  const struct {
+  const struct
+  {
     GcalPageType page_type;
-    GType        gtype;
+    GType gtype;
   } pages[] = {
     { GCAL_PAGE_CALENDARS, GCAL_TYPE_CALENDARS_PAGE },
     { GCAL_PAGE_NEW_CALENDAR, GCAL_TYPE_NEW_CALENDAR_PAGE },
@@ -148,14 +150,13 @@ setup_context (GcalCalendarManagementDialog *self)
   GCAL_EXIT;
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_navigation_view_popped_cb (AdwNavigationView            *navigation_view,
-                              AdwNavigationPage            *popped_page,
+on_navigation_view_popped_cb (AdwNavigationView *navigation_view,
+                              AdwNavigationPage *popped_page,
                               GcalCalendarManagementDialog *self)
 {
   g_assert (GCAL_IS_CALENDAR_MANAGEMENT_PAGE (popped_page));
@@ -164,9 +165,9 @@ on_navigation_view_popped_cb (AdwNavigationView            *navigation_view,
 }
 
 static void
-on_page_switched_cb (GcalCalendarManagementPage   *page,
-                     const gchar                  *next_page,
-                     GcalCalendar                 *calendar,
+on_page_switched_cb (GcalCalendarManagementPage *page,
+                     const gchar *next_page,
+                     GcalCalendar *calendar,
                      GcalCalendarManagementDialog *self)
 {
   GCAL_ENTRY;
@@ -175,7 +176,6 @@ on_page_switched_cb (GcalCalendarManagementPage   *page,
 
   GCAL_EXIT;
 }
-
 
 /*
  * GtkWidget overrides
@@ -191,15 +191,14 @@ gcal_calendar_management_dialog_hide (GtkWidget *widget)
   GTK_WIDGET_CLASS (gcal_calendar_management_dialog_parent_class)->hide (widget);
 }
 
-
 /*
  * GObject overrides
  */
 
 static void
-gcal_calendar_management_dialog_get_property (GObject    *object,
-                                              guint       prop_id,
-                                              GValue     *value,
+gcal_calendar_management_dialog_get_property (GObject *object,
+                                              guint prop_id,
+                                              GValue *value,
                                               GParamSpec *pspec)
 {
   GcalCalendarManagementDialog *self = (GcalCalendarManagementDialog *) object;
@@ -216,10 +215,10 @@ gcal_calendar_management_dialog_get_property (GObject    *object,
 }
 
 static void
-gcal_calendar_management_dialog_set_property (GObject      *object,
-                                              guint         prop_id,
+gcal_calendar_management_dialog_set_property (GObject *object,
+                                              guint prop_id,
                                               const GValue *value,
-                                              GParamSpec   *pspec)
+                                              GParamSpec *pspec)
 {
   GcalCalendarManagementDialog *self = (GcalCalendarManagementDialog *) object;
 
@@ -274,7 +273,7 @@ gcal_calendar_management_dialog_init (GcalCalendarManagementDialog *self)
  * Public API
  */
 
-GcalCalendarManagementDialog*
+GcalCalendarManagementDialog *
 gcal_calendar_management_dialog_new (GcalContext *context)
 {
   return g_object_new (GCAL_TYPE_CALENDAR_MANAGEMENT_DIALOG, "context", context, NULL);

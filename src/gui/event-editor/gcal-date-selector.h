@@ -23,16 +23,16 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_DATE_SELECTOR             (gcal_date_selector_get_type ())
+#define GCAL_TYPE_DATE_SELECTOR (gcal_date_selector_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalDateSelector, gcal_date_selector, GCAL, DATE_SELECTOR, GtkEntry)
 
-GtkWidget*       gcal_date_selector_new             (void);
+GtkWidget *gcal_date_selector_new (void);
 
-GDateTime*       gcal_date_selector_get_date        (GcalDateSelector *selector);
+GDateTime *gcal_date_selector_get_date (GcalDateSelector *selector);
 
-void             gcal_date_selector_set_date        (GcalDateSelector *selector,
-                                                     GDateTime        *date);
+void gcal_date_selector_set_date (GcalDateSelector *selector,
+                                  GDateTime *date);
 
 G_END_DECLS
 

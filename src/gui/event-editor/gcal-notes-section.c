@@ -20,25 +20,24 @@
 
 #define G_LOG_DOMAIN "GcalNotesSection"
 
+#include "gcal-notes-section.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-event-editor-section.h"
-#include "gcal-notes-section.h"
 
 struct _GcalNotesSection
 {
-  AdwPreferencesRow   parent;
+  AdwPreferencesRow parent;
 
-  GtkTextView        *notes_text;
+  GtkTextView *notes_text;
 
-  GcalContext        *context;
-  GcalEvent          *event;
+  GcalContext *context;
+  GcalEvent *event;
 };
 
-static void          gcal_event_editor_section_iface_init        (GcalEventEditorSectionInterface *iface);
+static void gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalNotesSection, gcal_notes_section, ADW_TYPE_PREFERENCES_ROW,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalNotesSection, gcal_notes_section, ADW_TYPE_PREFERENCES_ROW, G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
 
 enum
 {
@@ -52,8 +51,8 @@ enum
  */
 
 static void
-on_notes_text_state_flags_changed_cb (GtkTextView      *text_view,
-                                      GtkStateFlags     previous_flags,
+on_notes_text_state_flags_changed_cb (GtkTextView *text_view,
+                                      GtkStateFlags previous_flags,
                                       GcalNotesSection *self)
 {
   GtkStateFlags flags = gtk_widget_get_state_flags (GTK_WIDGET (text_view));
@@ -64,15 +63,14 @@ on_notes_text_state_flags_changed_cb (GtkTextView      *text_view,
     gtk_widget_remove_css_class (GTK_WIDGET (self), "focused");
 }
 
-
 /*
  * GcalEventEditorSection interface
  */
 
 static void
 gcal_notes_section_set_event (GcalEventEditorSection *section,
-                              GcalEvent              *event,
-                              GcalEventEditorFlags    flags)
+                              GcalEvent *event,
+                              GcalEventEditorFlags flags)
 {
   GcalNotesSection *self;
   GtkTextBuffer *buffer;
@@ -138,7 +136,6 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
   iface->changed = gcal_notes_section_changed;
 }
 
-
 /*
  * GObject overrides
  */
@@ -146,7 +143,7 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
 static void
 gcal_notes_section_finalize (GObject *object)
 {
-  GcalNotesSection *self = (GcalNotesSection *)object;
+  GcalNotesSection *self = (GcalNotesSection *) object;
 
   g_clear_object (&self->context);
   g_clear_object (&self->event);
@@ -155,9 +152,9 @@ gcal_notes_section_finalize (GObject *object)
 }
 
 static void
-gcal_notes_section_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
+gcal_notes_section_get_property (GObject *object,
+                                 guint prop_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
   GcalNotesSection *self = GCAL_NOTES_SECTION (object);
@@ -174,10 +171,10 @@ gcal_notes_section_get_property (GObject    *object,
 }
 
 static void
-gcal_notes_section_set_property (GObject      *object,
-                                 guint         prop_id,
+gcal_notes_section_set_property (GObject *object,
+                                 guint prop_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
   GcalNotesSection *self = GCAL_NOTES_SECTION (object);
 

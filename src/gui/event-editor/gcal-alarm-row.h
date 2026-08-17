@@ -25,12 +25,12 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_ALARM_ROW (gcal_alarm_row_get_type())
+#define GCAL_TYPE_ALARM_ROW (gcal_alarm_row_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalAlarmRow, gcal_alarm_row, GCAL, ALARM_ROW, AdwActionRow)
 
-GtkWidget*           gcal_alarm_row_new                          (ECalComponentAlarm *alarm);
+GtkWidget *gcal_alarm_row_new (ECalComponentAlarm *alarm);
 
-ECalComponentAlarm*  gcal_alarm_row_get_alarm                    (GcalAlarmRow       *self);
+ECalComponentAlarm *gcal_alarm_row_get_alarm (GcalAlarmRow *self);
 
 G_END_DECLS

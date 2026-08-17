@@ -18,37 +18,36 @@
 
 #define G_LOG_DOMAIN "GcalWeatherSettings"
 
+#include "gcal-weather-settings.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-manager.h"
 #include "gcal-utils.h"
 #include "gcal-weather-service.h"
-#include "gcal-weather-settings.h"
 
 struct _GcalWeatherSettings
 {
-  GtkBox              parent;
+  GtkBox parent;
 
-  GtkSwitch          *show_weather_switch;
-  GtkSwitch          *weather_auto_location_switch;
-  GtkEditable        *weather_location_entry;
+  GtkSwitch *show_weather_switch;
+  GtkSwitch *weather_auto_location_switch;
+  GtkEditable *weather_location_entry;
 
-  GWeatherLocation   *location;
+  GWeatherLocation *location;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
+static void on_weather_location_searchbox_changed_cb (GtkEntry *entry,
+                                                      GcalWeatherSettings *self);
 
-static void          on_weather_location_searchbox_changed_cb    (GtkEntry            *entry,
-                                                                  GcalWeatherSettings *self);
+static void on_show_weather_changed_cb (GtkSwitch *wswitch,
+                                        GParamSpec *pspec,
+                                        GcalWeatherSettings *self);
 
-static void          on_show_weather_changed_cb                  (GtkSwitch           *wswitch,
-                                                                  GParamSpec          *pspec,
-                                                                  GcalWeatherSettings *self);
-
-static void          on_weather_auto_location_changed_cb         (GtkSwitch           *lswitch,
-                                                                  GParamSpec          *pspec,
-                                                                  GcalWeatherSettings *self);
+static void on_weather_auto_location_changed_cb (GtkSwitch *lswitch,
+                                                 GParamSpec *pspec,
+                                                 GcalWeatherSettings *self);
 
 G_DEFINE_TYPE (GcalWeatherSettings, gcal_weather_settings, GTK_TYPE_BOX)
 
@@ -59,8 +58,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -165,8 +165,7 @@ update_menu_weather_sensitivity (GcalWeatherSettings *self)
   gtk_widget_set_sensitive (GTK_WIDGET (self->weather_location_entry), weather_enabled && !autoloc_enabled);
 }
 
-
-static GWeatherLocation*
+static GWeatherLocation *
 get_checked_fixed_location (GcalWeatherSettings *self)
 {
   /*
@@ -212,14 +211,13 @@ manage_weather_service (GcalWeatherSettings *self)
   GCAL_EXIT;
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_show_weather_changed_cb (GtkSwitch           *wswitch,
-                            GParamSpec          *pspec,
+on_show_weather_changed_cb (GtkSwitch *wswitch,
+                            GParamSpec *pspec,
                             GcalWeatherSettings *self)
 {
   save_weather_settings (self);
@@ -227,10 +225,9 @@ on_show_weather_changed_cb (GtkSwitch           *wswitch,
   manage_weather_service (self);
 }
 
-
 static void
-on_weather_auto_location_changed_cb (GtkSwitch           *lswitch,
-                                     GParamSpec          *pspec,
+on_weather_auto_location_changed_cb (GtkSwitch *lswitch,
+                                     GParamSpec *pspec,
                                      GcalWeatherSettings *self)
 {
   save_weather_settings (self);
@@ -239,7 +236,7 @@ on_weather_auto_location_changed_cb (GtkSwitch           *lswitch,
 }
 
 static void
-on_weather_location_searchbox_changed_cb (GtkEntry            *entry,
+on_weather_location_searchbox_changed_cb (GtkEntry *entry,
                                           GcalWeatherSettings *self)
 {
   GWeatherLocation *location;
@@ -262,7 +259,6 @@ on_weather_location_searchbox_changed_cb (GtkEntry            *entry,
     }
 }
 
-
 /*
  * GObject overrides
  */
@@ -270,7 +266,7 @@ on_weather_location_searchbox_changed_cb (GtkEntry            *entry,
 static void
 gcal_weather_settings_finalize (GObject *object)
 {
-  GcalWeatherSettings *self = (GcalWeatherSettings *)object;
+  GcalWeatherSettings *self = (GcalWeatherSettings *) object;
 
   g_clear_object (&self->location);
   g_clear_object (&self->context);
@@ -279,9 +275,9 @@ gcal_weather_settings_finalize (GObject *object)
 }
 
 static void
-gcal_weather_settings_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
+gcal_weather_settings_get_property (GObject *object,
+                                    guint prop_id,
+                                    GValue *value,
                                     GParamSpec *pspec)
 {
   GcalWeatherSettings *self = GCAL_WEATHER_SETTINGS (object);
@@ -298,10 +294,10 @@ gcal_weather_settings_get_property (GObject    *object,
 }
 
 static void
-gcal_weather_settings_set_property (GObject      *object,
-                                    guint         prop_id,
+gcal_weather_settings_set_property (GObject *object,
+                                    guint prop_id,
                                     const GValue *value,
-                                    GParamSpec   *pspec)
+                                    GParamSpec *pspec)
 {
   GcalWeatherSettings *self = GCAL_WEATHER_SETTINGS (object);
 

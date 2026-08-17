@@ -24,10 +24,10 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_SEARCH_BUTTON (gcal_search_button_get_type())
+#define GCAL_TYPE_SEARCH_BUTTON (gcal_search_button_get_type ())
 G_DECLARE_FINAL_TYPE (GcalSearchButton, gcal_search_button, GCAL, SEARCH_BUTTON, AdwBin)
 
-void                 gcal_search_button_search                   (GcalSearchButton   *self,
-                                                                  const gchar        *search_text);
+void gcal_search_button_search (GcalSearchButton *self,
+                                const gchar *search_text);
 
 G_END_DECLS

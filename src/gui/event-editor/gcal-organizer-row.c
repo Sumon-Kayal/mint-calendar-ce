@@ -32,8 +32,8 @@ struct _GcalOrganizerRow
 
   GcalEventOrganizer *organizer;
 
-  GtkWidget          *context_menu;
-  GtkGestureClick    *gesture_click;
+  GtkWidget *context_menu;
+  GtkGestureClick *gesture_click;
 
   GSimpleActionGroup *action_group;
 };
@@ -47,12 +47,14 @@ enum
   N_PROPS,
 };
 
-static GParamSpec *properties[N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 static void
 on_copy_email_cb (GSimpleAction *action,
-                  GVariant      *param,
-                  gpointer       user_data)
+                  GVariant *param,
+                  gpointer user_data)
 {
   GcalOrganizerRow *self = GCAL_ORGANIZER_ROW (user_data);
 
@@ -60,16 +62,16 @@ on_copy_email_cb (GSimpleAction *action,
   GdkClipboard *clipboard = gdk_display_get_clipboard (display);
 
   g_autofree const gchar *email =
-    gcal_get_email_from_mailto_uri (gcal_event_organizer_get_uri (self->organizer));
+      gcal_get_email_from_mailto_uri (gcal_event_organizer_get_uri (self->organizer));
 
   gdk_clipboard_set_text (clipboard, email);
 }
 
 static void
 show_context_menu (GcalOrganizerRow *self,
-                   guint             npress,
-                   double            x,
-                   double            y)
+                   guint npress,
+                   double x,
+                   double y)
 {
   g_assert (GCAL_IS_ORGANIZER_ROW (self));
 
@@ -78,8 +80,8 @@ show_context_menu (GcalOrganizerRow *self,
   gtk_popover_popup (GTK_POPOVER (self->context_menu));
 }
 
-static gchar*
-generate_subtitle (GcalOrganizerRow   *self,
+static gchar *
+generate_subtitle (GcalOrganizerRow *self,
                    GcalEventOrganizer *organizer)
 {
   g_autofree const gchar *name_with_email = NULL;
@@ -93,7 +95,6 @@ generate_subtitle (GcalOrganizerRow   *self,
 
   return g_strdup (name_with_email);
 }
-
 
 static void
 gcal_organizer_row_dispose (GObject *object)
@@ -117,10 +118,10 @@ gcal_organizer_row_finalize (GObject *object)
 }
 
 static void
-gcal_organizer_row_set_property (GObject      *object,
-                                 guint         property_id,
+gcal_organizer_row_set_property (GObject *object,
+                                 guint property_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
   GcalOrganizerRow *self = GCAL_ORGANIZER_ROW (object);
 
@@ -136,9 +137,9 @@ gcal_organizer_row_set_property (GObject      *object,
 }
 
 static void
-gcal_organizer_row_get_property (GObject    *object,
-                                 guint       property_id,
-                                 GValue     *value,
+gcal_organizer_row_get_property (GObject *object,
+                                 guint property_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
   GcalOrganizerRow *self = GCAL_ORGANIZER_ROW (object);
@@ -195,9 +196,9 @@ gcal_organizer_row_class_init (GcalOrganizerRowClass *klass)
    * The #GcalEventOrganizer of the event for which the row is displayed.
    */
   properties[PROP_ORGANIZER] =
-    g_param_spec_object ("organizer", NULL, NULL,
-                         GCAL_TYPE_EVENT_ORGANIZER,
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("organizer", NULL, NULL,
+                           GCAL_TYPE_EVENT_ORGANIZER,
+                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 

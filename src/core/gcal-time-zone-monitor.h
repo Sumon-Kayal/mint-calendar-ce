@@ -24,12 +24,12 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_TIME_ZONE_MONITOR (gcal_time_zone_monitor_get_type())
+#define GCAL_TYPE_TIME_ZONE_MONITOR (gcal_time_zone_monitor_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalTimeZoneMonitor, gcal_time_zone_monitor, GCAL, TIME_ZONE_MONITOR, GObject)
 
-GcalTimeZoneMonitor* gcal_time_zone_monitor_new                  (void);
+GcalTimeZoneMonitor *gcal_time_zone_monitor_new (void);
 
-GTimeZone*           gcal_time_zone_monitor_get_timezone         (GcalTimeZoneMonitor *self);
+GTimeZone *gcal_time_zone_monitor_get_timezone (GcalTimeZoneMonitor *self);
 
 G_END_DECLS

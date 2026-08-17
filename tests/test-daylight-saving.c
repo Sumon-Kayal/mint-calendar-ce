@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <glib.h>
 #include "gcal-utils.h"
+#include <glib.h>
 
 /*********************************************************************************************************************/
 
@@ -58,7 +58,6 @@ floating_minutes (void)
   g_assert_cmpstr (formatted, ==, "2023-11-05T03:30:00+01");
   g_clear_pointer (&formatted, g_free);
 }
-
 
 static void
 floating_minutes_october (void)
@@ -133,7 +132,7 @@ floating_minutes_march (void)
 /*********************************************************************************************************************/
 
 gint
-main (gint   argc,
+main (gint argc,
       gchar *argv[])
 {
   g_setenv ("TZ", "UTC", TRUE);

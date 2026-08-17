@@ -25,29 +25,31 @@
 #include "gcal-date-time-utils.h"
 #include "gcal-utils.h"
 
-#include <stdlib.h>
 #include <langinfo.h>
+#include <stdlib.h>
 
 struct _GcalDateChooserDay
 {
-  GtkButton           parent;
+  GtkButton parent;
 
-  GtkWidget          *dot_revealer;
-  GtkWidget          *label;
-  GDateTime          *date;
+  GtkWidget *dot_revealer;
+  GtkWidget *label;
+  GDateTime *date;
 };
 
-enum {
+enum
+{
   PROP_0,
   PROP_HAS_DOT,
   PROP_DOT_VISIBLE,
   NUM_PROPS
 };
 
-static GParamSpec *properties[NUM_PROPS] = { NULL, };
+static GParamSpec *properties[NUM_PROPS] = {
+  NULL,
+};
 
 G_DEFINE_TYPE (GcalDateChooserDay, gcal_date_chooser_day, GTK_TYPE_BUTTON)
-
 
 /*
  * GObject overrides
@@ -64,9 +66,9 @@ gcal_date_chooser_day_dispose (GObject *object)
 }
 
 static void
-gcal_date_chooser_day_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
+gcal_date_chooser_day_get_property (GObject *object,
+                                    guint prop_id,
+                                    GValue *value,
                                     GParamSpec *pspec)
 {
   GcalDateChooserDay *self = GCAL_DATE_CHOOSER_DAY (object);
@@ -87,10 +89,10 @@ gcal_date_chooser_day_get_property (GObject    *object,
 }
 
 static void
-gcal_date_chooser_day_set_property (GObject      *object,
-                                    guint         prop_id,
+gcal_date_chooser_day_set_property (GObject *object,
+                                    guint prop_id,
                                     const GValue *value,
-                                    GParamSpec   *pspec)
+                                    GParamSpec *pspec)
 {
   GcalDateChooserDay *self = GCAL_DATE_CHOOSER_DAY (object);
 
@@ -128,11 +130,11 @@ gcal_date_chooser_day_class_init (GcalDateChooserDayClass *class)
    * dot, it will be centered otherwise.
    */
   properties[PROP_HAS_DOT] =
-    g_param_spec_boolean ("has-dot",
-                          "Has dot",
-                          "Whether the day has a dot or not",
-                          FALSE,
-                          G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+      g_param_spec_boolean ("has-dot",
+                            "Has dot",
+                            "Whether the day has a dot or not",
+                            FALSE,
+                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalDateChooserDay:dot-visible:
@@ -143,11 +145,11 @@ gcal_date_chooser_day_class_init (GcalDateChooserDayClass *class)
    * #FALSE.
    */
   properties[PROP_DOT_VISIBLE] =
-    g_param_spec_boolean ("dot-visible",
-                          "Dot visible",
-                          "Whether the dot is visible or not",
-                          FALSE,
-                          G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+      g_param_spec_boolean ("dot-visible",
+                            "Dot visible",
+                            "Whether the dot is visible or not",
+                            FALSE,
+                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, NUM_PROPS, properties);
 
@@ -163,7 +165,6 @@ gcal_date_chooser_day_init (GcalDateChooserDay *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-
 /*
  * Public API
  */
@@ -175,7 +176,7 @@ gcal_date_chooser_day_init (GcalDateChooserDay *self)
  *
  * Returns: the newly created `DateChooserDay`
  */
-GtkWidget*
+GtkWidget *
 gcal_date_chooser_day_new (void)
 {
   return g_object_new (GCAL_TYPE_DATE_CHOOSER_DAY, NULL);
@@ -183,7 +184,7 @@ gcal_date_chooser_day_new (void)
 
 void
 gcal_date_chooser_day_set_date (GcalDateChooserDay *self,
-                                GDateTime          *date)
+                                GDateTime *date)
 {
   GtkWidget *widget = GTK_WIDGET (self);
   g_autoptr (GDateTime) now = NULL;
@@ -215,7 +216,7 @@ gcal_date_chooser_day_set_date (GcalDateChooserDay *self,
   gtk_label_set_label (GTK_LABEL (self->label), text);
 }
 
-GDateTime*
+GDateTime *
 gcal_date_chooser_day_get_date (GcalDateChooserDay *self)
 {
   g_assert (GCAL_IS_DATE_CHOOSER_DAY (self));
@@ -225,7 +226,7 @@ gcal_date_chooser_day_get_date (GcalDateChooserDay *self)
 
 void
 gcal_date_chooser_day_set_other_month (GcalDateChooserDay *self,
-                                       gboolean            other_month)
+                                       gboolean other_month)
 {
   g_assert (GCAL_IS_DATE_CHOOSER_DAY (self));
 
@@ -247,7 +248,7 @@ gcal_date_chooser_day_set_other_month (GcalDateChooserDay *self,
  */
 void
 gcal_date_chooser_day_set_has_dot (GcalDateChooserDay *self,
-                                   gboolean            has_dot)
+                                   gboolean has_dot)
 {
   g_assert (GCAL_IS_DATE_CHOOSER_DAY (self));
 
@@ -287,7 +288,7 @@ gcal_date_chooser_day_get_has_dot (GcalDateChooserDay *self)
  */
 void
 gcal_date_chooser_day_set_dot_visible (GcalDateChooserDay *self,
-                                       gboolean            dot_visible)
+                                       gboolean dot_visible)
 {
   g_assert (GCAL_IS_DATE_CHOOSER_DAY (self));
 
@@ -317,7 +318,7 @@ gcal_date_chooser_day_get_dot_visible (GcalDateChooserDay *self)
 
 void
 gcal_date_chooser_day_set_selected (GcalDateChooserDay *self,
-                                    gboolean            selected)
+                                    gboolean selected)
 {
   GtkWidget *widget;
 

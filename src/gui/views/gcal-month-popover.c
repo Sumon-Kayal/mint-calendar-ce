@@ -18,36 +18,36 @@
 
 #define G_LOG_DOMAIN "GcalMonthPopover"
 
+#include "gcal-month-popover.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-event-widget.h"
-#include "gcal-month-popover.h"
 #include "gcal-utils.h"
 
 #include <adwaita.h>
 
-#define RATIO_TO_RELATIVE  1.25
-#define MIN_WIDTH          250
+#define RATIO_TO_RELATIVE 1.25
+#define MIN_WIDTH 250
 
 struct _GcalMonthPopover
 {
-  GtkWidget           parent;
+  GtkWidget parent;
 
-  GtkLabel           *day_label;
-  GtkListBox         *listbox;
-  GtkWidget          *main_box;
-  GtkButton          *new_event_button;
+  GtkLabel *day_label;
+  GtkListBox *listbox;
+  GtkWidget *main_box;
+  GtkButton *new_event_button;
 
-  GcalContext        *context;
+  GcalContext *context;
 
-  GDateTime          *date;
-  AdwAnimation       *animation;
+  GDateTime *date;
+  AdwAnimation *animation;
 
   GSimpleActionGroup *action_group;
 };
 
-static void          event_activated_cb                          (GcalEventWidget    *event_widget,
-                                                                  GcalMonthPopover   *self);
+static void event_activated_cb (GcalEventWidget *event_widget,
+                                GcalMonthPopover *self);
 
 G_DEFINE_TYPE (GcalMonthPopover, gcal_month_popover, GTK_TYPE_WIDGET)
 
@@ -65,9 +65,12 @@ enum
   LAST_SIGNAL,
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
-static GParamSpec *properties [N_PROPS] = { NULL, };
-
+static guint signals[LAST_SIGNAL] = {
+  0,
+};
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary functions
@@ -146,10 +149,10 @@ update_event_list (GcalMonthPopover *self)
     }
 }
 
-static GskTransform*
+static GskTransform *
 create_transform (GcalMonthPopover *self,
-                  gint              width,
-                  gint              height)
+                  gint width,
+                  gint height)
 {
   graphene_point_t offset;
   GskTransform *transform;
@@ -172,7 +175,6 @@ create_transform (GcalMonthPopover *self,
   return g_steal_pointer (&transform);
 }
 
-
 /*
  * GtkListBox functions
  */
@@ -180,7 +182,7 @@ create_transform (GcalMonthPopover *self,
 static gint
 sort_func (GtkListBoxRow *a,
            GtkListBoxRow *b,
-           gpointer       user_data)
+           gpointer user_data)
 {
   GcalEventWidget *event_a;
   GcalEventWidget *event_b;
@@ -192,8 +194,8 @@ sort_func (GtkListBoxRow *a,
 }
 
 static gboolean
-repeat_direction (GtkWidget        *widget,
-                  GtkDirectionType  direction)
+repeat_direction (GtkWidget *widget,
+                  GtkDirectionType direction)
 {
   GtkWidget *child;
 
@@ -208,14 +210,13 @@ repeat_direction (GtkWidget        *widget,
   return TRUE;
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_list_box_row_activated_cb (GtkListBox     *list_box,
-                              GtkListBoxRow  *row,
+on_list_box_row_activated_cb (GtkListBox *list_box,
+                              GtkListBoxRow *row,
                               GcalMonthPopover *self)
 {
   GtkWidget *child = gtk_list_box_row_get_child (row);
@@ -226,7 +227,7 @@ on_list_box_row_activated_cb (GtkListBox     *list_box,
 }
 
 static void
-animation_cb (gdouble  value,
+animation_cb (gdouble value,
               gpointer user_data)
 {
   GcalMonthPopover *self = GCAL_MONTH_POPOVER (user_data);
@@ -236,7 +237,7 @@ animation_cb (gdouble  value,
 }
 
 static void
-on_animation_done_cb (AdwAnimation     *animation,
+on_animation_done_cb (AdwAnimation *animation,
                       GcalMonthPopover *self)
 {
   if (adw_animation_get_value (animation) == 0.0)
@@ -244,7 +245,7 @@ on_animation_done_cb (AdwAnimation     *animation,
 }
 
 static void
-event_activated_cb (GcalEventWidget  *event_widget,
+event_activated_cb (GcalEventWidget *event_widget,
                     GcalMonthPopover *self)
 {
   g_signal_emit (self, signals[EVENT_ACTIVATED], 0, event_widget);
@@ -257,21 +258,21 @@ close_button_clicked_cb (GcalMonthPopover *self)
 }
 
 static void
-new_event_button_clicked_cb (GtkWidget        *button,
+new_event_button_clicked_cb (GtkWidget *button,
                              GcalMonthPopover *self)
 {
   GCAL_ENTRY;
 
   gcal_month_popover_popdown (self);
-  gtk_widget_activate_action (GTK_WIDGET (self),  "win.new-event",  NULL);
+  gtk_widget_activate_action (GTK_WIDGET (self), "win.new-event", NULL);
 
   GCAL_EXIT;
 }
 
 static void
 on_month_popover_popdown_activated_cb (GSimpleAction *action,
-                                       GVariant      *param,
-                                       gpointer       user_data)
+                                       GVariant *param,
+                                       gpointer user_data)
 {
   GcalMonthPopover *self = (GcalMonthPopover *) user_data;
 
@@ -280,19 +281,18 @@ on_month_popover_popdown_activated_cb (GSimpleAction *action,
   gcal_month_popover_popdown (self);
 }
 
-
 /*
  * GtkWidget overrides
  */
 
 static void
-gcal_month_popover_measure (GtkWidget      *widget,
-                            GtkOrientation  orientation,
-                            gint            for_size,
-                            gint           *minimum,
-                            gint           *natural,
-                            gint           *minimum_baseline,
-                            gint           *natural_baseline)
+gcal_month_popover_measure (GtkWidget *widget,
+                            GtkOrientation orientation,
+                            gint for_size,
+                            gint *minimum,
+                            gint *natural,
+                            gint *minimum_baseline,
+                            gint *natural_baseline)
 {
   GtkWidget *child;
 
@@ -327,9 +327,9 @@ gcal_month_popover_measure (GtkWidget      *widget,
 }
 static void
 gcal_month_popover_size_allocate (GtkWidget *widget,
-                                  gint       width,
-                                  gint       height,
-                                  gint       baseline)
+                                  gint width,
+                                  gint height,
+                                  gint baseline)
 {
   GcalMonthPopover *self = GCAL_MONTH_POPOVER (widget);
   g_autoptr (GskTransform) transform = NULL;
@@ -349,8 +349,8 @@ gcal_month_popover_size_allocate (GtkWidget *widget,
 }
 
 static gboolean
-gcal_month_popover_focus (GtkWidget        *widget,
-                          GtkDirectionType  direction)
+gcal_month_popover_focus (GtkWidget *widget,
+                          GtkDirectionType direction)
 {
   GtkWidget *child = gtk_widget_get_focus_child (widget);
 
@@ -372,15 +372,14 @@ gcal_month_popover_focus (GtkWidget        *widget,
     }
 }
 
-
 /*
  * GObject overrides
  */
 
 static void
-gcal_month_popover_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
+gcal_month_popover_get_property (GObject *object,
+                                 guint prop_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
   GcalMonthPopover *self = GCAL_MONTH_POPOVER (object);
@@ -397,10 +396,10 @@ gcal_month_popover_get_property (GObject    *object,
 }
 
 static void
-gcal_month_popover_set_property (GObject      *object,
-                                 guint         prop_id,
+gcal_month_popover_set_property (GObject *object,
+                                 guint prop_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
   GcalMonthPopover *self = GCAL_MONTH_POPOVER (object);
 
@@ -418,7 +417,7 @@ gcal_month_popover_set_property (GObject      *object,
 static void
 gcal_month_popover_dispose (GObject *object)
 {
-  GcalMonthPopover *self = (GcalMonthPopover *)object;
+  GcalMonthPopover *self = (GcalMonthPopover *) object;
 
   g_clear_pointer (&self->main_box, gtk_widget_unparent);
 
@@ -441,18 +440,18 @@ gcal_month_popover_class_init (GcalMonthPopoverClass *klass)
   widget_class->size_allocate = gcal_month_popover_size_allocate;
   widget_class->focus = gcal_month_popover_focus;
 
-  properties [PROP_CONTEXT] = g_param_spec_object ("context",
-                                                   "Context",
-                                                   "Context",
-                                                   GCAL_TYPE_CONTEXT,
-                                                   G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_CONTEXT] = g_param_spec_object ("context",
+                                                  "Context",
+                                                  "Context",
+                                                  GCAL_TYPE_CONTEXT,
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   signals[EVENT_ACTIVATED] = g_signal_new ("event-activated",
                                            GCAL_TYPE_MONTH_POPOVER,
                                            G_SIGNAL_RUN_FIRST,
-                                           0,  NULL, NULL, NULL,
+                                           0, NULL, NULL, NULL,
                                            G_TYPE_NONE,
                                            1,
                                            GCAL_TYPE_EVENT_WIDGET);
@@ -460,7 +459,7 @@ gcal_month_popover_class_init (GcalMonthPopoverClass *klass)
   signals[CLOSED] = g_signal_new ("closed",
                                   GCAL_TYPE_MONTH_POPOVER,
                                   G_SIGNAL_RUN_FIRST,
-                                  0,  NULL, NULL, NULL,
+                                  0, NULL, NULL, NULL,
                                   G_TYPE_NONE,
                                   0, NULL);
 
@@ -482,7 +481,7 @@ static void
 gcal_month_popover_init (GcalMonthPopover *self)
 {
   static const GActionEntry actions[] = {
-    {"popdown", on_month_popover_popdown_activated_cb },
+    { "popdown", on_month_popover_popdown_activated_cb },
   };
 
   self->action_group = g_simple_action_group_new ();
@@ -507,7 +506,7 @@ gcal_month_popover_init (GcalMonthPopover *self)
   g_signal_connect (self->animation, "done", G_CALLBACK (on_animation_done_cb), self);
 }
 
-GtkWidget*
+GtkWidget *
 gcal_month_popover_new (void)
 {
   return g_object_new (GCAL_TYPE_MONTH_POPOVER, NULL);
@@ -549,7 +548,7 @@ gcal_month_popover_popdown (GcalMonthPopover *self)
   GCAL_EXIT;
 }
 
-GDateTime*
+GDateTime *
 gcal_month_popover_get_date (GcalMonthPopover *self)
 {
   g_return_val_if_fail (GCAL_IS_MONTH_POPOVER (self), NULL);
@@ -559,7 +558,7 @@ gcal_month_popover_get_date (GcalMonthPopover *self)
 
 void
 gcal_month_popover_set_date (GcalMonthPopover *self,
-                             GDateTime        *date)
+                             GDateTime *date)
 {
   g_return_if_fail (GCAL_IS_MONTH_POPOVER (self));
 

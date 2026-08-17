@@ -25,11 +25,11 @@
 
 struct _GcalWeekHourBar
 {
-  GtkBox              parent_instance;
+  GtkBox parent_instance;
 
-  GtkLabel           *labels[24];
+  GtkLabel *labels[24];
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 G_DEFINE_FINAL_TYPE (GcalWeekHourBar, gcal_week_hour_bar, GTK_TYPE_BOX)
@@ -54,7 +54,7 @@ update_labels (GcalWeekHourBar *self)
         {
           hours = g_strdup_printf ("%d %s",
                                    i % 12 == 0 ? 12 : i % 12,
-                                   i >= 12 ? _("PM") : _("AM"));
+                                   i >= 12 ? _ ("PM") : _ ("AM"));
         }
 
       gtk_label_set_label (self->labels[i], hours);
@@ -62,7 +62,7 @@ update_labels (GcalWeekHourBar *self)
 }
 
 static void
-gcal_week_hour_bar_snapshot (GtkWidget   *widget,
+gcal_week_hour_bar_snapshot (GtkWidget *widget,
                              GtkSnapshot *snapshot)
 {
   gcal_week_view_common_snapshot_hour_lines (widget,
@@ -100,7 +100,6 @@ gcal_week_hour_bar_init (GcalWeekHourBar *self)
                 "spacing", 1,
                 NULL);
 
-
   for (i = 0; i < 24; i++)
     {
       GtkWidget *label = gtk_label_new ("");
@@ -116,7 +115,7 @@ gcal_week_hour_bar_init (GcalWeekHourBar *self)
 
 void
 gcal_week_hour_bar_set_context (GcalWeekHourBar *self,
-                                GcalContext     *context)
+                                GcalContext *context)
 {
   g_return_if_fail (GCAL_IS_WEEK_HOUR_BAR (self));
 

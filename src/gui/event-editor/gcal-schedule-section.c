@@ -20,41 +20,41 @@
 
 #define G_LOG_DOMAIN "GcalScheduleSection"
 
+#include "gcal-schedule-section.h"
 #include "gcal-context.h"
-#include "gcal-date-selector.h"
 #include "gcal-date-chooser-row.h"
+#include "gcal-date-selector.h"
 #include "gcal-date-time-chooser.h"
 #include "gcal-debug.h"
-#include "gcal-event.h"
 #include "gcal-event-editor-section.h"
 #include "gcal-event-schedule.h"
+#include "gcal-event.h"
 #include "gcal-recurrence.h"
-#include "gcal-schedule-section.h"
 #include "gcal-utils.h"
 
 #include <glib/gi18n.h>
 
 struct _GcalScheduleSection
 {
-  GtkBox               parent;
+  GtkBox parent;
 
   GcalEventSchedule *values;
 
-  GtkToggleButton      *all_day_toggle;
-  GtkToggleButton      *time_slot_toggle;
+  GtkToggleButton *all_day_toggle;
+  GtkToggleButton *time_slot_toggle;
   AdwPreferencesGroup *start_date_group;
-  GcalDateChooserRow  *start_date_row;
+  GcalDateChooserRow *start_date_row;
   AdwPreferencesGroup *end_date_group;
-  GcalDateChooserRow  *end_date_row;
+  GcalDateChooserRow *end_date_row;
   GcalDateTimeChooser *start_date_time_chooser;
   GcalDateTimeChooser *end_date_time_chooser;
-  GtkWidget           *number_of_occurrences_spin;
-  GtkWidget           *repeat_combo;
-  GtkWidget           *repeat_duration_combo;
-  GtkWidget           *until_date_selector;
+  GtkWidget *number_of_occurrences_spin;
+  GtkWidget *repeat_combo;
+  GtkWidget *repeat_duration_combo;
+  GtkWidget *until_date_selector;
 
-  GcalContext        *context;
-  GcalEvent          *event;
+  GcalContext *context;
+  GcalEvent *event;
 
   GcalEventEditorFlags flags;
 };
@@ -79,7 +79,8 @@ typedef struct
   GDateTime *date_time_start;
   GDateTime *date_time_end;
 
-  struct {
+  struct
+  {
     gboolean duration_combo_visible;
     gboolean number_of_occurrences_visible;
     gboolean until_date_visible;
@@ -94,10 +95,9 @@ static void widget_state_free (WidgetState *state);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WidgetState, widget_state_free);
 
-static void          gcal_event_editor_section_iface_init        (GcalEventEditorSectionInterface *iface);
+static void gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalScheduleSection, gcal_schedule_section, GTK_TYPE_BOX,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalScheduleSection, gcal_schedule_section, GTK_TYPE_BOX, G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
 
 enum
 {
@@ -106,28 +106,28 @@ enum
   N_PROPS
 };
 
-static void          on_start_date_changed_cb                    (GtkWidget          *widget,
-                                                                  GParamSpec         *pspec,
-                                                                  GcalScheduleSection *self);
+static void on_start_date_changed_cb (GtkWidget *widget,
+                                      GParamSpec *pspec,
+                                      GcalScheduleSection *self);
 
-static void          on_end_date_changed_cb                      (GtkWidget          *widget,
-                                                                  GParamSpec         *pspec,
-                                                                  GcalScheduleSection *self);
+static void on_end_date_changed_cb (GtkWidget *widget,
+                                    GParamSpec *pspec,
+                                    GcalScheduleSection *self);
 
-static void          on_start_date_time_changed_cb               (GtkWidget          *widget,
-                                                                  GParamSpec         *pspec,
-                                                                  GcalScheduleSection *self);
+static void on_start_date_time_changed_cb (GtkWidget *widget,
+                                           GParamSpec *pspec,
+                                           GcalScheduleSection *self);
 
-static void          on_end_date_time_changed_cb                 (GtkWidget          *widget,
-                                                                  GParamSpec         *pspec,
-                                                                  GcalScheduleSection *self);
+static void on_end_date_time_changed_cb (GtkWidget *widget,
+                                         GParamSpec *pspec,
+                                         GcalScheduleSection *self);
 
-static void          on_schedule_type_changed_cb                 (GtkWidget           *widget,
-                                                                  GParamSpec          *pspec,
-                                                                  GcalScheduleSection *self);
+static void on_schedule_type_changed_cb (GtkWidget *widget,
+                                         GParamSpec *pspec,
+                                         GcalScheduleSection *self);
 
-static void          on_number_of_occurrences_changed_cb         (GcalScheduleSection *self);
-static void          on_until_date_changed_cb                    (GcalScheduleSection *self);
+static void on_number_of_occurrences_changed_cb (GcalScheduleSection *self);
+static void on_until_date_changed_cb (GcalScheduleSection *self);
 
 static WidgetState *
 widget_state_from_values (const GcalEventSchedule *values)
@@ -240,7 +240,6 @@ all_day_selected (GcalScheduleSection *self)
   return gtk_toggle_button_get_active (self->all_day_toggle);
 }
 
-
 static void
 block_date_signals (GcalScheduleSection *self)
 {
@@ -275,7 +274,7 @@ remove_recurrence_properties (GcalEvent *event)
 
 static void
 update_widgets (GcalScheduleSection *self,
-                WidgetState         *state)
+                WidgetState *state)
 {
   g_signal_handlers_block_by_func (self->all_day_toggle, on_schedule_type_changed_cb, self);
   g_signal_handlers_block_by_func (self->time_slot_toggle, on_schedule_type_changed_cb, self);
@@ -360,8 +359,8 @@ update_from_event_schedule (GcalScheduleSection *self,
  */
 
 static void
-on_schedule_type_changed_cb (GtkWidget           *widget,
-                             GParamSpec          *pspec,
+on_schedule_type_changed_cb (GtkWidget *widget,
+                             GParamSpec *pspec,
                              GcalScheduleSection *self)
 {
   gboolean all_day = all_day_selected (self);
@@ -370,8 +369,8 @@ on_schedule_type_changed_cb (GtkWidget           *widget,
 }
 
 static void
-on_start_date_changed_cb (GtkWidget           *widget,
-                          GParamSpec          *pspec,
+on_start_date_changed_cb (GtkWidget *widget,
+                          GParamSpec *pspec,
                           GcalScheduleSection *self)
 {
   GDateTime *start = gcal_date_chooser_row_get_date (self->start_date_row);
@@ -380,8 +379,8 @@ on_start_date_changed_cb (GtkWidget           *widget,
 }
 
 static void
-on_end_date_changed_cb (GtkWidget           *widget,
-                        GParamSpec          *pspec,
+on_end_date_changed_cb (GtkWidget *widget,
+                        GParamSpec *pspec,
                         GcalScheduleSection *self)
 {
   GDateTime *end = gcal_date_chooser_row_get_date (self->end_date_row);
@@ -390,8 +389,8 @@ on_end_date_changed_cb (GtkWidget           *widget,
 }
 
 static void
-on_start_date_time_changed_cb (GtkWidget           *widget,
-                               GParamSpec          *pspec,
+on_start_date_time_changed_cb (GtkWidget *widget,
+                               GParamSpec *pspec,
                                GcalScheduleSection *self)
 {
   GDateTime *start = gcal_date_time_chooser_get_date_time (self->start_date_time_chooser);
@@ -400,8 +399,8 @@ on_start_date_time_changed_cb (GtkWidget           *widget,
 }
 
 static void
-on_end_date_time_changed_cb (GtkWidget           *widget,
-                             GParamSpec          *pspec,
+on_end_date_time_changed_cb (GtkWidget *widget,
+                             GParamSpec *pspec,
                              GcalScheduleSection *self)
 {
   GDateTime *end = gcal_date_time_chooser_get_date_time (self->end_date_time_chooser);
@@ -446,8 +445,8 @@ get_recurrence_frequency (GcalScheduleSection *self)
 }
 
 static void
-on_repeat_duration_changed_cb (GtkWidget           *widget,
-                               GParamSpec          *pspec,
+on_repeat_duration_changed_cb (GtkWidget *widget,
+                               GParamSpec *pspec,
                                GcalScheduleSection *self)
 {
   if (get_recurrence_frequency (self) != GCAL_RECURRENCE_NO_REPEAT)
@@ -459,8 +458,8 @@ on_repeat_duration_changed_cb (GtkWidget           *widget,
 }
 
 static void
-on_repeat_type_changed_cb (GtkWidget           *widget,
-                           GParamSpec          *pspec,
+on_repeat_type_changed_cb (GtkWidget *widget,
+                           GParamSpec *pspec,
                            GcalScheduleSection *self)
 {
   GcalRecurrenceFrequency frequency = get_recurrence_frequency (self);
@@ -484,7 +483,6 @@ on_time_format_changed_cb (GcalScheduleSection *self)
     }
 }
 
-
 /*
  * GcalEventEditorSection interface
  */
@@ -502,8 +500,8 @@ on_time_format_changed_cb (GcalScheduleSection *self)
  */
 static void
 gcal_schedule_section_set_event (GcalEventEditorSection *section,
-                                 GcalEvent              *event,
-                                 GcalEventEditorFlags    flags)
+                                 GcalEvent *event,
+                                 GcalEventEditorFlags flags)
 {
   GcalScheduleSection *self;
   GcalTimeFormat time_format;
@@ -528,7 +526,7 @@ gcal_schedule_section_set_event (GcalEventEditorSection *section,
 
 static void
 gcal_schedule_section_apply_to_event (GcalScheduleSection *self,
-                                      GcalEvent           *event)
+                                      GcalEvent *event)
 {
   GCAL_ENTRY;
 
@@ -635,7 +633,6 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
   iface->changed = gcal_schedule_section_changed;
 }
 
-
 /*
  * GObject overrides
  */
@@ -643,7 +640,7 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
 static void
 gcal_schedule_section_finalize (GObject *object)
 {
-  GcalScheduleSection *self = (GcalScheduleSection *)object;
+  GcalScheduleSection *self = (GcalScheduleSection *) object;
 
   g_clear_pointer (&self->values, gcal_event_schedule_free);
   g_clear_object (&self->context);
@@ -653,9 +650,9 @@ gcal_schedule_section_finalize (GObject *object)
 }
 
 static void
-gcal_schedule_section_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
+gcal_schedule_section_get_property (GObject *object,
+                                    guint prop_id,
+                                    GValue *value,
                                     GParamSpec *pspec)
 {
   GcalScheduleSection *self = GCAL_SCHEDULE_SECTION (object);
@@ -672,10 +669,10 @@ gcal_schedule_section_get_property (GObject    *object,
 }
 
 static void
-gcal_schedule_section_set_property (GObject      *object,
-                                    guint         prop_id,
+gcal_schedule_section_set_property (GObject *object,
+                                    guint prop_id,
                                     const GValue *value,
-                                    GParamSpec   *pspec)
+                                    GParamSpec *pspec)
 {
   GcalScheduleSection *self = GCAL_SCHEDULE_SECTION (object);
 
@@ -823,17 +820,17 @@ static void
 test_turning_on_recurrence_count_turns_on_its_widget (void)
 {
   /* Start with some configuration */
-  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times("20250411T10:00:00-06:00",
-                                                                             "20250411T11:30:00-06:00",
-                                                                             FALSE);
+  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times ("20250411T10:00:00-06:00",
+                                                                              "20250411T11:30:00-06:00",
+                                                                              FALSE);
 
   /* Turn on recurrence */
   g_autoptr (GcalEventSchedule) with_recur =
-    gcal_event_schedule_set_recur_frequency (values, GCAL_RECURRENCE_DAILY);
+      gcal_event_schedule_set_recur_frequency (values, GCAL_RECURRENCE_DAILY);
 
   /* Set it to "count" */
   g_autoptr (GcalEventSchedule) with_count =
-    gcal_event_schedule_set_recur_limit_type (with_recur, GCAL_RECURRENCE_COUNT);
+      gcal_event_schedule_set_recur_limit_type (with_recur, GCAL_RECURRENCE_COUNT);
 
   g_autoptr (WidgetState) state = widget_state_from_values (with_count);
   g_assert_true (state->recurrence.duration_combo_visible);
@@ -845,17 +842,17 @@ static void
 test_turning_on_recurrence_until_turns_on_its_widget (void)
 {
   /* Start with some configuration */
-  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times("20250411T10:00:00-06:00",
-                                                                             "20250411T11:30:00-06:00",
-                                                                             FALSE);
+  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times ("20250411T10:00:00-06:00",
+                                                                              "20250411T11:30:00-06:00",
+                                                                              FALSE);
 
   /* Turn on recurrence */
   g_autoptr (GcalEventSchedule) with_recur =
-    gcal_event_schedule_set_recur_frequency (values, GCAL_RECURRENCE_DAILY);
+      gcal_event_schedule_set_recur_frequency (values, GCAL_RECURRENCE_DAILY);
 
   /* Set it to "count" */
   g_autoptr (GcalEventSchedule) with_until =
-    gcal_event_schedule_set_recur_limit_type (with_recur, GCAL_RECURRENCE_UNTIL);
+      gcal_event_schedule_set_recur_limit_type (with_recur, GCAL_RECURRENCE_UNTIL);
 
   g_autoptr (WidgetState) state = widget_state_from_values (with_until);
   g_assert_true (state->recurrence.duration_combo_visible);

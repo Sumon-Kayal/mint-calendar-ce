@@ -24,8 +24,7 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_WEATHER_SETTINGS (gcal_weather_settings_get_type())
+#define GCAL_TYPE_WEATHER_SETTINGS (gcal_weather_settings_get_type ())
 G_DECLARE_FINAL_TYPE (GcalWeatherSettings, gcal_weather_settings, GCAL, WEATHER_SETTINGS, GtkBox)
-
 
 G_END_DECLS

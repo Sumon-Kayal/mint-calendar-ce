@@ -19,28 +19,28 @@
 
 #define G_LOG_DOMAIN "GcalWindow"
 
+#include "gcal-window.h"
+#include "config.h"
 #include "gcal-agenda-view.h"
 #include "gcal-calendar-list.h"
 #include "gcal-calendar-management-dialog.h"
 #include "gcal-calendar-navigation-button.h"
-#include "config.h"
+#include "gcal-context.h"
 #include "gcal-date-chooser.h"
 #include "gcal-debug.h"
 #include "gcal-drop-overlay.h"
 #include "gcal-event-editor-dialog.h"
 #include "gcal-event-widget.h"
-#include "gcal-context.h"
 #include "gcal-manager.h"
 #include "gcal-month-view.h"
 #include "gcal-quick-add-popover.h"
 #include "gcal-search-button.h"
 #include "gcal-sync-indicator.h"
-#include "gcal-timeline.h"
 #include "gcal-timeline-subscriber.h"
+#include "gcal-timeline.h"
 #include "gcal-view.h"
 #include "gcal-weather-settings.h"
 #include "gcal-week-view.h"
-#include "gcal-window.h"
 
 #include "importer/gcal-import-dialog.h"
 
@@ -80,21 +80,21 @@
 
 typedef struct
 {
-  gint                x;
-  gint                y;
-  GcalRange          *range;
+  gint x;
+  gint y;
+  GcalRange *range;
 } NewEventData;
 
 typedef struct
 {
-  GcalWindow         *window;
-  gchar              *uuid;
+  GcalWindow *window;
+  gchar *uuid;
 } OpenEditDialogData;
 
 typedef struct
 {
-  GList              *ics_files;
-  GList              *invalid_files;
+  GList *ics_files;
+  GList *invalid_files;
 } FileFilterResult;
 
 struct _GcalWindow
@@ -102,68 +102,68 @@ struct _GcalWindow
   AdwApplicationWindow parent;
 
   /* upper level widgets */
-  GtkWidget              *header_bar;
-  AdwToastOverlay        *overlay;
-  AdwViewStack           *views_stack;
-  GtkWidget              *week_view;
-  GtkWidget              *month_view;
-  GtkWidget              *agenda_view;
-  GtkWidget              *date_chooser;
-  GcalSyncIndicator      *sync_indicator;
-  GtkWidget              *search_button;
+  GtkWidget *header_bar;
+  AdwToastOverlay *overlay;
+  AdwViewStack *views_stack;
+  GtkWidget *week_view;
+  GtkWidget *month_view;
+  GtkWidget *agenda_view;
+  GtkWidget *date_chooser;
+  GcalSyncIndicator *sync_indicator;
+  GtkWidget *search_button;
   AdwNavigationSplitView *split_view;
 
   /* header_bar widgets */
-  GtkWidget          *calendars_list;
-  GtkWidget          *menu_button;
+  GtkWidget *calendars_list;
+  GtkWidget *menu_button;
 
   GcalEventEditorDialog *event_editor;
-  GtkWidget             *import_dialog;
+  GtkWidget *import_dialog;
 
-  GtkWidget          *last_focused_widget;
+  GtkWidget *last_focused_widget;
 
   /* new event popover widgets */
-  GtkWidget          *quick_add_popover;
+  GtkWidget *quick_add_popover;
 
   /* day, week, month, year, list */
-  GtkWidget          *views[N_WEEKDAYS - 1];
-  gboolean            subscribed;
+  GtkWidget *views[N_WEEKDAYS - 1];
+  gboolean subscribed;
 
-  GcalContext        *context;
-  GcalWindowView      active_view;
+  GcalContext *context;
+  GcalWindowView active_view;
 
-  GDateTime          *active_date;
+  GDateTime *active_date;
 
-  gboolean            rtl;
+  gboolean rtl;
 
   /* states */
-  gboolean            new_event_mode;
+  gboolean new_event_mode;
 
-  NewEventData       *event_creation_data;
+  NewEventData *event_creation_data;
 
-  AdwToast           *delete_event_toast;
+  AdwToast *delete_event_toast;
 
-  gint                open_edit_dialog_timeout_id;
+  gint open_edit_dialog_timeout_id;
 
   /* weather management */
   GcalWeatherSettings *weather_settings;
 
   /* temp to keep event_creation */
-  gboolean            open_edit_dialog;
+  gboolean open_edit_dialog;
 
   /* handler for the searh_view */
-  gint                click_outside_handler_id;
+  gint click_outside_handler_id;
 
   /* CSS */
-  GtkCssProvider     *colors_provider;
+  GtkCssProvider *colors_provider;
 
   /* Window states */
-  gboolean            in_key_press;
+  gboolean in_key_press;
 
   /* File drop */
-  GcalDropOverlay    *drop_overlay;
-  AdwStatusPage      *drop_status_page;
-  GtkDropTarget      *drop_target;
+  GcalDropOverlay *drop_overlay;
+  AdwStatusPage *drop_status_page;
+  GtkDropTarget *drop_target;
 };
 
 enum
@@ -178,8 +178,9 @@ enum
 
 G_DEFINE_TYPE (GcalWindow, gcal_window, ADW_TYPE_APPLICATION_WINDOW)
 
-static GParamSpec* properties[N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -202,7 +203,7 @@ update_today_action_enabled (GcalWindow *window)
     case GCAL_WINDOW_VIEW_MONTH:
     case GCAL_WINDOW_VIEW_AGENDA:
       enabled = g_date_time_get_year (window->active_date) != g_date_time_get_year (now) ||
-                g_date_time_get_week_of_year (window->active_date) !=  g_date_time_get_week_of_year (now);
+                g_date_time_get_week_of_year (window->active_date) != g_date_time_get_week_of_year (now);
 
       GCAL_TRACE_MSG ("Active date's week is %d, current week is %d",
                       g_date_time_get_week_of_year (window->active_date),
@@ -230,8 +231,8 @@ focus_last_focused_widget (GcalWindow *self)
     }
 }
 
-static gchar*
-get_previous_date_icon (GcalWindow     *window,
+static gchar *
+get_previous_date_icon (GcalWindow *window,
                         GcalWindowView *view)
 {
   switch (gcal_view_get_time_direction (GCAL_VIEW (view)))
@@ -247,22 +248,22 @@ get_previous_date_icon (GcalWindow     *window,
     }
 }
 
-static gchar*
-get_previous_date_tooltip (GcalWindow  *window,
+static gchar *
+get_previous_date_tooltip (GcalWindow *window,
                            const gchar *view_name)
 {
   if (g_str_equal (view_name, "week"))
-    return g_strdup (_("Previous Week"));
+    return g_strdup (_ ("Previous Week"));
   else if (g_str_equal (view_name, "month"))
-    return g_strdup (_("Previous Month"));
+    return g_strdup (_ ("Previous Month"));
   else if (g_str_equal (view_name, "agenda"))
-    return g_strdup (_("Yesterday"));
+    return g_strdup (_ ("Yesterday"));
   else
     g_assert_not_reached ();
 }
 
-static gchar*
-get_next_date_icon (GcalWindow     *window,
+static gchar *
+get_next_date_icon (GcalWindow *window,
                     GcalWindowView *view)
 {
   switch (gcal_view_get_time_direction (GCAL_VIEW (view)))
@@ -278,16 +279,16 @@ get_next_date_icon (GcalWindow     *window,
     }
 }
 
-static gchar*
-get_next_date_tooltip (GcalWindow  *window,
+static gchar *
+get_next_date_tooltip (GcalWindow *window,
                        const gchar *view_name)
 {
   if (g_str_equal (view_name, "week"))
-    return g_strdup (_("Next Week"));
+    return g_strdup (_ ("Next Week"));
   else if (g_str_equal (view_name, "month"))
-    return g_strdup (_("Next Month"));
+    return g_strdup (_ ("Next Month"));
   else if (g_str_equal (view_name, "agenda"))
-    return g_strdup (_("Tomorrow"));
+    return g_strdup (_ ("Tomorrow"));
   else
     g_assert_not_reached ();
 }
@@ -300,7 +301,6 @@ maybe_add_subscribers_to_timeline (GcalWindow *self)
   if (self->subscribed)
     return;
 
-
   timeline = gcal_manager_get_timeline (gcal_context_get_manager (self->context));
   gcal_timeline_add_subscriber (timeline, GCAL_TIMELINE_SUBSCRIBER (self->week_view));
   gcal_timeline_add_subscriber (timeline, GCAL_TIMELINE_SUBSCRIBER (self->month_view));
@@ -312,7 +312,7 @@ maybe_add_subscribers_to_timeline (GcalWindow *self)
 
 static void
 update_active_date (GcalWindow *window,
-                    GDateTime  *date)
+                    GDateTime *date)
 {
   g_autoptr (GDateTime) new_date = NULL;
   g_autofree gchar *new_date_string = NULL;
@@ -354,7 +354,7 @@ recalculate_calendar_colors_css (GcalWindow *self)
   calendars = gcal_manager_get_calendars (manager);
   for (GList *l = calendars; l; l = l->next)
     {
-      g_autofree gchar* color_str = NULL;
+      g_autofree gchar *color_str = NULL;
       const GdkRGBA *color;
       GcalCalendar *calendar;
       GQuark color_id;
@@ -398,23 +398,23 @@ hide_widget (GtkWidget *widget)
 }
 
 static char *
-content_title (GcalWindow     *self,
-               GcalWindowView  active_view)
+content_title (GcalWindow *self,
+               GcalWindowView active_view)
 {
   /* We check for NULL so we get the right page name during initialization */
   switch (active_view)
     {
     case GCAL_WINDOW_VIEW_WEEK:
-      return g_strdup (_("Week"));
+      return g_strdup (_ ("Week"));
 
     case GCAL_WINDOW_VIEW_MONTH:
-      return g_strdup (_("Month"));
+      return g_strdup (_ ("Month"));
 
     case GCAL_WINDOW_VIEW_AGENDA:
-      return g_strdup (_("Agenda"));
+      return g_strdup (_ ("Agenda"));
 
     default:
-      return g_strdup (_("Calendar"));
+      return g_strdup (_ ("Calendar"));
     }
 }
 
@@ -450,9 +450,9 @@ free_file_slist_full (GSList *files)
 }
 
 static void
-filter_ics_files_thread (GTask        *task,
-                         gpointer      source_object,
-                         gpointer      task_data,
+filter_ics_files_thread (GTask *task,
+                         gpointer source_object,
+                         gpointer task_data,
                          GCancellable *cancellable)
 {
   FileFilterResult *result;
@@ -474,18 +474,18 @@ filter_ics_files_thread (GTask        *task,
   g_task_return_pointer (task, result, NULL);
 }
 
-static FileFilterResult*
-filter_ics_files_finish (GAsyncResult  *result,
-                         GError       **error)
+static FileFilterResult *
+filter_ics_files_finish (GAsyncResult *result,
+                         GError **error)
 {
   g_return_val_if_fail (g_task_is_valid (result, NULL), NULL);
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
 static void
-filter_ics_files (GcalWindow          *self,
-                  GSList              *files,
-                  GAsyncReadyCallback  callback)
+filter_ics_files (GcalWindow *self,
+                  GSList *files,
+                  GAsyncReadyCallback callback)
 {
   g_autoslist (GFile) files_copy = NULL;
   g_autoptr (GTask) task = NULL;
@@ -528,8 +528,8 @@ switch_prev_view (GcalWindow *self)
 
 static void
 on_show_calendars_action_activated (GSimpleAction *action,
-                                    GVariant      *param,
-                                    gpointer       user_data)
+                                    GVariant *param,
+                                    gpointer user_data)
 {
   GcalWindow *self = GCAL_WINDOW (user_data);
   GcalCalendarManagementDialog *dialog = gcal_calendar_management_dialog_new (self->context);
@@ -539,8 +539,8 @@ on_show_calendars_action_activated (GSimpleAction *action,
 
 static void
 on_view_action_activated (GSimpleAction *action,
-                          GVariant      *param,
-                          gpointer       user_data)
+                          GVariant *param,
+                          gpointer user_data)
 {
   GcalWindow *window = GCAL_WINDOW (user_data);
   gint32 view;
@@ -570,20 +570,20 @@ on_view_action_activated (GSimpleAction *action,
 
 static void
 on_back_button_pressed_cb (GtkGestureClick *gesture_click,
-                           gint             n_press,
-                           gdouble          x,
-                           gdouble          y,
-                           gpointer        *user_data)
+                           gint n_press,
+                           gdouble x,
+                           gdouble y,
+                           gpointer *user_data)
 {
   switch_prev_view (GCAL_WINDOW (user_data));
 }
 
 static void
 on_forward_button_pressed_cb (GtkGestureClick *gesture_click,
-                              gint             n_press,
-                              gdouble          x,
-                              gdouble          y,
-                              gpointer        *user_data)
+                              gint n_press,
+                              gdouble x,
+                              gdouble y,
+                              gpointer *user_data)
 {
 
   switch_next_view (GCAL_WINDOW (user_data));
@@ -591,16 +591,16 @@ on_forward_button_pressed_cb (GtkGestureClick *gesture_click,
 
 static void
 on_window_next_date_activated_cb (GSimpleAction *action,
-                                  GVariant      *param,
-                                  gpointer       user_data)
+                                  GVariant *param,
+                                  gpointer user_data)
 {
   switch_next_view (GCAL_WINDOW (user_data));
 }
 
 static void
 on_window_new_event_cb (GSimpleAction *action,
-                        GVariant      *param,
-                        gpointer       user_data)
+                        GVariant *param,
+                        gpointer user_data)
 {
   g_autoptr (ECalComponent) comp = NULL;
   g_autoptr (GDateTime) start = NULL;
@@ -628,8 +628,8 @@ on_window_new_event_cb (GSimpleAction *action,
 
 static void
 on_window_open_date_time_settings_cb (GSimpleAction *action,
-                                      GVariant      *param,
-                                      gpointer       user_data)
+                                      GVariant *param,
+                                      gpointer user_data)
 {
   GDBusConnection *connection = g_application_get_dbus_connection (g_application_get_default ());
 
@@ -638,8 +638,8 @@ on_window_open_date_time_settings_cb (GSimpleAction *action,
 
 static void
 on_window_open_online_accounts_cb (GSimpleAction *action,
-                                   GVariant      *param,
-                                   gpointer       user_data)
+                                   GVariant *param,
+                                   gpointer user_data)
 {
   GDBusConnection *connection = g_application_get_dbus_connection (g_application_get_default ());
 
@@ -648,16 +648,16 @@ on_window_open_online_accounts_cb (GSimpleAction *action,
 
 static void
 on_window_previous_date_activated_cb (GSimpleAction *action,
-                                      GVariant      *param,
-                                      gpointer       user_data)
+                                      GVariant *param,
+                                      gpointer user_data)
 {
   switch_prev_view (GCAL_WINDOW (user_data));
 }
 
 static void
 on_window_today_activated_cb (GSimpleAction *action,
-                              GVariant      *param,
-                              gpointer       user_data)
+                              GVariant *param,
+                              gpointer user_data)
 {
   g_autoptr (GDateTime) today = NULL;
   GcalWindow *self;
@@ -670,8 +670,8 @@ on_window_today_activated_cb (GSimpleAction *action,
 
 static void
 on_window_undo_delete_event_cb (GSimpleAction *action,
-                                GVariant      *param,
-                                gpointer       user_data)
+                                GVariant *param,
+                                gpointer user_data)
 {
   g_autoptr (GList) widgets = NULL;
   GcalRecurrenceModType modifier;
@@ -729,9 +729,9 @@ on_breakpoint_changed (GObject *object,
 }
 
 static void
-view_changed (GObject    *object,
+view_changed (GObject *object,
               GParamSpec *pspec,
-              gpointer    user_data)
+              gpointer user_data)
 {
   GcalWindow *window;
   GEnumClass *eklass;
@@ -766,7 +766,7 @@ view_changed (GObject    *object,
 
 static void
 set_new_event_mode (GcalWindow *window,
-                    gboolean    enabled)
+                    gboolean enabled)
 {
   GCAL_ENTRY;
 
@@ -791,10 +791,10 @@ set_new_event_mode (GcalWindow *window,
 
 /* new-event interaction: second variant */
 static void
-show_new_event_widget (GcalView   *view,
-                       GcalRange  *range,
-                       gdouble     x,
-                       gdouble     y,
+show_new_event_widget (GcalView *view,
+                       GcalRange *range,
+                       gdouble x,
+                       gdouble y,
                        GcalWindow *window)
 {
   graphene_point_t p;
@@ -851,23 +851,23 @@ show_new_event_widget (GcalView   *view,
 
 static void
 close_new_event_widget (GtkButton *button,
-                        gpointer   user_data)
+                        gpointer user_data)
 {
   set_new_event_mode (GCAL_WINDOW (user_data), FALSE);
 }
 
 static void
 edit_event (GcalQuickAddPopover *popover,
-            GcalEvent           *event,
-            GcalWindow          *self)
+            GcalEvent *event,
+            GcalWindow *self)
 {
   adw_dialog_present (ADW_DIALOG (self->event_editor), GTK_WIDGET (self));
   gcal_event_editor_dialog_set_event (self->event_editor, event, TRUE);
 }
 
 static void
-create_event_detailed_cb (GcalView   *view,
-                          GcalRange  *range,
+create_event_detailed_cb (GcalView *view,
+                          GcalRange *range,
                           GcalWindow *self)
 {
   g_autoptr (GDateTime) range_start = NULL;
@@ -891,9 +891,9 @@ create_event_detailed_cb (GcalView   *view,
 }
 
 static void
-event_preview_cb (GcalEventWidget        *event_widget,
-                  GcalEventPreviewAction  action,
-                  gpointer                user_data)
+event_preview_cb (GcalEventWidget *event_widget,
+                  GcalEventPreviewAction action,
+                  gpointer user_data)
 {
   GcalWindow *self = GCAL_WINDOW (user_data);
   GcalEvent *event;
@@ -919,7 +919,7 @@ day_selected (GcalWindow *self)
   update_active_date (self, gcal_view_get_date (GCAL_VIEW (self->date_chooser)));
 }
 
-static GtkWidget*
+static GtkWidget *
 find_first_focusable_widget (GtkWidget *widget)
 {
   GtkWidget *aux = widget;
@@ -932,9 +932,9 @@ find_first_focusable_widget (GtkWidget *widget)
 }
 
 static void
-event_activated (GcalView        *view,
+event_activated (GcalView *view,
                  GcalEventWidget *event_widget,
-                 gpointer         user_data)
+                 gpointer user_data)
 {
   GcalWindow *self = GCAL_WINDOW (user_data);
 
@@ -944,7 +944,7 @@ event_activated (GcalView        *view,
 }
 
 static void
-on_toast_dismissed_cb (AdwToast   *toast,
+on_toast_dismissed_cb (AdwToast *toast,
                        GcalWindow *self)
 {
   GcalRecurrenceModType modifier;
@@ -955,7 +955,7 @@ on_toast_dismissed_cb (AdwToast   *toast,
 
   /* If we undid the removal, the stored toast is gone at this point */
   if (!self->delete_event_toast)
-    GCAL_RETURN();
+    GCAL_RETURN ();
 
   manager = gcal_context_get_manager (self->context);
   event = g_object_get_data (G_OBJECT (toast), "event");
@@ -971,9 +971,9 @@ on_toast_dismissed_cb (AdwToast   *toast,
 
 static void
 on_event_editor_dialog_remove_event_cb (GcalEventEditorDialog *edit_dialog,
-                                        GcalEvent             *event,
-                                        GcalRecurrenceModType  modifier,
-                                        GcalWindow            *self)
+                                        GcalEvent *event,
+                                        GcalRecurrenceModType modifier,
+                                        GcalWindow *self)
 {
   g_autoptr (AdwToast) toast = NULL;
   g_autoptr (GList) widgets = NULL;
@@ -989,9 +989,9 @@ on_event_editor_dialog_remove_event_cb (GcalEventEditorDialog *edit_dialog,
     adw_toast_dismiss (self->delete_event_toast);
   self->delete_event_toast = NULL;
 
-  toast = adw_toast_new (has_deleted_event ? _("Another event deleted") : _("Event deleted"));
+  toast = adw_toast_new (has_deleted_event ? _ ("Another event deleted") : _ ("Event deleted"));
   adw_toast_set_timeout (toast, 5);
-  adw_toast_set_button_label (toast, _("_Undo"));
+  adw_toast_set_button_label (toast, _ ("_Undo"));
   adw_toast_set_action_name (toast, "win.undo-delete-event");
   g_object_set_data_full (G_OBJECT (toast), "event", g_object_ref (event), g_object_unref);
   g_object_set_data (G_OBJECT (toast), "modifier", GINT_TO_POINTER (modifier));
@@ -1015,8 +1015,8 @@ on_event_editor_dialog_remove_event_cb (GcalEventEditorDialog *edit_dialog,
 
 static gboolean
 on_drop_target_accept_cb (GtkDropTarget *target,
-                          GdkDrop       *drop,
-                          gpointer       user_data)
+                          GdkDrop *drop,
+                          gpointer user_data)
 {
   GdkDrag *drag;
   GdkContentFormats *formats;
@@ -1031,12 +1031,12 @@ on_drop_target_accept_cb (GtkDropTarget *target,
 }
 
 static void
-on_ics_files_filtered_cb (GObject      *source_object,
+on_ics_files_filtered_cb (GObject *source_object,
                           GAsyncResult *result,
-                          gpointer      data)
+                          gpointer data)
 {
   g_autoptr (GError) error = NULL;
-  g_autofree gchar* toast_title = NULL;
+  g_autofree gchar *toast_title = NULL;
   AdwToast *error_toast = NULL;
   GcalWindow *self;
   FileFilterResult *filter_result;
@@ -1054,12 +1054,12 @@ on_ics_files_filtered_cb (GObject      *source_object,
     {
       if (filter_result->invalid_files->next)
         {
-          toast_title = g_strdup(_("Could not import some files: Not ICS files"));
+          toast_title = g_strdup (_ ("Could not import some files: Not ICS files"));
         }
       else
         {
           g_autofree gchar *basename = g_file_get_basename (filter_result->invalid_files->data);
-          toast_title = g_strdup_printf (_("Could not import “%s”: Not an ICS file"), basename);
+          toast_title = g_strdup_printf (_ ("Could not import “%s”: Not an ICS file"), basename);
         }
       error_toast = adw_toast_new (toast_title);
     }
@@ -1071,7 +1071,7 @@ on_ics_files_filtered_cb (GObject      *source_object,
       self->import_dialog = gcal_import_dialog_new_for_file_list (self->context, filter_result->ics_files);
       adw_dialog_present (ADW_DIALOG (self->import_dialog), GTK_WIDGET (self));
 
-      g_object_add_weak_pointer (G_OBJECT (self->import_dialog), (gpointer *)&self->import_dialog);
+      g_object_add_weak_pointer (G_OBJECT (self->import_dialog), (gpointer *) &self->import_dialog);
 
       if (error_toast)
         gcal_import_dialog_add_toast (GCAL_IMPORT_DIALOG (self->import_dialog), error_toast);
@@ -1087,10 +1087,10 @@ on_ics_files_filtered_cb (GObject      *source_object,
 
 static gboolean
 on_drop_target_drop_cb (GtkDropTarget *target,
-                        const GValue  *value,
-                        gdouble        x,
-                        gdouble        y,
-                        gpointer       user_data)
+                        const GValue *value,
+                        gdouble x,
+                        gdouble y,
+                        gpointer user_data)
 {
   g_autoptr (GSList) files = NULL;
   GdkFileList *file_list;
@@ -1132,7 +1132,6 @@ schedule_open_edit_dialog_by_uuid (OpenEditDialogData *edit_dialog_data)
 
   return G_SOURCE_CONTINUE;
 }
-
 
 /*
  * GObject overrides
@@ -1244,10 +1243,10 @@ gcal_window_constructed (GObject *object)
 }
 
 static void
-gcal_window_set_property (GObject      *object,
-                          guint         property_id,
+gcal_window_set_property (GObject *object,
+                          guint property_id,
                           const GValue *value,
-                          GParamSpec   *pspec)
+                          GParamSpec *pspec)
 {
   GcalWindow *self = GCAL_WINDOW (object);
 
@@ -1288,9 +1287,9 @@ gcal_window_set_property (GObject      *object,
 }
 
 static void
-gcal_window_get_property (GObject    *object,
-                          guint       property_id,
-                          GValue     *value,
+gcal_window_get_property (GObject *object,
+                          guint property_id,
+                          GValue *value,
                           GParamSpec *pspec)
 {
   GcalWindow *self = GCAL_WINDOW (object);
@@ -1317,7 +1316,6 @@ gcal_window_get_property (GObject    *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
 }
-
 
 /*
  * GtkWidget overrides
@@ -1375,7 +1373,6 @@ gcal_window_class_init (GcalWindowClass *klass)
 
   widget_class = GTK_WIDGET_CLASS (klass);
   widget_class->unmap = gcal_window_unmap;
-
 
   properties[PROP_ACTIVE_DATE] = g_param_spec_boxed ("active-date",
                                                      "Date",
@@ -1457,15 +1454,15 @@ static void
 gcal_window_init (GcalWindow *self)
 {
   static const GActionEntry actions[] = {
-    {"change-view", on_view_action_activated, "i" },
-    {"next-date", on_window_next_date_activated_cb },
-    {"new-event", on_window_new_event_cb },
-    {"open-date-time-settings", on_window_open_date_time_settings_cb },
-    {"open-online-accounts", on_window_open_online_accounts_cb },
-    {"previous-date", on_window_previous_date_activated_cb },
-    {"show-calendars", on_show_calendars_action_activated },
-    {"today", on_window_today_activated_cb },
-    {"undo-delete-event", on_window_undo_delete_event_cb },
+    { "change-view", on_view_action_activated, "i" },
+    { "next-date", on_window_next_date_activated_cb },
+    { "new-event", on_window_new_event_cb },
+    { "open-date-time-settings", on_window_open_date_time_settings_cb },
+    { "open-online-accounts", on_window_open_online_accounts_cb },
+    { "previous-date", on_window_previous_date_activated_cb },
+    { "show-calendars", on_show_calendars_action_activated },
+    { "today", on_window_today_activated_cb },
+    { "undo-delete-event", on_window_undo_delete_event_cb },
   };
 
   /* Setup actions */
@@ -1491,9 +1488,9 @@ gcal_window_init (GcalWindow *self)
 
   GType drop_types[] = { GDK_TYPE_FILE_LIST };
   gtk_drop_target_set_gtypes (self->drop_target, drop_types,
-                              G_N_ELEMENTS(drop_types));
+                              G_N_ELEMENTS (drop_types));
 
-  gcal_drop_overlay_set_drop_target(self->drop_overlay, self->drop_target);
+  gcal_drop_overlay_set_drop_target (self->drop_overlay, self->drop_target);
 }
 
 /**
@@ -1505,9 +1502,9 @@ gcal_window_init (GcalWindow *self)
  *
  * Returns: (transfer full): a #GcalWindow
  */
-GtkWidget*
+GtkWidget *
 gcal_window_new_with_date (GcalApplication *app,
-                           GDateTime       *date)
+                           GDateTime *date)
 {
   return g_object_new (GCAL_TYPE_WINDOW,
                        "application", GTK_APPLICATION (app),
@@ -1526,7 +1523,7 @@ gcal_window_new_with_date (GcalApplication *app,
  * triggering the search.
  */
 void
-gcal_window_set_search_query (GcalWindow  *self,
+gcal_window_set_search_query (GcalWindow *self,
                               const gchar *query)
 {
   g_return_if_fail (GCAL_IS_WINDOW (self));
@@ -1543,7 +1540,7 @@ gcal_window_set_search_query (GcalWindow  *self,
  * open the event, it waits for 2 seconds before trying again.
  */
 void
-gcal_window_open_event_by_uuid (GcalWindow  *self,
+gcal_window_open_event_by_uuid (GcalWindow *self,
                                 const gchar *uuid)
 {
   GList *widgets;
@@ -1572,9 +1569,9 @@ gcal_window_open_event_by_uuid (GcalWindow  *self,
 }
 
 void
-gcal_window_import_files (GcalWindow  *self,
-                          GFile      **files,
-                          gint         n_files)
+gcal_window_import_files (GcalWindow *self,
+                          GFile **files,
+                          gint n_files)
 {
   g_return_if_fail (GCAL_IS_WINDOW (self));
 
@@ -1583,5 +1580,5 @@ gcal_window_import_files (GcalWindow  *self,
   self->import_dialog = gcal_import_dialog_new_for_files (self->context, files, n_files);
   adw_dialog_present (ADW_DIALOG (self->import_dialog), GTK_WIDGET (self));
 
-  g_object_add_weak_pointer (G_OBJECT (self->import_dialog), (gpointer *)&self->import_dialog);
+  g_object_add_weak_pointer (G_OBJECT (self->import_dialog), (gpointer *) &self->import_dialog);
 }

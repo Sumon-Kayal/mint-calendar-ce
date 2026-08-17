@@ -16,18 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gcal-debug.h"
 #include "gcal-log.h"
+#include "gcal-debug.h"
 
-#include <unistd.h>
 #include <glib.h>
+#include <unistd.h>
 
 G_LOCK_DEFINE_STATIC (channel_lock);
 
 GIOChannel *standard_channel = NULL;
 
-static const gchar* ignored_domains[] =
-{
+static const gchar *ignored_domains[] = {
   "GdkPixbuf",
   NULL
 };
@@ -35,15 +34,22 @@ static const gchar* ignored_domains[] =
 static const gchar *
 log_level_str (GLogLevelFlags log_level)
 {
-  switch (((gulong)log_level & G_LOG_LEVEL_MASK))
+  switch (((gulong) log_level & G_LOG_LEVEL_MASK))
     {
-    case G_LOG_LEVEL_ERROR:    return "   \033[1;31mERROR\033[0m";
-    case G_LOG_LEVEL_CRITICAL: return "\033[1;35mCRITICAL\033[0m";
-    case G_LOG_LEVEL_WARNING:  return " \033[1;33mWARNING\033[0m";
-    case G_LOG_LEVEL_MESSAGE:  return " \033[1;34mMESSAGE\033[0m";
-    case G_LOG_LEVEL_INFO:     return "    \033[1;32mINFO\033[0m";
-    case G_LOG_LEVEL_DEBUG:    return "   \033[1;32mDEBUG\033[0m";
-    case GCAL_LOG_LEVEL_TRACE: return "   \033[1;36mTRACE\033[0m";
+    case G_LOG_LEVEL_ERROR:
+      return "   \033[1;31mERROR\033[0m";
+    case G_LOG_LEVEL_CRITICAL:
+      return "\033[1;35mCRITICAL\033[0m";
+    case G_LOG_LEVEL_WARNING:
+      return " \033[1;33mWARNING\033[0m";
+    case G_LOG_LEVEL_MESSAGE:
+      return " \033[1;34mMESSAGE\033[0m";
+    case G_LOG_LEVEL_INFO:
+      return "    \033[1;32mINFO\033[0m";
+    case G_LOG_LEVEL_DEBUG:
+      return "   \033[1;32mDEBUG\033[0m";
+    case GCAL_LOG_LEVEL_TRACE:
+      return "   \033[1;36mTRACE\033[0m";
 
     default:
       return " UNKNOWN";
@@ -51,10 +57,10 @@ log_level_str (GLogLevelFlags log_level)
 }
 
 static void
-gcal_log_handler (const gchar    *domain,
-                  GLogLevelFlags  log_level,
-                  const gchar    *message,
-                  gpointer        user_data)
+gcal_log_handler (const gchar *domain,
+                  GLogLevelFlags log_level,
+                  const gchar *message,
+                  gpointer user_data)
 {
   g_autoptr (GDateTime) now = NULL;
   g_autofree gchar *buffer = NULL;
@@ -100,4 +106,3 @@ gcal_log_init (void)
       g_once_init_leave (&initialized, TRUE);
     }
 }
-

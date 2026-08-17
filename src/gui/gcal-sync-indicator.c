@@ -21,22 +21,22 @@
 
 #define G_LOG_DOMAIN "GcalSyncIndicator"
 
-#include "gcal-context.h"
 #include "gcal-sync-indicator.h"
+#include "gcal-context.h"
 
 struct _GcalSyncIndicator
 {
-  AdwBin              parent_instance;
+  AdwBin parent_instance;
 
-  GtkSpinner         *refreshing_spinner;
-  GtkStack           *stack;
+  GtkSpinner *refreshing_spinner;
+  GtkStack *stack;
 
-  guint               icon_changed_source_id;
+  guint icon_changed_source_id;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
-static gboolean      icon_change_timeout_cb                      (gpointer           data);
+static gboolean icon_change_timeout_cb (gpointer data);
 
 G_DEFINE_FINAL_TYPE (GcalSyncIndicator, gcal_sync_indicator, ADW_TYPE_BIN)
 
@@ -47,8 +47,9 @@ enum
   N_PROPS,
 };
 
-static GParamSpec *properties [N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -77,7 +78,6 @@ schedule_switch_to_success (GcalSyncIndicator *self)
   self->icon_changed_source_id = g_timeout_add (2000, icon_change_timeout_cb, self);
 }
 
-
 /*
  * Callbacks
  */
@@ -102,8 +102,8 @@ icon_change_timeout_cb (gpointer data)
 }
 
 static void
-on_manager_synchronizing_changed_cb (GcalManager       *manager,
-                                     GParamSpec        *pspec,
+on_manager_synchronizing_changed_cb (GcalManager *manager,
+                                     GParamSpec *pspec,
                                      GcalSyncIndicator *self)
 {
   if (gcal_manager_get_synchronizing (manager))
@@ -112,7 +112,6 @@ on_manager_synchronizing_changed_cb (GcalManager       *manager,
     schedule_switch_to_success (self);
 }
 
-
 /*
  * GObject overrides
  */
@@ -120,7 +119,7 @@ on_manager_synchronizing_changed_cb (GcalManager       *manager,
 static void
 gcal_sync_indicator_finalize (GObject *object)
 {
-  GcalSyncIndicator *self = (GcalSyncIndicator *)object;
+  GcalSyncIndicator *self = (GcalSyncIndicator *) object;
 
   g_clear_handle_id (&self->icon_changed_source_id, g_source_remove);
   g_clear_object (&self->context);
@@ -129,9 +128,9 @@ gcal_sync_indicator_finalize (GObject *object)
 }
 
 static void
-gcal_sync_indicator_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
+gcal_sync_indicator_get_property (GObject *object,
+                                  guint prop_id,
+                                  GValue *value,
                                   GParamSpec *pspec)
 {
   GcalSyncIndicator *self = GCAL_SYNC_INDICATOR (object);
@@ -148,10 +147,10 @@ gcal_sync_indicator_get_property (GObject    *object,
 }
 
 static void
-gcal_sync_indicator_set_property (GObject      *object,
-                                  guint         prop_id,
+gcal_sync_indicator_set_property (GObject *object,
+                                  guint prop_id,
                                   const GValue *value,
-                                  GParamSpec   *pspec)
+                                  GParamSpec *pspec)
 {
   GcalSyncIndicator *self = GCAL_SYNC_INDICATOR (object);
 

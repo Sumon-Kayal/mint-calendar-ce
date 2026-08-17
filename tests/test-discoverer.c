@@ -18,14 +18,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-
 #include <glib.h>
 #include <libecal/libecal.h>
 
 #include "gcal-simple-server.h"
 #include "gcal-source-discoverer.h"
 
-static GcalSimpleServer*
+static GcalSimpleServer *
 init_server (void)
 {
   g_autoptr (GcalSimpleServer) server = NULL;
@@ -39,9 +38,9 @@ init_server (void)
 /*********************************************************************************************************************/
 
 static void
-discovered_file_cb (GObject      *source_object,
+discovered_file_cb (GObject *source_object,
                     GAsyncResult *result,
-                    gpointer      user_data)
+                    gpointer user_data)
 {
   g_autoptr (GPtrArray) sources = NULL;
   g_autoptr (GError) error = NULL;
@@ -83,9 +82,9 @@ discoverer_file (void)
 /*********************************************************************************************************************/
 
 static void
-discoverer_invalid_https_only_cb (GObject      *source_object,
+discoverer_invalid_https_only_cb (GObject *source_object,
                                   GAsyncResult *result,
-                                  gpointer      user_data)
+                                  gpointer user_data)
 {
   g_autoptr (GPtrArray) sources = NULL;
   g_autoptr (GError) error = NULL;
@@ -212,7 +211,7 @@ discoverer_webdav_auth (void)
 /*********************************************************************************************************************/
 
 gint
-main (gint   argc,
+main (gint argc,
       gchar *argv[])
 {
   g_setenv ("TZ", "UTC", TRUE);
@@ -222,8 +221,7 @@ main (gint   argc,
 
   g_test_add_func ("/discoverer/file", discoverer_file);
   g_test_add_func ("/discoverer/invalid-https-only", discoverer_invalid_https_only);
-  //g_test_add_func ("/discoverer/webdav/unauthorized", discoverer_webdav_unauthorized);
+  // g_test_add_func ("/discoverer/webdav/unauthorized", discoverer_webdav_unauthorized);
 
   return g_test_run ();
 }
-

@@ -48,7 +48,7 @@ gcal_unichar_direction (gunichar ch)
 
 PangoDirection
 gcal_find_base_dir (const gchar *text,
-                    gint         length)
+                    gint length)
 {
   PangoDirection dir = PANGO_DIRECTION_NEUTRAL;
   const char *p;
@@ -56,16 +56,17 @@ gcal_find_base_dir (const gchar *text,
   g_return_val_if_fail (text != NULL || length == 0, PANGO_DIRECTION_NEUTRAL);
 
   p = text;
-  while ((length < 0 || p < text + length) && *p) {
-    gunichar wc = g_utf8_get_char (p);
+  while ((length < 0 || p < text + length) && *p)
+    {
+      gunichar wc = g_utf8_get_char (p);
 
-    dir = gcal_unichar_direction (wc);
+      dir = gcal_unichar_direction (wc);
 
-    if (dir != PANGO_DIRECTION_NEUTRAL)
-      break;
+      if (dir != PANGO_DIRECTION_NEUTRAL)
+        break;
 
-    p = g_utf8_next_char (p);
-  }
+      p = g_utf8_next_char (p);
+    }
 
   return dir;
 }

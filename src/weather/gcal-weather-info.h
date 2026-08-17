@@ -22,31 +22,26 @@
 #include <glib-object.h>
 #include <glib.h>
 
-
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_WEATHER_INFO (gcal_weather_info_get_type())
+#define GCAL_TYPE_WEATHER_INFO (gcal_weather_info_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalWeatherInfo, gcal_weather_info, GCAL, WEATHER_INFO, GObject)
 
+GcalWeatherInfo *gcal_weather_info_new (GDate *date,
+                                        const gchar *icon_name,
+                                        const gchar *temperature);
 
-GcalWeatherInfo*     gcal_weather_info_new                       (GDate              *date,
-                                                                  const gchar        *icon_name,
-                                                                  const gchar        *temperature);
+void gcal_weather_info_get_date (GcalWeatherInfo *self,
+                                 GDate *date);
 
-void                 gcal_weather_info_get_date                  (GcalWeatherInfo    *self,
-                                                                  GDate              *date);
+void gcal_weather_info_get_date (GcalWeatherInfo *self,
+                                 GDate *date);
 
-void                 gcal_weather_info_get_date                  (GcalWeatherInfo    *self,
-                                                                  GDate              *date);
+const gchar *gcal_weather_info_get_icon_name (GcalWeatherInfo *self);
 
-const gchar*         gcal_weather_info_get_icon_name             (GcalWeatherInfo    *self);
-
-const gchar*         gcal_weather_info_get_temperature           (GcalWeatherInfo    *self);
-
+const gchar *gcal_weather_info_get_temperature (GcalWeatherInfo *self);
 
 G_END_DECLS
 
 #endif /* __GCAL_WEATHER_INFO_H__ */
-
-

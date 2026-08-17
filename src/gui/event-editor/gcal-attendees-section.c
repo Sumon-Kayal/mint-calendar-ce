@@ -35,19 +35,18 @@ struct _GcalAttendeesSection
 {
   GtkBox parent_instance;
 
-  GcalContext         *context;
-  GcalEvent           *event;
-  GcalEventOrganizer  *organizer;
+  GcalContext *context;
+  GcalEvent *event;
+  GcalEventOrganizer *organizer;
 
-  AdwActionRow        *summary_row;
+  AdwActionRow *summary_row;
 
-  GListModel          *attendees;
+  GListModel *attendees;
 };
 
-static void          gcal_event_editor_section_init_iface        (GcalEventEditorSectionInterface *iface);
+static void gcal_event_editor_section_init_iface (GcalEventEditorSectionInterface *iface);
 
-G_DEFINE_FINAL_TYPE_WITH_CODE (GcalAttendeesSection, gcal_attendees_section, GTK_TYPE_BOX,
-                               G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_init_iface))
+G_DEFINE_FINAL_TYPE_WITH_CODE (GcalAttendeesSection, gcal_attendees_section, GTK_TYPE_BOX, G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_init_iface))
 
 enum
 {
@@ -58,12 +57,14 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties[N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 static void
 gcal_attendees_section_set_event (GcalEventEditorSection *section,
-                                  GcalEvent              *event,
-                                  GcalEventEditorFlags    flags)
+                                  GcalEvent *event,
+                                  GcalEventEditorFlags flags)
 {
   GcalAttendeesSection *self = GCAL_ATTENDEES_SECTION (section);
 
@@ -195,9 +196,9 @@ gcal_attendees_section_class_init (GcalAttendeesSectionClass *klass)
    * The #GcalContext instance. Required by the interface.
    */
   properties[PROP_CONTEXT] =
-    g_param_spec_object ("context", NULL, NULL,
-                         GCAL_TYPE_CONTEXT,
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("context", NULL, NULL,
+                           GCAL_TYPE_CONTEXT,
+                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeesSection:attendees:
@@ -206,9 +207,9 @@ gcal_attendees_section_class_init (GcalAttendeesSectionClass *klass)
    * Passed to the summary rows #GcalAttendeeSummaryRow.
    */
   properties[PROP_ATTENDEES] =
-    g_param_spec_object ("attendees", NULL, NULL,
-                         G_TYPE_LIST_MODEL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("attendees", NULL, NULL,
+                           G_TYPE_LIST_MODEL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeesSection:organizer:
@@ -217,9 +218,9 @@ gcal_attendees_section_class_init (GcalAttendeesSectionClass *klass)
    * #GcalOrganizerRow binds to this property.
    */
   properties[PROP_ORGANIZER] =
-    g_param_spec_object ("organizer", NULL, NULL,
-                         GCAL_TYPE_EVENT_ORGANIZER,
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("organizer", NULL, NULL,
+                           GCAL_TYPE_EVENT_ORGANIZER,
+                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 

@@ -26,8 +26,8 @@
 #include "gcal-application.h"
 #include "gcal-context.h"
 #include "gcal-enums.h"
-#include "gcal-utils.h"
 #include "gcal-event-widget.h"
+#include "gcal-utils.h"
 #include "gcal-view.h"
 
 #include <libecal/libecal.h>
@@ -39,9 +39,9 @@
 #include <langinfo.h>
 #include <locale.h>
 
-#include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 /**
  * SECTION:gcal-utils
@@ -50,57 +50,55 @@
  */
 
 static const gint
-ab_day[N_WEEKDAYS] =
-{
-  ABDAY_1,
-  ABDAY_2,
-  ABDAY_3,
-  ABDAY_4,
-  ABDAY_5,
-  ABDAY_6,
-  ABDAY_7,
-};
+    ab_day[N_WEEKDAYS] = {
+      ABDAY_1,
+      ABDAY_2,
+      ABDAY_3,
+      ABDAY_4,
+      ABDAY_5,
+      ABDAY_6,
+      ABDAY_7,
+    };
 
 static const gint
-month_item[12] =
-{
-  /* ALTMON_* constants have been introduced in glibc 2.27 (Feb 1, 2018), also
-   * have been supported in *BSD family (but not in OS X) since 1990s.
-   * If they exist they are the correct way to obtain the month names in
-   * nominative case, standalone, without the day number, as used in the
-   * calendar header.  This is obligatory in some languages (Slavic, Baltic,
-   * Greek, etc.) but also recommended to use in all languages because for
-   * other languages there is no difference between ALTMON_* and MON_*.
-   * If ALTMON_* is not supported then we must use MON_*.
-   */
+    month_item[12] = {
+/* ALTMON_* constants have been introduced in glibc 2.27 (Feb 1, 2018), also
+ * have been supported in *BSD family (but not in OS X) since 1990s.
+ * If they exist they are the correct way to obtain the month names in
+ * nominative case, standalone, without the day number, as used in the
+ * calendar header.  This is obligatory in some languages (Slavic, Baltic,
+ * Greek, etc.) but also recommended to use in all languages because for
+ * other languages there is no difference between ALTMON_* and MON_*.
+ * If ALTMON_* is not supported then we must use MON_*.
+ */
 #ifdef HAVE_ALTMON
-  ALTMON_1,
-  ALTMON_2,
-  ALTMON_3,
-  ALTMON_4,
-  ALTMON_5,
-  ALTMON_6,
-  ALTMON_7,
-  ALTMON_8,
-  ALTMON_9,
-  ALTMON_10,
-  ALTMON_11,
-  ALTMON_12
+      ALTMON_1,
+      ALTMON_2,
+      ALTMON_3,
+      ALTMON_4,
+      ALTMON_5,
+      ALTMON_6,
+      ALTMON_7,
+      ALTMON_8,
+      ALTMON_9,
+      ALTMON_10,
+      ALTMON_11,
+      ALTMON_12
 #else
-  MON_1,
-  MON_2,
-  MON_3,
-  MON_4,
-  MON_5,
-  MON_6,
-  MON_7,
-  MON_8,
-  MON_9,
-  MON_10,
-  MON_11,
-  MON_12
+      MON_1,
+      MON_2,
+      MON_3,
+      MON_4,
+      MON_5,
+      MON_6,
+      MON_7,
+      MON_8,
+      MON_9,
+      MON_10,
+      MON_11,
+      MON_12
 #endif
-};
+    };
 
 #define SCROLL_HARDNESS 10.0
 
@@ -112,7 +110,7 @@ month_item[12] =
  *
  * Returns: (transfer full): the weekday name
  */
-gchar*
+gchar *
 gcal_get_weekday (gint i)
 {
   return nl_langinfo (ab_day[i]);
@@ -126,7 +124,7 @@ gcal_get_weekday (gint i)
  *
  * Returns: (transfer full): the month name
  */
-gchar*
+gchar *
 gcal_get_month_name (gint i)
 {
   return nl_langinfo (month_item[i]);
@@ -142,9 +140,9 @@ gcal_get_month_name (gint i)
  *
  * Returns: (transfer full): a #GdkPaintable
  */
-GdkPaintable*
+GdkPaintable *
 gcal_get_paintable_from_color (const GdkRGBA *color,
-                               gint           size)
+                               gint size)
 {
   g_autoptr (GtkSnapshot) snapshot = gtk_snapshot_new ();
 
@@ -162,9 +160,9 @@ gcal_get_paintable_from_color (const GdkRGBA *color,
  *
  * Returns: (transfer full): a #cairo_surface_t
  */
-GdkPaintable*
+GdkPaintable *
 get_circle_paintable_from_color (const GdkRGBA *color,
-                                 gint           size)
+                                 gint size)
 {
   g_autoptr (GtkSnapshot) snapshot = NULL;
   GskRoundedRect rect;
@@ -213,9 +211,9 @@ get_color_name_from_source (ESource *source,
  * Returns: (nullable)(transfer full) a new allocated string with the
  * description
  **/
-gchar*
+gchar *
 get_desc_from_component (ECalComponent *component,
-                         const gchar   *joint_char)
+                         const gchar *joint_char)
 {
   GSList *text_list;
   GSList *l;
@@ -259,8 +257,8 @@ get_desc_from_component (ECalComponent *component,
  *
  * Returns: (Transfer full) a new allocated string with the description
  **/
-gchar*
-get_uuid_from_component (ESource       *source,
+gchar *
+get_uuid_from_component (ESource *source,
                          ECalComponent *component)
 {
   gchar *uuid;
@@ -358,7 +356,7 @@ read_first_weekday_from_portal (gint *out_first_weekday)
             }
         }
 
-out:
+    out:
       g_once_init_leave (&first_weekday_init, TRUE);
     }
 
@@ -386,7 +384,11 @@ get_first_weekday (void)
 
 #ifdef HAVE__NL_TIME_FIRST_WEEKDAY
 
-  union { unsigned int word; char *string; } langinfo;
+  union
+  {
+    unsigned int word;
+    char *string;
+  } langinfo;
   gint week_1stday = 0;
   gint first_weekday = 1;
   guint week_origin;
@@ -408,9 +410,8 @@ get_first_weekday (void)
 
   gchar *gtk_week_start;
 
-
   /* Use a define to hide the string from xgettext */
-# define GTK_WEEK_START "calendar:week_start:0"
+#define GTK_WEEK_START "calendar:week_start:0"
   gtk_week_start = dgettext ("gtk40", GTK_WEEK_START);
 
   if (strncmp (gtk_week_start, "calendar:week_start:", 20) == 0)
@@ -440,10 +441,10 @@ get_first_weekday (void)
  *
  * Returns: (transfer full): an {@link ECalComponent} object
  **/
-ECalComponent*
+ECalComponent *
 build_component_from_details (const gchar *summary,
-                              GDateTime   *initial_date,
-                              GDateTime   *final_date)
+                              GDateTime *initial_date,
+                              GDateTime *final_date)
 {
   ECalComponent *event = NULL;
   ECalComponentDateTime *dt = NULL;
@@ -552,7 +553,7 @@ icaltime_compare_date (const ICalTime *date1,
 gint
 icaltime_compare_with_current (const ICalTime *date1,
                                const ICalTime *date2,
-                               time_t         *current_time_t)
+                               time_t *current_time_t)
 {
   g_autoptr (GTimeZone) zone = NULL;
   ICalTimezone *zone1, *zone2;
@@ -624,33 +625,41 @@ e_strftime_fix_am_pm (gchar *str,
   gchar *ffmt;
   gsize ret;
 
-  if (strstr(fmt, "%p")==NULL && strstr(fmt, "%P")==NULL) {
-    /* No AM/PM involved - can use the fmt string directly */
-    ret = e_strftime (str, max, fmt, tm);
-  } else {
-    /* Get the AM/PM symbol from the locale */
-    e_strftime (buf, 10, "%p", tm);
-
-    if (buf[0]) {
-      /* AM/PM have been defined in the locale
-       * so we can use the fmt string directly. */
+  if (strstr (fmt, "%p") == NULL && strstr (fmt, "%P") == NULL)
+    {
+      /* No AM/PM involved - can use the fmt string directly */
       ret = e_strftime (str, max, fmt, tm);
-    } else {
-      /* No AM/PM defined by locale
-       * must change to 24 hour clock. */
-      ffmt = g_strdup (fmt);
-      for (sp=ffmt; (sp=strstr(sp, "%l")); sp++) {
-        /* Maybe this should be 'k', but I have never
-         * seen a 24 clock actually use that format. */
-        sp[1]='H';
-      }
-      for (sp=ffmt; (sp=strstr(sp, "%I")); sp++) {
-        sp[1]='H';
-      }
-      ret = e_strftime (str, max, ffmt, tm);
-      g_free (ffmt);
     }
-  }
+  else
+    {
+      /* Get the AM/PM symbol from the locale */
+      e_strftime (buf, 10, "%p", tm);
+
+      if (buf[0])
+        {
+          /* AM/PM have been defined in the locale
+           * so we can use the fmt string directly. */
+          ret = e_strftime (str, max, fmt, tm);
+        }
+      else
+        {
+          /* No AM/PM defined by locale
+           * must change to 24 hour clock. */
+          ffmt = g_strdup (fmt);
+          for (sp = ffmt; (sp = strstr (sp, "%l")); sp++)
+            {
+              /* Maybe this should be 'k', but I have never
+               * seen a 24 clock actually use that format. */
+              sp[1] = 'H';
+            }
+          for (sp = ffmt; (sp = strstr (sp, "%I")); sp++)
+            {
+              sp[1] = 'H';
+            }
+          ret = e_strftime (str, max, ffmt, tm);
+          g_free (ffmt);
+        }
+    }
 
   return (ret);
 }
@@ -677,25 +686,28 @@ e_utf8_strftime_fix_am_pm (gchar *str,
     return 0;
 
   ret = e_strftime_fix_am_pm (str, max, locale_fmt, tm);
-  if (!ret) {
-    g_free (locale_fmt);
-    return 0;
-  }
+  if (!ret)
+    {
+      g_free (locale_fmt);
+      return 0;
+    }
 
   buf = g_locale_to_utf8 (str, ret, NULL, &sz, NULL);
-  if (!buf) {
-    g_free (locale_fmt);
-    return 0;
-  }
+  if (!buf)
+    {
+      g_free (locale_fmt);
+      return 0;
+    }
 
-  if (sz >= max) {
-    gchar *tmp = buf + max - 1;
-    tmp = g_utf8_find_prev_char (buf, tmp);
-    if (tmp)
-      sz = tmp - buf;
-    else
-      sz = 0;
-  }
+  if (sz >= max)
+    {
+      gchar *tmp = buf + max - 1;
+      tmp = g_utf8_find_prev_char (buf, tmp);
+      if (tmp)
+        sz = tmp - buf;
+      else
+        sz = 0;
+    }
   memcpy (str, buf, sz);
   str[sz] = '\0';
   g_free (locale_fmt);
@@ -713,16 +725,17 @@ e_utf8_strftime_fix_am_pm (gchar *str,
  * Returns: (transfer full): a string representing the
  * offset
  */
-gchar*
+gchar *
 format_utc_offset (gint64 offset)
 {
   const char *sign = "+";
   gint hours, minutes, seconds;
 
-  if (offset < 0) {
+  if (offset < 0)
+    {
       offset = -offset;
       sign = "-";
-  }
+    }
 
   /* offset can be seconds or microseconds */
   if (offset >= 1000000)
@@ -750,7 +763,7 @@ format_utc_offset (gint64 offset)
  * start that @alarm will be triggered.
  */
 gint
-get_alarm_trigger_minutes (GcalEvent          *event,
+get_alarm_trigger_minutes (GcalEvent *event,
                            ECalComponentAlarm *alarm)
 {
   ECalComponentAlarmTrigger *trigger;
@@ -771,10 +784,10 @@ get_alarm_trigger_minutes (GcalEvent          *event,
   alarm_dt = g_date_time_add_full (gcal_event_get_date_start (event),
                                    0,
                                    0,
-                                   - (i_cal_duration_get_days (duration) + i_cal_duration_get_weeks (duration) * N_WEEKDAYS),
-                                   - i_cal_duration_get_hours (duration),
-                                   - i_cal_duration_get_minutes (duration),
-                                   - i_cal_duration_get_seconds (duration));
+                                   -(i_cal_duration_get_days (duration) + i_cal_duration_get_weeks (duration) * N_WEEKDAYS),
+                                   -i_cal_duration_get_hours (duration),
+                                   -i_cal_duration_get_minutes (duration),
+                                   -i_cal_duration_get_seconds (duration));
 
   diff = g_date_time_difference (gcal_event_get_date_start (event), alarm_dt) / G_TIME_SPAN_MINUTE;
 
@@ -796,7 +809,7 @@ get_alarm_trigger_minutes (GcalEvent          *event,
  * Returns: %TRUE if the date should change, %FALSE otherwise.
  */
 gboolean
-should_change_date_for_scroll (gdouble  *scroll_value,
+should_change_date_for_scroll (gdouble *scroll_value,
                                GdkEvent *scroll_event)
 {
   gdouble dx, dy;
@@ -854,38 +867,37 @@ is_source_enabled (ESource *source)
 
 struct
 {
-  const gchar        *territory;
-  GcalWeekDay         no_work_days;
+  const gchar *territory;
+  GcalWeekDay no_work_days;
 } no_work_day_per_locale[] = {
-  { "AE", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* United Arab Emirates */,
-  { "AF", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Afghanistan */,
-  { "BD", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Bangladesh */,
-  { "BH", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Bahrain */,
-  { "BN", GCAL_WEEK_DAY_SUNDAY   | GCAL_WEEK_DAY_FRIDAY   } /* Brunei Darussalam */,
-  { "CR", GCAL_WEEK_DAY_SATURDAY                          } /* Costa Rica */,
-  { "DJ", GCAL_WEEK_DAY_FRIDAY                            } /* Djibouti */,
-  { "DZ", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Algeria */,
-  { "EG", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Egypt */,
-  { "GN", GCAL_WEEK_DAY_SATURDAY                          } /* Equatorial Guinea */,
-  { "HK", GCAL_WEEK_DAY_SATURDAY                          } /* Hong Kong */,
-  { "IL", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Israel */,
-  { "IQ", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Iraq */,
-  { "IR", GCAL_WEEK_DAY_THURSDAY | GCAL_WEEK_DAY_FRIDAY   } /* Iran */,
-  { "KW", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Kuwait */,
-  { "KZ", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Kazakhstan */,
-  { "LY", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Libya */,
-  { "MX", GCAL_WEEK_DAY_SATURDAY                          } /* Mexico */,
-  { "MY", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Malaysia */,
-  { "NP", GCAL_WEEK_DAY_SATURDAY                          } /* Nepal */,
-  { "OM", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Oman */,
-  { "QA", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Qatar */,
-  { "SA", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Saudi Arabia */,
-  { "SU", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Sudan */,
-  { "SY", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Syria */,
-  { "UG", GCAL_WEEK_DAY_SUNDAY                            } /* Uganda */,
-  { "YE", GCAL_WEEK_DAY_FRIDAY   | GCAL_WEEK_DAY_SATURDAY } /* Yemen */,
+  { "AE", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* United Arab Emirates */,
+  { "AF", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Afghanistan */,
+  { "BD", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Bangladesh */,
+  { "BH", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Bahrain */,
+  { "BN", GCAL_WEEK_DAY_SUNDAY | GCAL_WEEK_DAY_FRIDAY } /* Brunei Darussalam */,
+  { "CR", GCAL_WEEK_DAY_SATURDAY } /* Costa Rica */,
+  { "DJ", GCAL_WEEK_DAY_FRIDAY } /* Djibouti */,
+  { "DZ", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Algeria */,
+  { "EG", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Egypt */,
+  { "GN", GCAL_WEEK_DAY_SATURDAY } /* Equatorial Guinea */,
+  { "HK", GCAL_WEEK_DAY_SATURDAY } /* Hong Kong */,
+  { "IL", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Israel */,
+  { "IQ", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Iraq */,
+  { "IR", GCAL_WEEK_DAY_THURSDAY | GCAL_WEEK_DAY_FRIDAY } /* Iran */,
+  { "KW", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Kuwait */,
+  { "KZ", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Kazakhstan */,
+  { "LY", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Libya */,
+  { "MX", GCAL_WEEK_DAY_SATURDAY } /* Mexico */,
+  { "MY", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Malaysia */,
+  { "NP", GCAL_WEEK_DAY_SATURDAY } /* Nepal */,
+  { "OM", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Oman */,
+  { "QA", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Qatar */,
+  { "SA", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Saudi Arabia */,
+  { "SU", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Sudan */,
+  { "SY", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Syria */,
+  { "UG", GCAL_WEEK_DAY_SUNDAY } /* Uganda */,
+  { "YE", GCAL_WEEK_DAY_FRIDAY | GCAL_WEEK_DAY_SATURDAY } /* Yemen */,
 };
-
 
 /**
  * is_workday:
@@ -900,7 +912,9 @@ is_workday (guint day)
 {
   GcalWeekDay no_work_days;
   gchar *locale;
-  gchar territory[3] = { 0, };
+  gchar territory[3] = {
+    0,
+  };
   guint i;
 
   if (day > N_WEEKDAYS - 1)
@@ -931,10 +945,10 @@ is_workday (guint day)
   return !(no_work_days & 1 << day);
 }
 
-GList*
-filter_children_by_uid_and_modtype (GtkWidget             *widget,
-                                    GcalRecurrenceModType  mod,
-                                    const gchar           *uid)
+GList *
+filter_children_by_uid_and_modtype (GtkWidget *widget,
+                                    GcalRecurrenceModType mod,
+                                    const gchar *uid)
 {
   GtkWidget *child;
   GcalEvent *event;
@@ -1007,7 +1021,6 @@ filter_children_by_uid_and_modtype (GtkWidget             *widget,
               if (g_date_time_compare (gcal_event_get_date_start (event), gcal_event_get_date_start (ev)) < 0)
                 result = g_list_prepend (result, event_widget);
             }
-
         }
 
       e_cal_component_id_free (id);
@@ -1018,8 +1031,8 @@ filter_children_by_uid_and_modtype (GtkWidget             *widget,
 
 static GDBusProxy *
 create_dbus_proxy (GDBusConnection *connection,
-                   const gchar     *name,
-                   const gchar     *object_path)
+                   const gchar *name,
+                   const gchar *object_path)
 {
   return g_dbus_proxy_new_sync (connection,
                                 G_DBUS_PROXY_FLAGS_NONE,
@@ -1033,8 +1046,8 @@ create_dbus_proxy (GDBusConnection *connection,
 
 void
 gcal_utils_launch_gnome_settings (GDBusConnection *connection,
-                                  const gchar     *panel_id,
-                                  const gchar     *action)
+                                  const gchar *panel_id,
+                                  const gchar *action)
 {
   g_autoptr (GDBusProxy) proxy = NULL;
   GVariantBuilder builder;
@@ -1051,16 +1064,14 @@ gcal_utils_launch_gnome_settings (GDBusConnection *connection,
             {
               g_spawn_command_line_async ("gnome-online-accounts-gtk", NULL);
             }
-          else
-          if (g_strcmp0 (panel_id, "datetime") == 0)
+          else if (g_strcmp0 (panel_id, "datetime") == 0)
             {
               if (g_strcmp0 (desktop_environment, "X-Cinnamon") == 0)
                 {
                   g_spawn_command_line_async ("cinnamon-settings calendar", NULL);
                 }
-              else
-              if (g_strcmp0 (desktop_environment, "MATE") == 0 ||
-                  g_strcmp0 (desktop_environment, "XFCE") == 0)
+              else if (g_strcmp0 (desktop_environment, "MATE") == 0 ||
+                       g_strcmp0 (desktop_environment, "XFCE") == 0)
                 {
                   g_spawn_command_line_async ("time-admin", NULL);
                 }
@@ -1110,7 +1121,7 @@ gcal_utils_launch_gnome_settings (GDBusConnection *connection,
                           NULL);
 }
 
-gchar*
+gchar *
 gcal_utils_format_filename_for_display (const gchar *filename)
 {
   /*
@@ -1134,9 +1145,9 @@ gcal_utils_format_filename_for_display (const gchar *filename)
 }
 
 void
-gcal_utils_extract_google_section (const gchar  *description,
-                                   gchar       **out_description,
-                                   gchar       **out_meeting_url)
+gcal_utils_extract_google_section (const gchar *description,
+                                   gchar **out_description,
+                                   gchar **out_meeting_url)
 {
   g_autofree gchar *actual_description = NULL;
   g_autofree gchar *meeting_url = NULL;
@@ -1188,15 +1199,15 @@ out:
 
 typedef struct
 {
-  GcalEvent                 *event;
-  GcalAskRecurrenceCallback  callback;
-  gpointer                   user_data;
+  GcalEvent *event;
+  GcalAskRecurrenceCallback callback;
+  gpointer user_data;
 } AskRecurrenceData;
 
 static void
-on_message_dialog_response_cb (GObject      *source_object,
+on_message_dialog_response_cb (GObject *source_object,
                                GAsyncResult *result,
-                               gpointer      user_data)
+                               gpointer user_data)
 {
   GcalRecurrenceModType mod_type;
   AskRecurrenceData *data;
@@ -1220,11 +1231,11 @@ on_message_dialog_response_cb (GObject      *source_object,
 }
 
 void
-gcal_utils_ask_recurrence_modification_type (GtkWidget                 *parent,
-                                             GcalEvent                 *event,
-                                             gboolean                   show_mod_all,
-                                             GcalAskRecurrenceCallback  callback,
-                                             gpointer                   user_data)
+gcal_utils_ask_recurrence_modification_type (GtkWidget *parent,
+                                             GcalEvent *event,
+                                             gboolean show_mod_all,
+                                             GcalAskRecurrenceCallback callback,
+                                             gpointer user_data)
 {
   AskRecurrenceData *data;
   ECalClient *client;
@@ -1235,21 +1246,21 @@ gcal_utils_ask_recurrence_modification_type (GtkWidget                 *parent,
   data->callback = callback;
   data->user_data = user_data;
 
-  dialog = adw_alert_dialog_new (_("Modify Multiple Events?"),
-                                 _("The event you are trying to modify is recurring. The changes you have selected should be applied to:"));
+  dialog = adw_alert_dialog_new (_ ("Modify Multiple Events?"),
+                                 _ ("The event you are trying to modify is recurring. The changes you have selected should be applied to:"));
 
   adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
-                                  "close", _("_Cancel"),
-                                  "this-only", _("_Only This Event"),
+                                  "close", _ ("_Cancel"),
+                                  "this-only", _ ("_Only This Event"),
                                   NULL);
 
   client = gcal_calendar_get_client (gcal_event_get_calendar (event));
 
   if (!e_client_check_capability (E_CLIENT (client), E_CAL_STATIC_CAPABILITY_NO_THISANDFUTURE))
-    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "subsequent-events", _("_Subsequent Events"));
+    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "subsequent-events", _ ("_Subsequent Events"));
 
   if (show_mod_all)
-    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "all-events",  _("_All Events"));
+    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "all-events", _ ("_All Events"));
 
   adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "cancel");
   adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
@@ -1347,30 +1358,31 @@ gcal_is_valid_event_name (const gchar *event_name)
 const gchar *
 gcal_get_service_name_from_url (const gchar *url)
 {
-  struct {
+  struct
+  {
     const gchar *needle;
     const gchar *service_name;
   } service_name_vtable[] = {
     // Conferencing
-    { "bluejeans", N_("BlueJeans") },
-    { "bigbluebutton", N_("BigBlueButton") },
-    { "bbb", N_("BigBlueButton") },
-    { "meet.google.com", N_("Google Meet") },
-    { "meet.jit.si", N_("Jitsi") },
-    { "jitsi", N_("Jitsi") },
-    { "meetings.dialpad.com", N_("Uber Conference") },
-    { "meet.gnome.com", N_("GNOME Meet") },
-    { "teams.microsoft.com", N_("Microsoft Teams") },
-    { "whereby.com", N_("Whereby") },
-    { "webex", N_("Webex") },
-    { "zoom.us", N_("Zoom") },
+    { "bluejeans", N_ ("BlueJeans") },
+    { "bigbluebutton", N_ ("BigBlueButton") },
+    { "bbb", N_ ("BigBlueButton") },
+    { "meet.google.com", N_ ("Google Meet") },
+    { "meet.jit.si", N_ ("Jitsi") },
+    { "jitsi", N_ ("Jitsi") },
+    { "meetings.dialpad.com", N_ ("Uber Conference") },
+    { "meet.gnome.com", N_ ("GNOME Meet") },
+    { "teams.microsoft.com", N_ ("Microsoft Teams") },
+    { "whereby.com", N_ ("Whereby") },
+    { "webex", N_ ("Webex") },
+    { "zoom.us", N_ ("Zoom") },
 
     // Map
-    { "geo:", N_("View Map") },
-    { "openstreetmap.org", N_("OpenStreetMap") },
-    { "maps.app.goo.gl", N_("Google Maps") },
-    { "google.com/maps", N_("Google Maps") },
-    { "bing.com/maps", N_("Bing Maps") },
+    { "geo:", N_ ("View Map") },
+    { "openstreetmap.org", N_ ("OpenStreetMap") },
+    { "maps.app.goo.gl", N_ ("Google Maps") },
+    { "google.com/maps", N_ ("Google Maps") },
+    { "bing.com/maps", N_ ("Bing Maps") },
   };
   gsize i;
 
@@ -1386,7 +1398,7 @@ gcal_get_service_name_from_url (const gchar *url)
 /**
  * gcal_create_soup_session:
  *
-* Creates a new #SoupSession with correct default settings.
+ * Creates a new #SoupSession with correct default settings.
  *
  * Returns: (transfer full): a new #SoupSession
  */
@@ -1420,11 +1432,11 @@ gcal_create_soup_session (void)
  */
 typedef struct
 {
-  GtkExpression *expression;  /* owned; the "read-only" property expression, reused for every watch */
-  GtkFilter     *bool_filter; /* borrowed; re-filtered when a watched calendar's value changes */
-  GListModel    *calendars;   /* borrowed; only kept to disconnect items-changed on teardown */
-  GHashTable    *watches;     /* GcalCalendar* (borrowed key) -> GtkExpressionWatch* (owned value) */
-  gulong         items_changed_id;
+  GtkExpression *expression; /* owned; the "read-only" property expression, reused for every watch */
+  GtkFilter *bool_filter;    /* borrowed; re-filtered when a watched calendar's value changes */
+  GListModel *calendars;     /* borrowed; only kept to disconnect items-changed on teardown */
+  GHashTable *watches;       /* GcalCalendar* (borrowed key) -> GtkExpressionWatch* (owned value) */
+  gulong items_changed_id;
 } GcalWritableCalendarsWatch;
 
 static void
@@ -1458,10 +1470,10 @@ reconcile_writable_calendars_watches (GcalWritableCalendarsWatch *watch_data)
           GtkExpressionWatch *expr_watch;
 
           expr_watch = gtk_expression_watch (watch_data->expression,
-                                              calendar,
-                                              on_writable_calendar_changed_cb,
-                                              g_object_ref (watch_data->bool_filter),
-                                              g_object_unref);
+                                             calendar,
+                                             on_writable_calendar_changed_cb,
+                                             g_object_ref (watch_data->bool_filter),
+                                             g_object_unref);
           g_hash_table_insert (watch_data->watches, calendar, expr_watch);
         }
     }
@@ -1478,11 +1490,11 @@ reconcile_writable_calendars_watches (GcalWritableCalendarsWatch *watch_data)
 }
 
 static void
-on_writable_calendars_items_changed_cb (GListModel                 *calendars,
-                                         guint                       position,
-                                         guint                       removed,
-                                         guint                       added,
-                                         GcalWritableCalendarsWatch *watch_data)
+on_writable_calendars_items_changed_cb (GListModel *calendars,
+                                        guint position,
+                                        guint removed,
+                                        guint added,
+                                        GcalWritableCalendarsWatch *watch_data)
 {
   reconcile_writable_calendars_watches (watch_data);
 }
@@ -1514,7 +1526,7 @@ on_writable_calendars_watch_free (gpointer data)
  *
  * Returns: (transfer full): a #GListModel with all available read-write #GcalCalendar
  */
-GListModel*
+GListModel *
 gcal_create_writable_calendars_model (GcalManager *manager)
 {
   g_autoptr (GtkFilterListModel) filter_model = NULL;
@@ -1539,13 +1551,13 @@ gcal_create_writable_calendars_model (GcalManager *manager)
   watch_data->calendars = calendars;
   watch_data->watches = g_hash_table_new (NULL, NULL);
   watch_data->items_changed_id = g_signal_connect (calendars,
-                                                     "items-changed",
-                                                     G_CALLBACK (on_writable_calendars_items_changed_cb),
-                                                     watch_data);
+                                                   "items-changed",
+                                                   G_CALLBACK (on_writable_calendars_items_changed_cb),
+                                                   watch_data);
   reconcile_writable_calendars_watches (watch_data);
 
   g_object_set_data_full (G_OBJECT (filter_model), "gcal-writable-calendars-watch",
-                           watch_data, on_writable_calendars_watch_free);
+                          watch_data, on_writable_calendars_watch_free);
 
   return G_LIST_MODEL (g_steal_pointer (&filter_model));
 }

@@ -18,8 +18,8 @@
 
 #define G_LOG_DOMAIN "GcalDateTimeChooser"
 
-#include "gcal-date-chooser-row.h"
 #include "gcal-date-time-chooser.h"
+#include "gcal-date-chooser-row.h"
 #include "gcal-date-time-utils.h"
 #include "gcal-debug.h"
 #include "gcal-time-zone-dialog.h"
@@ -31,18 +31,18 @@ struct _GcalDateTimeChooser
   AdwPreferencesGroup parent;
 
   GcalDateChooserRow *date_row;
-  AdwEntryRow        *time_row;
-  GtkPopover         *time_popover;
-  AdwButtonContent   *time_zone_button_content;
-  GtkWidget          *period_toggle_box;
-  GtkToggleButton    *am_toggle_button;
-  GtkToggleButton    *pm_toggle_button;
+  AdwEntryRow *time_row;
+  GtkPopover *time_popover;
+  AdwButtonContent *time_zone_button_content;
+  GtkWidget *period_toggle_box;
+  GtkToggleButton *am_toggle_button;
+  GtkToggleButton *pm_toggle_button;
 
   GtkAdjustment *hour_adjustment;
   GtkAdjustment *minute_adjustment;
 
-  GDateTime      *date_time;
-  GcalTimeFormat  time_format;
+  GDateTime *date_time;
+  GcalTimeFormat time_format;
 };
 
 G_DEFINE_TYPE (GcalDateTimeChooser, gcal_date_time_chooser, ADW_TYPE_PREFERENCES_GROUP);
@@ -62,7 +62,7 @@ static GParamSpec *properties[N_PROPS] = {
 
 static void on_spin_buttons_value_changed_cb (GcalDateTimeChooser *self);
 
-static void on_period_toggle_button_toggled_cb (GtkToggleButton     *button,
+static void on_period_toggle_button_toggled_cb (GtkToggleButton *button,
                                                 GcalDateTimeChooser *self);
 
 /*
@@ -139,7 +139,7 @@ normalize_timezone_button_label (GcalDateTimeChooser *self)
   /* Translators: "%1$s" is the timezone identifier (e.g. UTC, America/Sao_Paulo)
    * and "%2$s" is the timezone offset (e.g. UTC-3).
    */
-  formatted = g_strdup_printf (_("%1$s (%2$s)"), identifier, utc_str);
+  formatted = g_strdup_printf (_ ("%1$s (%2$s)"), identifier, utc_str);
 
   adw_button_content_set_label (self->time_zone_button_content, formatted);
 }
@@ -333,15 +333,14 @@ validate_and_normalize_time_entry (GcalDateTimeChooser *self)
     }
 }
 
-
 /*
  * Callbacks
  */
 
 static void
 on_date_changed_cb (GcalDateTimeChooser *self,
-                    GParamSpec          *pspec,
-                    GtkWidget           *widget)
+                    GParamSpec *pspec,
+                    GtkWidget *widget)
 {
   g_autoptr (GDateTime) new_date_time = NULL;
   GDateTime *date_chooser_row_date;
@@ -363,7 +362,7 @@ on_date_changed_cb (GcalDateTimeChooser *self,
 }
 
 static void
-on_time_zone_selected_cb (GcalTimeZoneDialog  *dialog,
+on_time_zone_selected_cb (GcalTimeZoneDialog *dialog,
                           GcalDateTimeChooser *self)
 {
   GTimeZone *time_zone;
@@ -387,7 +386,7 @@ on_time_zone_selected_cb (GcalTimeZoneDialog  *dialog,
 }
 
 static void
-on_time_zone_button_clicked_cb (GtkButton           *button,
+on_time_zone_button_clicked_cb (GtkButton *button,
                                 GcalDateTimeChooser *self)
 {
   AdwDialog *dialog;
@@ -402,21 +401,21 @@ on_time_zone_button_clicked_cb (GtkButton           *button,
 
 static void
 on_time_row_contains_focus_changed_cb (GtkEventControllerFocus *focus_controller,
-                                       GParamSpec              *pspec,
-                                       GcalDateTimeChooser     *self)
+                                       GParamSpec *pspec,
+                                       GcalDateTimeChooser *self)
 {
   validate_and_normalize_time_entry (self);
 }
 
 static void
-on_time_popover_shown_cb (GtkPopover          *popover,
+on_time_popover_shown_cb (GtkPopover *popover,
                           GcalDateTimeChooser *self)
 {
   validate_and_normalize_time_entry (self);
 }
 
 static void
-on_spin_button_output_cb (GtkWidget           *widget,
+on_spin_button_output_cb (GtkWidget *widget,
                           GcalDateTimeChooser *self)
 {
   g_autofree gchar *text = NULL;
@@ -469,7 +468,7 @@ on_spin_buttons_value_changed_cb (GcalDateTimeChooser *self)
 }
 
 static void
-on_hour_spin_button_wrapped_cb (GtkSpinButton       *spin_button,
+on_hour_spin_button_wrapped_cb (GtkSpinButton *spin_button,
                                 GcalDateTimeChooser *self)
 {
   if (gtk_toggle_button_get_active (self->am_toggle_button))
@@ -479,7 +478,7 @@ on_hour_spin_button_wrapped_cb (GtkSpinButton       *spin_button,
 }
 
 static void
-on_period_toggle_button_toggled_cb (GtkToggleButton     *button,
+on_period_toggle_button_toggled_cb (GtkToggleButton *button,
                                     GcalDateTimeChooser *self)
 {
   g_autoptr (GDateTime) new_date_time = NULL;
@@ -510,9 +509,9 @@ gcal_date_time_chooser_dispose (GObject *object)
 }
 
 static void
-gcal_date_time_chooser_get_property (GObject    *object,
-                                     guint       prop_id,
-                                     GValue     *value,
+gcal_date_time_chooser_get_property (GObject *object,
+                                     guint prop_id,
+                                     GValue *value,
                                      GParamSpec *pspec)
 {
   GcalDateTimeChooser *self = GCAL_DATE_TIME_CHOOSER (object);
@@ -537,10 +536,10 @@ gcal_date_time_chooser_get_property (GObject    *object,
 }
 
 static void
-gcal_date_time_chooser_set_property (GObject      *object,
-                                     guint         prop_id,
+gcal_date_time_chooser_set_property (GObject *object,
+                                     guint prop_id,
                                      const GValue *value,
-                                     GParamSpec   *pspec)
+                                     GParamSpec *pspec)
 {
   GcalDateTimeChooser *self = GCAL_DATE_TIME_CHOOSER (object);
 
@@ -649,7 +648,7 @@ gcal_date_time_chooser_new (void)
 
 void
 gcal_date_time_chooser_set_time_format (GcalDateTimeChooser *self,
-                                        GcalTimeFormat       time_format)
+                                        GcalTimeFormat time_format)
 {
   g_return_if_fail (GCAL_IS_DATE_TIME_CHOOSER (self));
 
@@ -701,7 +700,7 @@ gcal_date_time_chooser_get_date_time (GcalDateTimeChooser *self)
  */
 void
 gcal_date_time_chooser_set_date_time (GcalDateTimeChooser *self,
-                                      GDateTime           *date_time)
+                                      GDateTime *date_time)
 {
   GCAL_ENTRY;
 
@@ -750,7 +749,7 @@ gcal_date_time_chooser_get_date (GcalDateTimeChooser *self)
  */
 void
 gcal_date_time_chooser_set_date (GcalDateTimeChooser *self,
-                                 GDateTime           *date_time)
+                                 GDateTime *date_time)
 {
   g_autoptr (GDateTime) new_date_time = NULL;
 
@@ -779,7 +778,7 @@ gcal_date_time_chooser_set_date (GcalDateTimeChooser *self,
  *
  * Returns: (transfer none): the label of the date row.
  */
-const gchar*
+const gchar *
 gcal_date_time_chooser_get_date_label (GcalDateTimeChooser *self)
 {
   g_assert (GCAL_IS_DATE_TIME_CHOOSER (self));
@@ -796,7 +795,7 @@ gcal_date_time_chooser_get_date_label (GcalDateTimeChooser *self)
  */
 void
 gcal_date_time_chooser_set_date_label (GcalDateTimeChooser *self,
-                                       const gchar         *date_label)
+                                       const gchar *date_label)
 {
   g_assert (GCAL_IS_DATE_TIME_CHOOSER (self));
 
@@ -811,7 +810,7 @@ gcal_date_time_chooser_set_date_label (GcalDateTimeChooser *self,
  *
  * Returns: (transfer none): the label of the time row.
  */
-const gchar*
+const gchar *
 gcal_date_time_chooser_get_time_label (GcalDateTimeChooser *self)
 {
   g_assert (GCAL_IS_DATE_TIME_CHOOSER (self));
@@ -828,7 +827,7 @@ gcal_date_time_chooser_get_time_label (GcalDateTimeChooser *self)
  */
 void
 gcal_date_time_chooser_set_time_label (GcalDateTimeChooser *self,
-                                       const gchar         *time_label)
+                                       const gchar *time_label)
 {
   g_assert (GCAL_IS_DATE_TIME_CHOOSER (self));
 

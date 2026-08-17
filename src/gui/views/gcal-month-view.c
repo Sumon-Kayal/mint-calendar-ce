@@ -21,20 +21,20 @@
 
 #define G_LOG_DOMAIN "GcalMonthView"
 
+#include "gcal-month-view.h"
 #include "config.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-month-cell.h"
 #include "gcal-month-popover.h"
-#include "gcal-month-view.h"
 #include "gcal-month-view-row.h"
 #include "gcal-range-tree.h"
 #include "gcal-timeline-subscriber.h"
 #include "gcal-utils.h"
 #include "gcal-view-private.h"
 
-#include <math.h>
 #include <adwaita.h>
+#include <math.h>
 
 #define N_ROWS_PER_PAGE 5
 #define N_PAGES 5
@@ -48,53 +48,51 @@ G_STATIC_ASSERT (N_PAGES % 2 != 0);
 
 struct _GcalMonthView
 {
-  GtkWidget          parent;
+  GtkWidget parent;
 
-  GtkWidget          *header;
-  GtkWidget          *weekday_label[N_WEEKDAYS];
+  GtkWidget *header;
+  GtkWidget *weekday_label[N_WEEKDAYS];
 
   GtkEventController *motion_controller;
 
-  GPtrArray          *week_rows;
-  GHashTable         *events;
+  GPtrArray *week_rows;
+  GHashTable *events;
 
-  struct {
-    GtkWidget        *popover;
+  struct
+  {
+    GtkWidget *popover;
     GcalMonthViewRow *row;
-    GtkWidget        *relative_to;
+    GtkWidget *relative_to;
   } overflow;
 
-  struct {
-    GDateTime        *start;
-    GDateTime        *end;
+  struct
+  {
+    GDateTime *start;
+    GDateTime *end;
   } selection;
 
   /* Ranges from [0.0, 1.0] */
-  gdouble             row_offset;
-  AdwAnimation       *row_offset_animation;
+  gdouble row_offset;
+  AdwAnimation *row_offset_animation;
 
-  AdwAnimation       *kinetic_scroll_animation;
-  gdouble             last_velocity;
+  AdwAnimation *kinetic_scroll_animation;
+  gdouble last_velocity;
 
-  GDateTime          *date;
-  GcalContext        *context;
+  GDateTime *date;
+  GcalContext *context;
 
-  GtkWidget          *last_focused_widget;
+  GtkWidget *last_focused_widget;
 
-  GdkModifierType     state;
+  GdkModifierType state;
 };
 
-static void          gcal_view_interface_init                    (GcalViewInterface  *iface);
+static void gcal_view_interface_init (GcalViewInterface *iface);
 
-static void          gtk_buildable_interface_init                (GtkBuildableIface  *iface);
+static void gtk_buildable_interface_init (GtkBuildableIface *iface);
 
-static void          gcal_timeline_subscriber_interface_init     (GcalTimelineSubscriberInterface *iface);
+static void gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface);
 
-
-G_DEFINE_FINAL_TYPE_WITH_CODE (GcalMonthView, gcal_month_view, GTK_TYPE_WIDGET,
-                               G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER, gcal_timeline_subscriber_interface_init)
-                               G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init)
-                               G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, gtk_buildable_interface_init))
+G_DEFINE_FINAL_TYPE_WITH_CODE (GcalMonthView, gcal_month_view, GTK_TYPE_WIDGET, G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER, gcal_timeline_subscriber_interface_init) G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init) G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, gtk_buildable_interface_init))
 
 enum
 {
@@ -105,16 +103,15 @@ enum
   N_PROPS,
 };
 
-
 /*
  * Auxiliary methods
  */
 
 static void
 allocate_overflow_popover (GcalMonthView *self,
-                           gint           width,
-                           gint           height,
-                           gint           baseline)
+                           gint width,
+                           gint height,
+                           gint baseline)
 {
   graphene_point_t origin, end;
   GtkAllocation popover_allocation;
@@ -144,7 +141,7 @@ allocate_overflow_popover (GcalMonthView *self,
                                  &end))
     g_assert_not_reached ();
 
-  cell_allocation = (GtkAllocation) {
+  cell_allocation = (GtkAllocation){
     .x = origin.x,
     .y = origin.y,
     .width = end.x - origin.x,
@@ -170,7 +167,7 @@ allocate_overflow_popover (GcalMonthView *self,
                          cell_allocation.width * 1.5);
   popover_height = CLAMP (popover_height, cell_allocation.height * 1.5, height);
 
-  popover_allocation = (GtkAllocation) {
+  popover_allocation = (GtkAllocation){
     .x = MAX (0, cell_allocation.x - (popover_width - cell_allocation.width) / 2.0),
     .y = MAX (header_height, cell_allocation.y - (popover_height - cell_allocation.height) / 2.0),
     .width = popover_width,
@@ -238,7 +235,7 @@ update_active_date (GcalMonthView *self)
 }
 
 static void
-add_cached_events_to_row (GcalMonthView    *self,
+add_cached_events_to_row (GcalMonthView *self,
                           GcalMonthViewRow *row)
 {
   g_autoptr (GcalRange) row_range = NULL;
@@ -295,11 +292,11 @@ move_bottom_row_to_top (GcalMonthView *self)
                                    GCAL_RANGE_DEFAULT);
 
 #ifdef GCAL_ENABLE_TRACE
-    {
-      g_autofree gchar *first_row_range_str = gcal_range_to_string (first_row_range);
-      g_autofree gchar *new_range_str = gcal_range_to_string (new_range);
-      GCAL_TRACE_MSG ("Moved bottom row to top, new range: %s (first row range: %s)", new_range_str, first_row_range_str);
-    }
+  {
+    g_autofree gchar *first_row_range_str = gcal_range_to_string (first_row_range);
+    g_autofree gchar *new_range_str = gcal_range_to_string (new_range);
+    GCAL_TRACE_MSG ("Moved bottom row to top, new range: %s (first row range: %s)", new_range_str, first_row_range_str);
+  }
 #endif
 
   last_row = g_ptr_array_steal_index (self->week_rows, self->week_rows->len - 1);
@@ -329,11 +326,11 @@ move_top_row_to_bottom (GcalMonthView *self)
                                    GCAL_RANGE_DEFAULT);
 
 #ifdef GCAL_ENABLE_TRACE
-    {
-      g_autofree gchar *last_row_range_str = gcal_range_to_string (last_row_range);
-      g_autofree gchar *new_range_str = gcal_range_to_string (new_range);
-      GCAL_TRACE_MSG ("Moved top row to bottom, new range: %s (last row range: %s)", new_range_str, last_row_range_str);
-    }
+  {
+    g_autofree gchar *last_row_range_str = gcal_range_to_string (last_row_range);
+    g_autofree gchar *new_range_str = gcal_range_to_string (new_range);
+    GCAL_TRACE_MSG ("Moved top row to bottom, new range: %s (last row range: %s)", new_range_str, last_row_range_str);
+  }
 #endif
 
   first_row = g_ptr_array_steal_index (self->week_rows, 0);
@@ -364,7 +361,7 @@ dump_row_ranges (GcalMonthView *self)
 
 static void
 update_week_ranges (GcalMonthView *self,
-                    GDateTime     *new_date)
+                    GDateTime *new_date)
 {
   g_autoptr (GcalRange) current_range = NULL;
   g_autoptr (GDateTime) current_date = NULL;
@@ -437,7 +434,7 @@ get_grid_height (GcalMonthView *self)
 
 static void
 offset_and_shuffle_rows (GcalMonthView *self,
-                         gdouble        dy)
+                         gdouble dy)
 {
   GCAL_ENTRY;
 
@@ -476,7 +473,7 @@ offset_and_shuffle_rows (GcalMonthView *self,
 
 static void
 offset_and_shuffle_rows_by_pixels (GcalMonthView *self,
-                                   gdouble        dy_pixels)
+                                   gdouble dy_pixels)
 {
   gdouble row_height;
   gint grid_height;
@@ -492,7 +489,7 @@ offset_and_shuffle_rows_by_pixels (GcalMonthView *self,
 }
 
 static void
-animate_row_offset_cb (gdouble  value,
+animate_row_offset_cb (gdouble value,
                        gpointer user_data)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (user_data);
@@ -502,7 +499,7 @@ animate_row_offset_cb (gdouble  value,
 }
 
 static void
-on_row_offset_animation_done (AdwAnimation  *animation,
+on_row_offset_animation_done (AdwAnimation *animation,
                               GcalMonthView *self)
 {
   gtk_widget_remove_css_class (GTK_WIDGET (self), "scrolling");
@@ -543,7 +540,7 @@ snap_to_top_row (GcalMonthView *self)
 }
 
 static void
-animate_row_scroll_cb (gdouble  value,
+animate_row_scroll_cb (gdouble value,
                        gpointer user_data)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (user_data);
@@ -562,7 +559,7 @@ animate_row_scroll_cb (gdouble  value,
 
 static void
 animate_row_scroll (GcalMonthView *self,
-                    gint           n_rows)
+                    gint n_rows)
 {
   GCAL_ENTRY;
 
@@ -665,7 +662,7 @@ update_selection_range (GcalMonthView *self)
 
 static gboolean
 child_focus_from_keyval (GtkWidget *widget,
-                         guint      keyval)
+                         guint keyval)
 {
   switch (keyval)
     {
@@ -692,7 +689,7 @@ child_focus_from_keyval (GtkWidget *widget,
 
 static void
 trigger_scroll (GcalMonthView *self,
-                gint           n_rows)
+                gint n_rows)
 {
   gtk_widget_add_css_class (GTK_WIDGET (self), "scrolling");
 
@@ -705,7 +702,7 @@ trigger_scroll (GcalMonthView *self,
 
 static gint
 compute_horizontal_axis_of_cell (GcalMonthView *self,
-                                 GtkWidget     *cell)
+                                 GtkWidget *cell)
 {
   gint cell_center;
   graphene_point_t point;
@@ -721,9 +718,9 @@ compute_horizontal_axis_of_cell (GcalMonthView *self,
 }
 
 static gboolean
-focus_month_cell (GcalMonthView    *self,
-                  GtkWidget        *cell,
-                  GtkDirectionType  direction)
+focus_month_cell (GcalMonthView *self,
+                  GtkWidget *cell,
+                  GtkDirectionType direction)
 {
   GtkWidget *row, *new_row, *new_cell;
   GtkDirectionType lateral;
@@ -780,18 +777,16 @@ focus_month_cell (GcalMonthView    *self,
   return gtk_widget_grab_focus (new_cell);
 }
 
-
-
 /*
  * Callbacks
  */
 
 static void
 on_click_gesture_pressed_cb (GtkGestureClick *click_gesture,
-                             gint             n_press,
-                             gdouble          x,
-                             gdouble          y,
-                             GcalMonthView   *self)
+                             gint n_press,
+                             gdouble x,
+                             gdouble y,
+                             GcalMonthView *self)
 {
   GtkWidget *widget_at_position;
   GtkWidget *day_cell;
@@ -818,10 +813,10 @@ on_click_gesture_pressed_cb (GtkGestureClick *click_gesture,
 
 static void
 on_click_gesture_released_cb (GtkGestureClick *click_gesture,
-                              gint             n_press,
-                              gdouble          x,
-                              gdouble          y,
-                              GcalMonthView   *self)
+                              gint n_press,
+                              gdouble x,
+                              gdouble y,
+                              GcalMonthView *self)
 {
   g_autoptr (GcalRange) selection_range = NULL;
   g_autoptr (GDateTime) selection_start = NULL;
@@ -869,9 +864,9 @@ on_click_gesture_released_cb (GtkGestureClick *click_gesture,
 
 static void
 on_motion_controller_motion_cb (GtkEventControllerMotion *motion_controller,
-                                gdouble                   x,
-                                gdouble                   y,
-                                GcalMonthView            *self)
+                                gdouble x,
+                                gdouble y,
+                                GcalMonthView *self)
 {
   GtkWidget *widget_at_position;
   GtkWidget *day_cell;
@@ -904,16 +899,16 @@ on_motion_controller_motion_cb (GtkEventControllerMotion *motion_controller,
 
 static void
 on_event_widget_activated_cb (GcalMonthViewRow *row,
-                              GcalEventWidget  *event_widget,
-                              GcalMonthView    *self)
+                              GcalEventWidget *event_widget,
+                              GcalMonthView *self)
 {
   gcal_view_event_activated (GCAL_VIEW (self), event_widget);
 }
 
 static void
 on_month_row_cell_activated_cb (GcalMonthViewRow *row,
-                                GcalMonthCell    *cell,
-                                GcalMonthView    *self)
+                                GcalMonthCell *cell,
+                                GcalMonthView *self)
 {
   g_autoptr (GcalRange) selection_range = NULL;
   g_autoptr (GDateTime) selection_start = NULL;
@@ -955,10 +950,10 @@ on_month_row_cell_activated_cb (GcalMonthViewRow *row,
 
 static gboolean
 on_key_controller_key_pressed_cb (GtkEventControllerKey *event_controller,
-                                  guint                  keyval,
-                                  guint                  keycode,
-                                  GdkModifierType        state,
-                                  GcalMonthView         *self)
+                                  guint keyval,
+                                  guint keycode,
+                                  GdkModifierType state,
+                                  GcalMonthView *self)
 {
   GDateTime *date = NULL;
   GtkWidget *focused_widget;
@@ -1004,10 +999,10 @@ on_key_controller_key_pressed_cb (GtkEventControllerKey *event_controller,
 
 static void
 on_key_controller_key_released_cb (GtkEventControllerKey *event_controller,
-                                   guint                  keyval,
-                                   guint                  keycode,
-                                   GdkModifierType        state,
-                                   GcalMonthView         *self)
+                                   guint keyval,
+                                   guint keycode,
+                                   GdkModifierType state,
+                                   GcalMonthView *self)
 {
   GtkWidget *focused_widget;
   GtkRoot *root;
@@ -1035,7 +1030,7 @@ on_key_controller_key_released_cb (GtkEventControllerKey *event_controller,
 
 static void
 on_scroll_controller_scroll_begin_cb (GtkEventControllerScroll *scroll_controller,
-                                      GcalMonthView            *self)
+                                      GcalMonthView *self)
 {
   GdkEvent *event;
 
@@ -1055,9 +1050,9 @@ on_scroll_controller_scroll_begin_cb (GtkEventControllerScroll *scroll_controlle
 
 static gboolean
 on_scroll_controller_scroll_cb (GtkEventControllerScroll *scroll_controller,
-                                gdouble                   dx,
-                                gdouble                   dy,
-                                GcalMonthView            *self)
+                                gdouble dx,
+                                gdouble dy,
+                                GcalMonthView *self)
 {
   GdkEvent *current_event;
 
@@ -1080,9 +1075,9 @@ on_scroll_controller_scroll_cb (GtkEventControllerScroll *scroll_controller,
 
 static gboolean
 on_discrete_scroll_controller_scroll_cb (GtkEventControllerScroll *scroll_controller,
-                                         gdouble                   dx,
-                                         gdouble                   dy,
-                                         GcalMonthView            *self)
+                                         gdouble dx,
+                                         gdouble dy,
+                                         GcalMonthView *self)
 {
   GdkEvent *current_event;
   gint n_rows = 0;
@@ -1112,7 +1107,7 @@ on_discrete_scroll_controller_scroll_cb (GtkEventControllerScroll *scroll_contro
 
 static void
 on_scroll_controller_scroll_end_cb (GtkEventControllerScroll *scroll_controller,
-                                    GcalMonthView            *self)
+                                    GcalMonthView *self)
 {
   GCAL_ENTRY;
 
@@ -1122,7 +1117,7 @@ on_scroll_controller_scroll_end_cb (GtkEventControllerScroll *scroll_controller,
 }
 
 static void
-decelerate_scroll_cb (gdouble  value,
+decelerate_scroll_cb (gdouble value,
                       gpointer user_data)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (user_data);
@@ -1138,7 +1133,7 @@ decelerate_scroll_cb (gdouble  value,
 }
 
 static void
-on_kinetic_scroll_done_cb (AdwAnimation  *animation,
+on_kinetic_scroll_done_cb (AdwAnimation *animation,
                            GcalMonthView *self)
 {
   GCAL_ENTRY;
@@ -1150,9 +1145,9 @@ on_kinetic_scroll_done_cb (AdwAnimation  *animation,
 
 static void
 on_scroll_controller_decelerate_cb (GtkEventControllerScroll *scroll_controller,
-                                    gdouble                   velocity_x,
-                                    gdouble                   velocity_y,
-                                    GcalMonthView            *self)
+                                    gdouble velocity_x,
+                                    gdouble velocity_y,
+                                    GcalMonthView *self)
 {
   g_autoptr (AdwAnimationTarget) animation_target = NULL;
   gdouble row_height;
@@ -1204,8 +1199,8 @@ on_scroll_controller_decelerate_cb (GtkEventControllerScroll *scroll_controller,
 
 static void
 on_month_row_show_overflow_cb (GcalMonthViewRow *row,
-                               GcalMonthCell    *cell,
-                               GcalMonthView    *self)
+                               GcalMonthCell *cell,
+                               GcalMonthView *self)
 {
   GcalMonthPopover *popover;
   GtkWidget *focused;
@@ -1237,7 +1232,7 @@ on_month_row_show_overflow_cb (GcalMonthViewRow *row,
 
 static void
 on_month_popover_event_activated_cb (GcalMonthPopover *month_popover,
-                                     GcalEventWidget  *event_widget,
+                                     GcalEventWidget *event_widget,
                                      GcalMonthViewRow *self)
 {
   gcal_view_event_activated (GCAL_VIEW (self), event_widget);
@@ -1245,7 +1240,7 @@ on_month_popover_event_activated_cb (GcalMonthPopover *month_popover,
 
 static void
 on_month_popover_closed_cb (GcalMonthPopover *month_popover,
-                            GcalMonthView    *self)
+                            GcalMonthView *self)
 {
   if (self->last_focused_widget)
     {
@@ -1254,12 +1249,11 @@ on_month_popover_closed_cb (GcalMonthPopover *month_popover,
     }
 }
 
-
 /*
  * GcalTimelineSubscriber iface
  */
 
-static GcalRange*
+static GcalRange *
 gcal_month_view_get_range (GcalTimelineSubscriber *subscriber)
 {
   g_autoptr (GcalRange) first_row_range = NULL;
@@ -1277,7 +1271,7 @@ gcal_month_view_get_range (GcalTimelineSubscriber *subscriber)
 
 static void
 gcal_month_view_add_event (GcalTimelineSubscriber *subscriber,
-                           GcalEvent              *event)
+                           GcalEvent *event)
 {
   GcalMonthView *self;
 
@@ -1320,7 +1314,7 @@ gcal_month_view_add_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_month_view_remove_event (GcalTimelineSubscriber *subscriber,
-                              GcalEvent              *event)
+                              GcalEvent *event)
 {
   g_autoptr (GcalEvent) G_GNUC_UNUSED owned_event = NULL;
   GcalMonthView *self;
@@ -1367,8 +1361,8 @@ gcal_month_view_remove_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_month_view_update_event (GcalTimelineSubscriber *subscriber,
-                              GcalEvent              *old_event,
-                              GcalEvent              *event)
+                              GcalEvent *old_event,
+                              GcalEvent *event)
 {
   GCAL_ENTRY;
 
@@ -1389,12 +1383,11 @@ gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface)
   iface->remove_event = gcal_month_view_remove_event;
 }
 
-
 /*
  * GcalView interface
  */
 
-static GDateTime*
+static GDateTime *
 gcal_month_view_get_date (GcalView *view)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (view);
@@ -1403,7 +1396,7 @@ gcal_month_view_get_date (GcalView *view)
 }
 
 static void
-gcal_month_view_set_date (GcalView  *view,
+gcal_month_view_set_date (GcalView *view,
                           GDateTime *date)
 {
   GcalMonthView *self;
@@ -1452,10 +1445,10 @@ gcal_month_view_clear_marks (GcalView *view)
   GCAL_EXIT;
 }
 
-static GList*
-gcal_month_view_get_children_by_uuid (GcalView              *view,
-                                      GcalRecurrenceModType  mod,
-                                      const gchar           *uuid)
+static GList *
+gcal_month_view_get_children_by_uuid (GcalView *view,
+                                      GcalRecurrenceModType mod,
+                                      const gchar *uuid)
 {
   g_autoptr (GList) children = NULL;
   GcalMonthView *self;
@@ -1478,7 +1471,7 @@ gcal_month_view_get_children_by_uuid (GcalView              *view,
   GCAL_RETURN (g_steal_pointer (&children));
 }
 
-static GDateTime*
+static GDateTime *
 gcal_month_view_get_next_date (GcalView *view)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (view);
@@ -1492,8 +1485,7 @@ gcal_month_view_get_next_date (GcalView *view)
   return g_date_time_new_local (year, month, 1, 0, 0, 0);
 }
 
-
-static GDateTime*
+static GDateTime *
 gcal_month_view_get_previous_date (GcalView *view)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (view);
@@ -1518,7 +1510,6 @@ gcal_view_interface_init (GcalViewInterface *iface)
   iface->get_previous_date = gcal_month_view_get_previous_date;
 }
 
-
 /*
  * GtkBuildable interface
  */
@@ -1527,9 +1518,9 @@ static GtkBuildableIface *parent_buildable_iface;
 
 static void
 gcal_month_view_add_child (GtkBuildable *buildable,
-                           GtkBuilder   *builder,
-                           GObject      *child,
-                           const gchar  *type)
+                           GtkBuilder *builder,
+                           GObject *child,
+                           const gchar *type)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (buildable);
 
@@ -1552,14 +1543,13 @@ gtk_buildable_interface_init (GtkBuildableIface *iface)
   iface->add_child = gcal_month_view_add_child;
 }
 
-
 /*
  * GtkWidget overrides
  */
 
 static gboolean
-gcal_month_view_focus (GtkWidget        *widget,
-                       GtkDirectionType  direction)
+gcal_month_view_focus (GtkWidget *widget,
+                       GtkDirectionType direction)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (widget);
   GtkWidget *candidate = NULL;
@@ -1633,13 +1623,13 @@ gcal_month_view_focus (GtkWidget        *widget,
 }
 
 static void
-gcal_month_view_measure (GtkWidget      *widget,
-                         GtkOrientation  orientation,
-                         gint            for_size,
-                         gint           *minimum,
-                         gint           *natural,
-                         gint           *minimum_baseline,
-                         gint           *natural_baseline)
+gcal_month_view_measure (GtkWidget *widget,
+                         GtkOrientation orientation,
+                         gint for_size,
+                         gint *minimum,
+                         gint *natural,
+                         gint *minimum_baseline,
+                         gint *natural_baseline)
 {
   GcalMonthView *self;
   gint natural_header_size;
@@ -1685,7 +1675,6 @@ gcal_month_view_measure (GtkWidget      *widget,
         }
     }
 
-
   if (orientation == GTK_ORIENTATION_VERTICAL)
     {
       if (minimum)
@@ -1697,10 +1686,10 @@ gcal_month_view_measure (GtkWidget      *widget,
   else
     {
       if (minimum)
-        *minimum = MAX(minimum_header_size, minimum_row_size);
+        *minimum = MAX (minimum_header_size, minimum_row_size);
 
       if (natural)
-        *natural = MAX(natural_header_size, natural_row_size);
+        *natural = MAX (natural_header_size, natural_row_size);
     }
 
   if (minimum_baseline)
@@ -1712,9 +1701,9 @@ gcal_month_view_measure (GtkWidget      *widget,
 
 static void
 gcal_month_view_size_allocate (GtkWidget *widget,
-                               gint       width,
-                               gint       height,
-                               gint       baseline)
+                               gint width,
+                               gint height,
+                               gint baseline)
 {
   GcalMonthView *self;
   gdouble row_scroll_offset;
@@ -1762,7 +1751,7 @@ gcal_month_view_size_allocate (GtkWidget *widget,
 }
 
 static void
-gcal_month_view_snapshot (GtkWidget   *widget,
+gcal_month_view_snapshot (GtkWidget *widget,
                           GtkSnapshot *snapshot)
 {
   GcalMonthView *self;
@@ -1790,7 +1779,6 @@ gcal_month_view_snapshot (GtkWidget   *widget,
   /* Overflow popover */
   gtk_widget_snapshot_child (widget, self->overflow.popover, snapshot);
 }
-
 
 /*
  * GObject overrides
@@ -1822,7 +1810,7 @@ gcal_month_view_dispose (GObject *object)
 static void
 gcal_month_view_finalize (GObject *object)
 {
-  GcalMonthView *self = (GcalMonthView *)object;
+  GcalMonthView *self = (GcalMonthView *) object;
 
   gcal_clear_date_time (&self->selection.start);
   gcal_clear_date_time (&self->selection.end);
@@ -1833,9 +1821,9 @@ gcal_month_view_finalize (GObject *object)
 }
 
 static void
-gcal_month_view_get_property (GObject    *object,
-                              guint       prop_id,
-                              GValue     *value,
+gcal_month_view_get_property (GObject *object,
+                              guint prop_id,
+                              GValue *value,
                               GParamSpec *pspec)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (object);
@@ -1860,10 +1848,10 @@ gcal_month_view_get_property (GObject    *object,
 }
 
 static void
-gcal_month_view_set_property (GObject      *object,
-                              guint         prop_id,
+gcal_month_view_set_property (GObject *object,
+                              guint prop_id,
                               const GValue *value,
-                              GParamSpec   *pspec)
+                              GParamSpec *pspec)
 {
   GcalMonthView *self = GCAL_MONTH_VIEW (object);
 

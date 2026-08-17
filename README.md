@@ -1,11 +1,12 @@
 <div align="center">
   <img src="data/icons/hicolor/scalable/apps/org.mint.calendar.ce.svg" width="128" height="128">
 
-  # Mint Calendar CE 
-  #      v1.0
+# Mint Calendar CE
 
-  Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
-  GNOME Calendar applied on top.
+# v1.0
+
+Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
+GNOME Calendar applied on top.
 
   <img width="922" src="https://static.gnome.org/appdata/gnome-50/org.gnome.Calendar/month-view.png">
 </div>
@@ -15,13 +16,13 @@ distributed independently — not an official Linux Mint or GNOME project.
 
 ## How this compares
 
-| | Linux Mint's `gnome-calendar` | GNOME Calendar (stock) | Mint Calendar CE |
-|---|---|---|---|
-| Based on | GNOME Calendar 48 | GNOME Calendar 50 | GNOME Calendar 50 |
-| Linux Mint's compatibility patch | Yes | No | Yes |
-| Branding | Stock GNOME | Stock GNOME | Mint-branded, Mint-Y-Dark icon |
-| Official Mint project | Yes | — | No — independent/community |
-| Where to get it | Mint's own repos | GNOME / Flathub | This project's [Releases page](https://github.com/Sumon-Kayal/mint-calendar-ce/releases) |
+|                                  | Linux Mint's `gnome-calendar` | GNOME Calendar (stock) | Mint Calendar CE                                                                         |
+| -------------------------------- | ----------------------------- | ---------------------- | ---------------------------------------------------------------------------------------- |
+| Based on                         | GNOME Calendar 48             | GNOME Calendar 50      | GNOME Calendar 50                                                                        |
+| Linux Mint's compatibility patch | Yes                           | No                     | Yes                                                                                      |
+| Branding                         | Stock GNOME                   | Stock GNOME            | Mint-branded, Mint-Y-Dark icon                                                           |
+| Official Mint project            | Yes                           | —                      | No — independent/community                                                               |
+| Where to get it                  | Mint's own repos              | GNOME / Flathub        | This project's [Releases page](https://github.com/Sumon-Kayal/mint-calendar-ce/releases) |
 
 In short: the newer GNOME Calendar, with the same Mint compatibility patch Mint's own package
 uses, under independent Mint branding.

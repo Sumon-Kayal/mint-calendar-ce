@@ -20,9 +20,9 @@
 
 #define G_LOG_DOMAIN "GcalEventPopover"
 
+#include "gcal-event-popover.h"
 #include "gcal-calendar.h"
 #include "gcal-debug.h"
-#include "gcal-event-popover.h"
 #include "gcal-meeting-row.h"
 #include "gcal-utils.h"
 
@@ -30,27 +30,27 @@
 
 struct _GcalEventPopover
 {
-  GtkPopover          parent;
+  GtkPopover parent;
 
-  GtkWidget          *action_button;
-  GtkLabel           *date_time_label;
-  GtkLabel           *description_label;
-  GtkScrolledWindow  *description_scrolled_window;
-  GtkWidget          *location_box;
-  GtkLabel           *location_label;
-  GtkListBox         *meetings_listbox;
-  GtkBox             *meetings_box;
-  GtkLabel           *placeholder_label;
-  GtkLabel           *summary_label;
-  GtkImage           *read_only_icon;
+  GtkWidget *action_button;
+  GtkLabel *date_time_label;
+  GtkLabel *description_label;
+  GtkScrolledWindow *description_scrolled_window;
+  GtkWidget *location_box;
+  GtkLabel *location_label;
+  GtkListBox *meetings_listbox;
+  GtkBox *meetings_box;
+  GtkLabel *placeholder_label;
+  GtkLabel *summary_label;
+  GtkImage *read_only_icon;
 
-  GcalContext        *context;
-  GcalEvent          *event;
+  GcalContext *context;
+  GcalEvent *event;
 };
 
-static void          on_join_meeting_cb                          (GcalMeetingRow     *meeting_row,
-                                                                  const gchar        *url,
-                                                                  GcalEventPopover   *self);
+static void on_join_meeting_cb (GcalMeetingRow *meeting_row,
+                                const gchar *url,
+                                GcalEventPopover *self);
 
 G_DEFINE_TYPE (GcalEventPopover, gcal_event_popover, GTK_TYPE_POPOVER)
 
@@ -68,9 +68,12 @@ enum
   NUM_SIGNALS
 };
 
-static guint signals[NUM_SIGNALS] = { 0, };
-static GParamSpec *properties[N_PROPS] = { NULL, };
-
+static guint signals[NUM_SIGNALS] = {
+  0,
+};
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -96,9 +99,9 @@ get_number_of_days_from_today (GDateTime *now,
   return g_date_days_between (&today, &event_day);
 }
 
-static gchar*
+static gchar *
 format_time (GcalEventPopover *self,
-             GDateTime        *date)
+             GDateTime *date)
 {
   GcalTimeFormat time_format;
 
@@ -119,33 +122,33 @@ format_time (GcalEventPopover *self,
   return NULL;
 }
 
-static const gchar*
+static const gchar *
 get_month_name (gint month)
 {
   const gchar *month_names[] = {
-    N_("January"),
-    N_("February"),
-    N_("March"),
-    N_("April"),
-    N_("May"),
-    N_("June"),
-    N_("July"),
-    N_("August"),
-    N_("September"),
-    N_("October"),
-    N_("November"),
-    N_("December"),
+    N_ ("January"),
+    N_ ("February"),
+    N_ ("March"),
+    N_ ("April"),
+    N_ ("May"),
+    N_ ("June"),
+    N_ ("July"),
+    N_ ("August"),
+    N_ ("September"),
+    N_ ("October"),
+    N_ ("November"),
+    N_ ("December"),
     NULL
   };
 
   return gettext (month_names[month]);
 }
 
-static gchar*
+static gchar *
 format_multiday_date (GcalEventPopover *self,
-                      GDateTime        *dt,
-                      gboolean          force_show_year,
-                      gboolean          show_time)
+                      GDateTime *dt,
+                      gboolean force_show_year,
+                      gboolean show_time)
 {
   g_autoptr (GDateTime) now = NULL;
   gint n_days_from_dt;
@@ -159,15 +162,15 @@ format_multiday_date (GcalEventPopover *self,
 
       if (n_days_from_dt == 0)
         {
-          return g_strdup_printf (_("Today %s"), hours);
+          return g_strdup_printf (_ ("Today %s"), hours);
         }
       else if (n_days_from_dt == 1)
         {
-          return g_strdup_printf (_("Tomorrow %s"), hours);
+          return g_strdup_printf (_ ("Tomorrow %s"), hours);
         }
       else if (n_days_from_dt == -1)
         {
-          return g_strdup_printf (_("Yesterday %s"), hours);
+          return g_strdup_printf (_ ("Yesterday %s"), hours);
         }
       else if (!force_show_year && g_date_time_get_year (now) == g_date_time_get_year (dt))
         {
@@ -176,7 +179,7 @@ format_multiday_date (GcalEventPopover *self,
            * of month, and %3$ is the hour. This format string results in dates
            * like "November 21, 22:00".
            */
-          return g_strdup_printf (_("%1$s %2$d, %3$s"),
+          return g_strdup_printf (_ ("%1$s %2$d, %3$s"),
                                   get_month_name (g_date_time_get_month (dt) - 1),
                                   g_date_time_get_day_of_month (dt),
                                   hours);
@@ -188,27 +191,26 @@ format_multiday_date (GcalEventPopover *self,
            * of month, %3$d is the year, and %4$s is the hour. This format string
            * results in dates like "November 21, 2020, 22:00".
            */
-          return g_strdup_printf (_("%1$s %2$d, %3$d, %4$s"),
+          return g_strdup_printf (_ ("%1$s %2$d, %3$d, %4$s"),
                                   get_month_name (g_date_time_get_month (dt) - 1),
                                   g_date_time_get_day_of_month (dt),
                                   g_date_time_get_year (dt),
                                   hours);
         }
-
     }
   else
     {
       if (n_days_from_dt == 0)
         {
-          return g_strdup (_("Today"));
+          return g_strdup (_ ("Today"));
         }
       else if (n_days_from_dt == 1)
         {
-          return g_strdup (_("Tomorrow"));
+          return g_strdup (_ ("Tomorrow"));
         }
       else if (n_days_from_dt == -1)
         {
-          return g_strdup (_("Yesterday"));
+          return g_strdup (_ ("Yesterday"));
         }
       else if (!force_show_year && g_date_time_get_year (now) == g_date_time_get_year (dt))
         {
@@ -217,7 +219,7 @@ format_multiday_date (GcalEventPopover *self,
            * the day of month. This format string results in dates like
            * "November 21".
            */
-          return g_strdup_printf (_("%1$s %2$d"),
+          return g_strdup_printf (_ ("%1$s %2$d"),
                                   get_month_name (g_date_time_get_month (dt) - 1),
                                   g_date_time_get_day_of_month (dt));
         }
@@ -228,22 +230,21 @@ format_multiday_date (GcalEventPopover *self,
            * of month, and %3$d is the year. This format string results in dates
            * like "November 21, 2020".
            */
-          return g_strdup_printf (_("%1$s %2$d, %3$d"),
+          return g_strdup_printf (_ ("%1$s %2$d, %3$d"),
                                   get_month_name (g_date_time_get_month (dt) - 1),
                                   g_date_time_get_day_of_month (dt),
                                   g_date_time_get_year (dt));
         }
-
     }
 
   g_assert_not_reached ();
 }
 
-static gchar*
+static gchar *
 format_single_day (GcalEventPopover *self,
-                   GDateTime        *start_dt,
-                   GDateTime        *end_dt,
-                   gboolean          show_time)
+                   GDateTime *start_dt,
+                   GDateTime *end_dt,
+                   gboolean show_time)
 {
   g_autoptr (GDateTime) now = NULL;
   gint n_days_from_dt;
@@ -262,7 +263,7 @@ format_single_day (GcalEventPopover *self,
            * Translators: %1$s is the start hour, and %2$s is the end hour, for
            * example: "Today, 19:00 — 22:00"
            */
-          return g_strdup_printf (_("Today, %1$s — %2$s"), start_hours, end_hours);
+          return g_strdup_printf (_ ("Today, %1$s — %2$s"), start_hours, end_hours);
         }
       else if (n_days_from_dt == 1)
         {
@@ -270,7 +271,7 @@ format_single_day (GcalEventPopover *self,
            * Translators: %1$s is the start hour, and %2$s is the end hour, for
            * example: "Tomorrow, 19:00 — 22:00"
            */
-          return g_strdup_printf (_("Tomorrow, %1$s – %2$s"), start_hours, end_hours);
+          return g_strdup_printf (_ ("Tomorrow, %1$s – %2$s"), start_hours, end_hours);
         }
       else if (n_days_from_dt == -1)
         {
@@ -278,7 +279,7 @@ format_single_day (GcalEventPopover *self,
            * Translators: %1$s is the start hour, and %2$s is the end hour, for
            * example: "Tomorrow, 19:00 — 22:00"
            */
-          return g_strdup_printf (_("Yesterday, %1$s – %2$s"), start_hours, end_hours);
+          return g_strdup_printf (_ ("Yesterday, %1$s – %2$s"), start_hours, end_hours);
         }
       else if (g_date_time_get_year (now) == g_date_time_get_year (start_dt))
         {
@@ -287,7 +288,7 @@ format_single_day (GcalEventPopover *self,
            * of month, %3$s is the start hour, and %4$s is the end hour. This
            * format string results in dates like "November 21, 19:00 — 22:00".
            */
-          return g_strdup_printf (_("%1$s %2$d, %3$s – %4$s"),
+          return g_strdup_printf (_ ("%1$s %2$d, %3$s – %4$s"),
                                   get_month_name (g_date_time_get_month (start_dt) - 1),
                                   g_date_time_get_day_of_month (start_dt),
                                   start_hours,
@@ -302,7 +303,7 @@ format_single_day (GcalEventPopover *self,
            *
            * "November 21, 2021, 19:00 — 22:00".
            */
-          return g_strdup_printf (_("%1$s %2$d, %3$d, %4$s – %5$s"),
+          return g_strdup_printf (_ ("%1$s %2$d, %3$d, %4$s – %5$s"),
                                   get_month_name (g_date_time_get_month (start_dt) - 1),
                                   g_date_time_get_day_of_month (start_dt),
                                   g_date_time_get_year (start_dt),
@@ -314,15 +315,15 @@ format_single_day (GcalEventPopover *self,
     {
       if (n_days_from_dt == 0)
         {
-          return g_strdup (_("Today"));
+          return g_strdup (_ ("Today"));
         }
       else if (n_days_from_dt == 1)
         {
-          return g_strdup (_("Tomorrow"));
+          return g_strdup (_ ("Tomorrow"));
         }
       else if (n_days_from_dt == -1)
         {
-          return g_strdup (_("Yesterday"));
+          return g_strdup (_ ("Yesterday"));
         }
       else if (g_date_time_get_year (now) == g_date_time_get_year (start_dt))
         {
@@ -331,7 +332,7 @@ format_single_day (GcalEventPopover *self,
            * the day of month. This format string results in dates like
            * "November 21".
            */
-          return g_strdup_printf (_("%1$s %2$d"),
+          return g_strdup_printf (_ ("%1$s %2$d"),
                                   get_month_name (g_date_time_get_month (start_dt) - 1),
                                   g_date_time_get_day_of_month (start_dt));
         }
@@ -342,7 +343,7 @@ format_single_day (GcalEventPopover *self,
            * of month, and %3$d is the year. This format string results in dates
            * like "November 21, 2020".
            */
-          return g_strdup_printf (_("%1$s %2$d, %3$d"),
+          return g_strdup_printf (_ ("%1$s %2$d, %3$d"),
                                   get_month_name (g_date_time_get_month (start_dt) - 1),
                                   g_date_time_get_day_of_month (start_dt),
                                   g_date_time_get_year (start_dt));
@@ -354,7 +355,7 @@ format_single_day (GcalEventPopover *self,
 
 static void
 update_decorations (GcalEventPopover *self,
-                    GcalEvent        *event)
+                    GcalEvent *event)
 {
   GcalCalendar *calendar;
   gboolean calendar_is_read_only;
@@ -367,12 +368,12 @@ update_decorations (GcalEventPopover *self,
   if (calendar_is_read_only)
     {
       gtk_button_set_icon_name (GTK_BUTTON (self->action_button), "info-outline-symbolic");
-      gtk_widget_set_tooltip_text (self->action_button, _("View Additional Details"));
+      gtk_widget_set_tooltip_text (self->action_button, _ ("View Additional Details"));
     }
   else
     {
       gtk_button_set_icon_name (GTK_BUTTON (self->action_button), "edit-symbolic");
-      gtk_widget_set_tooltip_text (self->action_button, _("Edit Additional Details"));
+      gtk_widget_set_tooltip_text (self->action_button, _ ("Edit Additional Details"));
     }
 }
 
@@ -416,12 +417,11 @@ update_date_time_label (GcalEventPopover *self)
         real_end_dt = g_date_time_add_days (end_dt, -1);
       else
         real_end_dt = g_date_time_ref (end_dt);
-      
+
       end_str = format_multiday_date (self, real_end_dt, show_year, show_hours);
 
       /* Translators: %1$s is the start date, and %2$s. For example: June 21 - November 29, 2022 */
-      g_string_printf (string, _("%1$s — %2$s"), start_str, end_str);
-
+      g_string_printf (string, _ ("%1$s — %2$s"), start_str, end_str);
     }
   else
     {
@@ -441,7 +441,7 @@ update_placeholder_label (GcalEventPopover *self)
 
 static void
 add_meeting (GcalEventPopover *self,
-             const gchar      *url)
+             const gchar *url)
 {
   GtkWidget *row;
 
@@ -481,7 +481,7 @@ setup_location_label (GcalEventPopover *self)
 
   gtk_widget_set_visible (self->location_box,
                           location && g_utf8_strlen (location, -1) > 0 &&
-                          !gtk_widget_get_visible (GTK_WIDGET (self->meetings_box)));
+                              !gtk_widget_get_visible (GTK_WIDGET (self->meetings_box)));
   gtk_label_set_markup (self->location_label, location);
 }
 
@@ -510,7 +510,7 @@ setup_description_label (GcalEventPopover *self)
 
 static void
 set_event_internal (GcalEventPopover *self,
-                    GcalEvent        *event)
+                    GcalEvent *event)
 {
   g_set_object (&self->event, event);
 
@@ -525,13 +525,12 @@ set_event_internal (GcalEventPopover *self,
   gtk_widget_grab_focus (self->action_button);
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_action_button_clicked_cb (GtkButton        *action_button,
+on_action_button_clicked_cb (GtkButton *action_button,
                              GcalEventPopover *self)
 {
   g_signal_emit (self, signals[EDIT], 0);
@@ -539,12 +538,12 @@ on_action_button_clicked_cb (GtkButton        *action_button,
 }
 
 static void
-on_file_dialog_save_cb (GObject      *object,
+on_file_dialog_save_cb (GObject *object,
                         GAsyncResult *res,
-                        gpointer      user_data)
+                        gpointer user_data)
 {
   g_autoptr (GcalEventPopover) self = user_data;
-  g_autofree gchar* contents = NULL;
+  g_autofree gchar *contents = NULL;
   g_autoptr (GError) error = NULL;
   g_autoptr (GFile) file = NULL;
   ECalComponent *component = NULL;
@@ -577,9 +576,8 @@ on_file_dialog_save_cb (GObject      *object,
                            NULL);
 }
 
-
 static void
-on_ics_export_button_clicked_cb (GtkButton        *button,
+on_ics_export_button_clicked_cb (GtkButton *button,
                                  GcalEventPopover *self)
 {
   g_autofree gchar *filename = NULL;
@@ -590,7 +588,7 @@ on_ics_export_button_clicked_cb (GtkButton        *button,
   file_dialog = gtk_file_dialog_new ();
   filename = g_strconcat (gcal_event_get_summary (self->event), ".ics", NULL);
 
-  gtk_file_dialog_set_title (file_dialog, _("Export Event"));
+  gtk_file_dialog_set_title (file_dialog, _ ("Export Event"));
   gtk_file_dialog_set_initial_name (file_dialog, filename);
 
   /*
@@ -608,9 +606,9 @@ on_ics_export_button_clicked_cb (GtkButton        *button,
 }
 
 static void
-on_uri_launched_cb (GObject      *source_object,
+on_uri_launched_cb (GObject *source_object,
                     GAsyncResult *result,
-                    gpointer      user_data)
+                    gpointer user_data)
 {
   g_autoptr (GcalEventPopover) self = user_data;
   g_autoptr (GError) error = NULL;
@@ -625,8 +623,8 @@ on_uri_launched_cb (GObject      *source_object,
 }
 
 static void
-on_join_meeting_cb (GcalMeetingRow   *meeting_row,
-                    const gchar      *url,
+on_join_meeting_cb (GcalMeetingRow *meeting_row,
+                    const gchar *url,
                     GcalEventPopover *self)
 {
   g_autoptr (GtkUriLauncher) uri_launcher = NULL;
@@ -653,7 +651,6 @@ on_time_format_changed_cb (GcalEventPopover *self)
   GCAL_EXIT;
 }
 
-
 /*
  * GtkWidget overrides
  */
@@ -668,7 +665,6 @@ gcal_event_popover_map (GtkWidget *widget)
   gtk_widget_grab_focus (self->action_button);
 }
 
-
 /*
  * GObject overrides
  */
@@ -676,7 +672,7 @@ gcal_event_popover_map (GtkWidget *widget)
 static void
 gcal_event_popover_finalize (GObject *object)
 {
-  GcalEventPopover *self = (GcalEventPopover *)object;
+  GcalEventPopover *self = (GcalEventPopover *) object;
 
   g_clear_object (&self->context);
   g_clear_object (&self->event);
@@ -685,9 +681,9 @@ gcal_event_popover_finalize (GObject *object)
 }
 
 static void
-gcal_event_popover_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
+gcal_event_popover_get_property (GObject *object,
+                                 guint prop_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
   GcalEventPopover *self = GCAL_EVENT_POPOVER (object);
@@ -708,10 +704,10 @@ gcal_event_popover_get_property (GObject    *object,
 }
 
 static void
-gcal_event_popover_set_property (GObject      *object,
-                                 guint         prop_id,
+gcal_event_popover_set_property (GObject *object,
+                                 guint prop_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
   GcalEventPopover *self = GCAL_EVENT_POPOVER (object);
 
@@ -805,9 +801,9 @@ gcal_event_popover_init (GcalEventPopover *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-GtkWidget*
+GtkWidget *
 gcal_event_popover_new (GcalContext *context,
-                        GcalEvent   *event)
+                        GcalEvent *event)
 {
   return g_object_new (GCAL_TYPE_EVENT_POPOVER,
                        "context", context,

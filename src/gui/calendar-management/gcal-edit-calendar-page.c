@@ -20,35 +20,33 @@
 
 #define G_LOG_DOMAIN "GcalEditCalendarPage"
 
-#include "gcal-context.h"
-#include "gcal-calendar-management-page.h"
-#include "gcal-debug.h"
 #include "gcal-edit-calendar-page.h"
+#include "gcal-calendar-management-page.h"
+#include "gcal-context.h"
+#include "gcal-debug.h"
 #include "gcal-utils.h"
 
 #include <glib/gi18n.h>
 
 struct _GcalEditCalendarPage
 {
-  AdwNavigationPage   parent;
+  AdwNavigationPage parent;
 
-  AdwActionRow       *account_row;
+  AdwActionRow *account_row;
   GtkColorDialogButton *calendar_color_button;
-  AdwSwitchRow       *calendar_visible_row;
-  AdwActionRow       *calendar_url_row;
-  AdwEntryRow        *name_entry;
-  GtkWidget          *remove_button_row;
+  AdwSwitchRow *calendar_visible_row;
+  AdwActionRow *calendar_url_row;
+  AdwEntryRow *name_entry;
+  GtkWidget *remove_button_row;
 
-  GcalCalendar       *calendar;
+  GcalCalendar *calendar;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
-static void          gcal_calendar_management_page_iface_init    (GcalCalendarManagementPageInterface *iface);
+static void gcal_calendar_management_page_iface_init (GcalCalendarManagementPageInterface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalEditCalendarPage, gcal_edit_calendar_page, ADW_TYPE_NAVIGATION_PAGE,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_CALENDAR_MANAGEMENT_PAGE,
-                                                gcal_calendar_management_page_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalEditCalendarPage, gcal_edit_calendar_page, ADW_TYPE_NAVIGATION_PAGE, G_IMPLEMENT_INTERFACE (GCAL_TYPE_CALENDAR_MANAGEMENT_PAGE, gcal_calendar_management_page_iface_init))
 
 enum
 {
@@ -57,14 +55,13 @@ enum
   N_PROPS
 };
 
-
 /*
  * Auxiliary methods
  */
 
 static gboolean
 is_goa_calendar (GcalEditCalendarPage *self,
-                 GcalCalendar         *calendar)
+                 GcalCalendar *calendar)
 {
   g_autoptr (ESource) parent = NULL;
   GcalManager *manager;
@@ -119,7 +116,7 @@ is_remote_source (ESource *source)
 
 static void
 setup_calendar (GcalEditCalendarPage *self,
-                GcalCalendar         *calendar)
+                GcalCalendar *calendar)
 {
   ESource *source;
   gboolean is_remote;
@@ -177,7 +174,7 @@ setup_calendar (GcalEditCalendarPage *self,
       uri = g_uri_to_string_partial (guri, G_URI_HIDE_PASSWORD);
       text = g_strdup_printf ("<a title=\"%1$s\" href=\"%1$s\">%1$s</a>", uri);
 
-      adw_preferences_row_set_title (ADW_PREFERENCES_ROW (self->calendar_url_row), _("Calendar URL"));
+      adw_preferences_row_set_title (ADW_PREFERENCES_ROW (self->calendar_url_row), _ ("Calendar URL"));
       adw_action_row_set_subtitle (self->calendar_url_row, text);
 
       gtk_accessible_update_property (GTK_ACCESSIBLE (self->calendar_url_row),
@@ -194,8 +191,8 @@ setup_calendar (GcalEditCalendarPage *self,
 
   if (!is_goa && !is_remote && !is_file)
     {
-      adw_preferences_row_set_title (ADW_PREFERENCES_ROW (self->calendar_url_row), _("Location"));
-      adw_action_row_set_subtitle (self->calendar_url_row, _("On This Computer"));
+      adw_preferences_row_set_title (ADW_PREFERENCES_ROW (self->calendar_url_row), _ ("Location"));
+      adw_action_row_set_subtitle (self->calendar_url_row, _ ("On This Computer"));
     }
 
   gtk_color_dialog_button_set_rgba (self->calendar_color_button, gcal_calendar_get_color (calendar));
@@ -211,15 +208,15 @@ setup_calendar (GcalEditCalendarPage *self,
 
 static void
 on_calendar_color_changed_cb (GtkColorDialogButton *button,
-                              GParamSpec           *pspec,
+                              GParamSpec *pspec,
                               GcalEditCalendarPage *self)
 {
   gcal_calendar_set_color (self->calendar, gtk_color_dialog_button_get_rgba (button));
 }
 
 static void
-on_calendar_visibility_changed_cb (AdwSwitchRow         *row,
-                                   GParamSpec           *pspec,
+on_calendar_visibility_changed_cb (AdwSwitchRow *row,
+                                   GParamSpec *pspec,
                                    GcalEditCalendarPage *self)
 {
   gcal_calendar_set_visible (self->calendar, adw_switch_row_get_active (row));
@@ -233,7 +230,7 @@ typedef struct
 
 static void
 insert_tz_comps (ICalParameter *param,
-                 gpointer       data)
+                 gpointer data)
 {
   g_autoptr (GError) error = NULL;
   TimeZoneData *tdata = data;
@@ -260,17 +257,17 @@ insert_tz_comps (ICalParameter *param,
 }
 
 static void
-append_tz_to_comp (gpointer       key,
-                   gpointer       value,
+append_tz_to_comp (gpointer key,
+                   gpointer value,
                    ICalComponent *toplevel)
 {
   i_cal_component_add_component (toplevel, (ICalComponent *) value);
 }
 
 static void
-on_file_dialog_save_cb (GObject      *object,
+on_file_dialog_save_cb (GObject *object,
                         GAsyncResult *res,
-                        gpointer      user_data)
+                        gpointer user_data)
 {
   GcalEditCalendarPage *self = user_data;
   g_autofree gchar *ics_str = NULL;
@@ -301,7 +298,7 @@ on_file_dialog_save_cb (GObject      *object,
   tz_data.client = client;
 
   for (GSList *l = events; l != NULL; l = l->next)
-   {
+    {
       ICalComponent *component = i_cal_component_clone (l->data);
 
       i_cal_component_foreach_tzid (component, insert_tz_comps, &tz_data);
@@ -328,7 +325,7 @@ on_file_dialog_save_cb (GObject      *object,
 }
 
 static void
-on_export_button_row_activated_cb (GtkButton            *button,
+on_export_button_row_activated_cb (GtkButton *button,
                                    GcalEditCalendarPage *self)
 {
   g_autofree gchar *filename = NULL;
@@ -341,7 +338,7 @@ on_export_button_row_activated_cb (GtkButton            *button,
   file_dialog = gtk_file_dialog_new ();
   filename = g_strconcat (gcal_calendar_get_name (self->calendar), ".ics", NULL);
 
-  gtk_file_dialog_set_title (file_dialog, _("Export Calendar"));
+  gtk_file_dialog_set_title (file_dialog, _ ("Export Calendar"));
   gtk_file_dialog_set_initial_name (file_dialog, filename);
 
   gtk_file_dialog_save (file_dialog,
@@ -350,12 +347,11 @@ on_export_button_row_activated_cb (GtkButton            *button,
                         on_file_dialog_save_cb,
                         self);
 
-
   GCAL_EXIT;
 }
 
 static void
-on_remove_button_row_activated_cb (GtkButton            *button,
+on_remove_button_row_activated_cb (GtkButton *button,
                                    GcalEditCalendarPage *self)
 {
   GcalCalendarManagementPage *page;
@@ -369,7 +365,7 @@ on_remove_button_row_activated_cb (GtkButton            *button,
 }
 
 static void
-on_settings_button_clicked_cb (GtkWidget            *button,
+on_settings_button_clicked_cb (GtkWidget *button,
                                GcalEditCalendarPage *self)
 {
   g_autoptr (ESource) parent = NULL;
@@ -395,14 +391,13 @@ on_settings_button_clicked_cb (GtkWidget            *button,
   GCAL_EXIT;
 }
 
-
 /*
  * GcalCalendarManagementPage iface
  */
 
 static void
 gcal_edit_calendar_page_activate (GcalCalendarManagementPage *page,
-                                  GcalCalendar               *calendar)
+                                  GcalCalendar *calendar)
 {
   GCAL_ENTRY;
 
@@ -438,7 +433,6 @@ gcal_calendar_management_page_iface_init (GcalCalendarManagementPageInterface *i
   iface->deactivate = gcal_edit_calendar_page_deactivate;
 }
 
-
 /*
  * GObject overrides
  */
@@ -457,7 +451,7 @@ gcal_edit_calendar_page_dispose (GObject *object)
 static void
 gcal_edit_calendar_page_finalize (GObject *object)
 {
-  GcalEditCalendarPage *self = (GcalEditCalendarPage *)object;
+  GcalEditCalendarPage *self = (GcalEditCalendarPage *) object;
 
   g_clear_object (&self->calendar);
   g_clear_object (&self->context);
@@ -466,9 +460,9 @@ gcal_edit_calendar_page_finalize (GObject *object)
 }
 
 static void
-gcal_edit_calendar_page_get_property (GObject    *object,
-                                      guint       prop_id,
-                                      GValue     *value,
+gcal_edit_calendar_page_get_property (GObject *object,
+                                      guint prop_id,
+                                      GValue *value,
                                       GParamSpec *pspec)
 {
   GcalEditCalendarPage *self = GCAL_EDIT_CALENDAR_PAGE (object);
@@ -485,10 +479,10 @@ gcal_edit_calendar_page_get_property (GObject    *object,
 }
 
 static void
-gcal_edit_calendar_page_set_property (GObject      *object,
-                                      guint         prop_id,
+gcal_edit_calendar_page_set_property (GObject *object,
+                                      guint prop_id,
                                       const GValue *value,
-                                      GParamSpec   *pspec)
+                                      GParamSpec *pspec)
 {
   GcalEditCalendarPage *self = GCAL_EDIT_CALENDAR_PAGE (object);
 

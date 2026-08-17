@@ -22,34 +22,32 @@
 
 #include <glib/gi18n.h>
 
-#include "gcal-calendar.h"
-#include "gcal-context.h"
 #include "gcal-calendar-management-page.h"
+#include "gcal-calendar.h"
 #include "gcal-calendars-page.h"
+#include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-utils.h"
 
 struct _GcalCalendarsPage
 {
-  AdwNavigationPage   parent;
+  AdwNavigationPage parent;
 
-  GtkListBox         *listbox;
-  AdwToastOverlay    *toast_overlay;
+  GtkListBox *listbox;
+  AdwToastOverlay *toast_overlay;
 
-  AdwToast           *toast;
+  AdwToast *toast;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
-static void          gcal_calendar_management_page_iface_init    (GcalCalendarManagementPageInterface *iface);
+static void gcal_calendar_management_page_iface_init (GcalCalendarManagementPageInterface *iface);
 
-static void          on_calendar_color_changed_cb                (GcalCalendar       *calendar,
-                                                                  GParamSpec         *pspec,
-                                                                  GtkImage           *icon);
+static void on_calendar_color_changed_cb (GcalCalendar *calendar,
+                                          GParamSpec *pspec,
+                                          GtkImage *icon);
 
-G_DEFINE_TYPE_WITH_CODE (GcalCalendarsPage, gcal_calendars_page, ADW_TYPE_NAVIGATION_PAGE,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_CALENDAR_MANAGEMENT_PAGE,
-                                                gcal_calendar_management_page_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalCalendarsPage, gcal_calendars_page, ADW_TYPE_NAVIGATION_PAGE, G_IMPLEMENT_INTERFACE (GCAL_TYPE_CALENDAR_MANAGEMENT_PAGE, gcal_calendar_management_page_iface_init))
 
 enum
 {
@@ -58,14 +56,13 @@ enum
   N_PROPS
 };
 
-
 /*
  * Auxiliary methods
  */
 
-static GtkWidget*
+static GtkWidget *
 make_calendar_row (GcalCalendarsPage *self,
-                   GcalCalendar      *calendar)
+                   GcalCalendar *calendar)
 {
   g_autoptr (GdkPaintable) color_paintable = NULL;
   g_autofree gchar *parent_name = NULL;
@@ -125,7 +122,7 @@ make_calendar_row (GcalCalendarsPage *self,
 
 static void
 add_calendar (GcalCalendarsPage *self,
-              GcalCalendar      *calendar)
+              GcalCalendar *calendar)
 {
   GtkWidget *child;
   GtkWidget *row;
@@ -147,10 +144,9 @@ add_calendar (GcalCalendarsPage *self,
   gtk_list_box_append (self->listbox, row);
 }
 
-
 static void
 remove_calendar (GcalCalendarsPage *self,
-                 GcalCalendar      *calendar)
+                 GcalCalendar *calendar)
 {
   GtkWidget *child;
 
@@ -170,7 +166,7 @@ remove_calendar (GcalCalendarsPage *self,
 
 static void
 delete_calendar (GcalCalendarsPage *self,
-                 GcalCalendar      *calendar)
+                 GcalCalendar *calendar)
 {
   g_autoptr (GError) error = NULL;
   ESource *removed_source;
@@ -194,7 +190,6 @@ delete_calendar (GcalCalendarsPage *self,
     }
 }
 
-
 /*
  * Callbacks
  */
@@ -202,7 +197,7 @@ delete_calendar (GcalCalendarsPage *self,
 static gint
 listbox_sort_func (GtkListBoxRow *row1,
                    GtkListBoxRow *row2,
-                   gpointer       user_data)
+                   gpointer user_data)
 {
   GcalCalendar *calendar1;
   GcalCalendar *calendar2;
@@ -218,7 +213,6 @@ listbox_sort_func (GtkListBoxRow *row1,
   if (retval != 0)
     return retval;
 
-
   parent_name1 = e_source_get_display_name (gcal_calendar_get_parent_source (calendar1));
   parent_name2 = e_source_get_display_name (gcal_calendar_get_parent_source (calendar2));
 
@@ -227,8 +221,8 @@ listbox_sort_func (GtkListBoxRow *row1,
 
 static void
 on_calendar_color_changed_cb (GcalCalendar *calendar,
-                              GParamSpec   *pspec,
-                              GtkImage     *icon)
+                              GParamSpec *pspec,
+                              GtkImage *icon)
 {
   g_autoptr (GdkPaintable) color_paintable = NULL;
   const GdkRGBA *color;
@@ -239,8 +233,8 @@ on_calendar_color_changed_cb (GcalCalendar *calendar,
 }
 
 static void
-on_listbox_row_activated_cb (GtkListBox        *listbox,
-                             GtkListBoxRow     *row,
+on_listbox_row_activated_cb (GtkListBox *listbox,
+                             GtkListBoxRow *row,
                              GcalCalendarsPage *self)
 {
   GcalCalendarManagementPage *page = GCAL_CALENDAR_MANAGEMENT_PAGE (self);
@@ -251,7 +245,7 @@ on_listbox_row_activated_cb (GtkListBox        *listbox,
 }
 
 static void
-on_new_calendar_row_activated_cb (AdwActionRow      *button,
+on_new_calendar_row_activated_cb (AdwActionRow *button,
                                   GcalCalendarsPage *self)
 {
   GcalCalendarManagementPage *page = GCAL_CALENDAR_MANAGEMENT_PAGE (self);
@@ -260,23 +254,23 @@ on_new_calendar_row_activated_cb (AdwActionRow      *button,
 }
 
 static void
-on_manager_calendar_added_cb (GcalManager       *manager,
-                              GcalCalendar      *calendar,
+on_manager_calendar_added_cb (GcalManager *manager,
+                              GcalCalendar *calendar,
                               GcalCalendarsPage *self)
 {
   add_calendar (self, calendar);
 }
 
 static void
-on_manager_calendar_removed_cb (GcalManager       *manager,
-                                GcalCalendar      *calendar,
+on_manager_calendar_removed_cb (GcalManager *manager,
+                                GcalCalendar *calendar,
                                 GcalCalendarsPage *self)
 {
   remove_calendar (self, calendar);
 }
 
 static void
-on_toast_button_clicked_cb (AdwToast          *toast,
+on_toast_button_clicked_cb (AdwToast *toast,
                             GcalCalendarsPage *self)
 {
   GcalCalendar *calendar;
@@ -297,7 +291,7 @@ on_toast_button_clicked_cb (AdwToast          *toast,
 }
 
 static void
-on_toast_dismissed_cb (AdwToast          *toast,
+on_toast_dismissed_cb (AdwToast *toast,
                        GcalCalendarsPage *self)
 {
   GcalCalendar *calendar;
@@ -319,14 +313,13 @@ on_toast_dismissed_cb (AdwToast          *toast,
   GCAL_EXIT;
 }
 
-
 /*
  * GcalCalendarManagementPage iface
  */
 
 static void
 gcal_calendars_page_activate (GcalCalendarManagementPage *page,
-                              GcalCalendar               *calendar)
+                              GcalCalendar *calendar)
 {
   g_autofree gchar *new_string = NULL;
   g_autoptr (AdwToast) toast = NULL;
@@ -348,12 +341,12 @@ gcal_calendars_page_activate (GcalCalendarManagementPage *page,
   /* Create the new toast */
 
   /* TRANSLATORS: %s is a calendar name. */
-  new_string = g_markup_printf_escaped (_("Calendar “%s” removed"),
+  new_string = g_markup_printf_escaped (_ ("Calendar “%s” removed"),
                                         gcal_calendar_get_name (calendar));
 
   toast = adw_toast_new (new_string);
   adw_toast_set_timeout (toast, 7);
-  adw_toast_set_button_label (toast, _("_Undo"));
+  adw_toast_set_button_label (toast, _ ("_Undo"));
   g_object_set_data_full (G_OBJECT (toast), "calendar", g_object_ref (calendar), g_object_unref);
   g_signal_connect (toast, "dismissed", G_CALLBACK (on_toast_dismissed_cb), self);
   g_signal_connect (toast, "button-clicked", G_CALLBACK (on_toast_button_clicked_cb), self);
@@ -379,7 +372,7 @@ gcal_calendar_management_page_iface_init (GcalCalendarManagementPageInterface *i
 static void
 gcal_calendars_page_finalize (GObject *object)
 {
-  GcalCalendarsPage *self = (GcalCalendarsPage *)object;
+  GcalCalendarsPage *self = (GcalCalendarsPage *) object;
 
   g_clear_object (&self->toast);
   g_clear_object (&self->context);
@@ -388,9 +381,9 @@ gcal_calendars_page_finalize (GObject *object)
 }
 
 static void
-gcal_calendars_page_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
+gcal_calendars_page_get_property (GObject *object,
+                                  guint prop_id,
+                                  GValue *value,
                                   GParamSpec *pspec)
 {
   GcalCalendarsPage *self = GCAL_CALENDARS_PAGE (object);
@@ -407,32 +400,32 @@ gcal_calendars_page_get_property (GObject    *object,
 }
 
 static void
-gcal_calendars_page_set_property (GObject      *object,
-                                  guint         prop_id,
+gcal_calendars_page_set_property (GObject *object,
+                                  guint prop_id,
                                   const GValue *value,
-                                  GParamSpec   *pspec)
+                                  GParamSpec *pspec)
 {
   GcalCalendarsPage *self = GCAL_CALENDARS_PAGE (object);
 
   switch (prop_id)
     {
     case PROP_CONTEXT:
-        {
-          g_autoptr (GList) calendars = NULL;
-          GcalManager *manager;
-          GList *l;
+      {
+        g_autoptr (GList) calendars = NULL;
+        GcalManager *manager;
+        GList *l;
 
-          self->context = g_value_dup_object (value);
-          g_assert (self->context != NULL);
+        self->context = g_value_dup_object (value);
+        g_assert (self->context != NULL);
 
-          manager = gcal_context_get_manager (self->context);
-          g_signal_connect_object (manager, "calendar-added", G_CALLBACK (on_manager_calendar_added_cb), self, 0);
-          g_signal_connect_object (manager, "calendar-removed", G_CALLBACK (on_manager_calendar_removed_cb), self, 0);
+        manager = gcal_context_get_manager (self->context);
+        g_signal_connect_object (manager, "calendar-added", G_CALLBACK (on_manager_calendar_added_cb), self, 0);
+        g_signal_connect_object (manager, "calendar-removed", G_CALLBACK (on_manager_calendar_removed_cb), self, 0);
 
-          calendars = gcal_manager_get_calendars (manager);
-          for (l = calendars; l; l = l->next)
-              add_calendar (self, l->data);
-        }
+        calendars = gcal_manager_get_calendars (manager);
+        for (l = calendars; l; l = l->next)
+          add_calendar (self, l->data);
+      }
       break;
 
     default:

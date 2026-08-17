@@ -16,45 +16,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #define G_LOG_DOMAIN "GcalMonthCell"
 
+#include "gcal-month-cell.h"
 #include "config.h"
 #include "gcal-application.h"
 #include "gcal-clock.h"
 #include "gcal-debug.h"
 #include "gcal-event-widget.h"
-#include "gcal-month-cell.h"
 #include "gcal-utils.h"
 #include "gcal-weather-info.h"
 
 struct _GcalMonthCell
 {
-  GtkWidget           parent;
+  GtkWidget parent;
 
-  GDateTime          *date;
-  guint               n_overflow;
+  GDateTime *date;
+  guint n_overflow;
 
-  AdwBreakpoint      *breakpoint_narrow;
+  AdwBreakpoint *breakpoint_narrow;
 
-  GtkLabel           *day_label;
-  GtkWidget          *header_box;
-  GtkImage           *weather_icon;
-  GtkLabel           *temp_label;
-  GtkWidget          *breakpoint_bin;
+  GtkLabel *day_label;
+  GtkWidget *header_box;
+  GtkImage *weather_icon;
+  GtkLabel *temp_label;
+  GtkWidget *breakpoint_bin;
 
-  GtkWidget          *overflow_button;
-  GtkInscription     *overflow_inscription;
-  GtkWidget          *overlay;
+  GtkWidget *overflow_button;
+  GtkInscription *overflow_inscription;
+  GtkWidget *overlay;
 
-  gboolean            different_month;
-  gboolean            selected;
+  gboolean different_month;
+  gboolean selected;
 
-  GcalContext        *context;
+  GcalContext *context;
 
-  GcalWeatherInfo    *weather_info;
+  GcalWeatherInfo *weather_info;
 
-  GBinding           *icon_tooltip_binding;
+  GBinding *icon_tooltip_binding;
 };
 
 G_DEFINE_TYPE (GcalMonthCell, gcal_month_cell, GTK_TYPE_WIDGET)
@@ -73,9 +72,12 @@ enum
   N_PROPS
 };
 
-static guint signals[N_SIGNALS] = { 0, };
-static GParamSpec *properties[N_PROPS] = { 0, };
-
+static guint signals[N_SIGNALS] = {
+  0,
+};
+static GParamSpec *properties[N_PROPS] = {
+  0,
+};
 
 /*
  * Auxiliary methods
@@ -123,9 +125,9 @@ add_month_separators (GcalMonthCell *self)
 }
 
 static void
-move_event (GcalMonthCell         *self,
-            GcalEvent             *event,
-            GcalRecurrenceModType  mod_type)
+move_event (GcalMonthCell *self,
+            GcalEvent *event,
+            GcalRecurrenceModType mod_type)
 {
 
   g_autoptr (GcalEvent) changed_event = NULL;
@@ -237,20 +239,19 @@ update_weather (GcalMonthCell *self)
     }
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-day_changed_cb (GcalClock     *clock,
+day_changed_cb (GcalClock *clock,
                 GcalMonthCell *self)
 {
   update_style_flags (self);
 }
 
 static void
-overflow_button_clicked_cb (GtkWidget     *button,
+overflow_button_clicked_cb (GtkWidget *button,
                             GcalMonthCell *self)
 {
   g_signal_emit (self, signals[SHOW_OVERFLOW], 0, button);
@@ -258,7 +259,7 @@ overflow_button_clicked_cb (GtkWidget     *button,
 
 static gboolean
 on_drop_target_accept_cb (GtkDropTarget *drop_target,
-                          GdkDrop       *drop,
+                          GdkDrop *drop,
                           GcalMonthCell *self)
 {
   GCAL_ENTRY;
@@ -273,9 +274,9 @@ on_drop_target_accept_cb (GtkDropTarget *drop_target,
 }
 
 static void
-on_ask_recurrence_response_cb (GcalEvent             *event,
-                               GcalRecurrenceModType  mod_type,
-                               gpointer               user_data)
+on_ask_recurrence_response_cb (GcalEvent *event,
+                               GcalRecurrenceModType mod_type,
+                               gpointer user_data)
 {
   GcalMonthCell *self = GCAL_MONTH_CELL (user_data);
 
@@ -285,9 +286,9 @@ on_ask_recurrence_response_cb (GcalEvent             *event,
 
 static gboolean
 on_drop_target_drop_cb (GtkDropTarget *drop_target,
-                        const GValue  *value,
-                        gdouble        x,
-                        gdouble        y,
+                        const GValue *value,
+                        gdouble x,
+                        gdouble y,
                         GcalMonthCell *self)
 {
   GcalEventWidget *event_widget;
@@ -320,7 +321,7 @@ on_drop_target_drop_cb (GtkDropTarget *drop_target,
 
 static void
 on_weather_service_weather_changed_cb (GcalWeatherService *weather_service,
-                                       GcalMonthCell      *self)
+                                       GcalMonthCell *self)
 {
   update_weather (self);
 }
@@ -329,7 +330,7 @@ static void
 on_breakpoint_changed_cb (GcalMonthCell *self)
 {
   AdwBreakpoint *current_breakpoint =
-    adw_breakpoint_bin_get_current_breakpoint (ADW_BREAKPOINT_BIN (self->breakpoint_bin));
+      adw_breakpoint_bin_get_current_breakpoint (ADW_BREAKPOINT_BIN (self->breakpoint_bin));
 
   if (current_breakpoint == self->breakpoint_narrow)
     {
@@ -344,14 +345,13 @@ on_breakpoint_changed_cb (GcalMonthCell *self)
     }
 }
 
-
 /*
  * GtkWidget overrides
  */
 
 static gboolean
-gcal_month_cell_focus (GtkWidget        *widget,
-                       GtkDirectionType  direction)
+gcal_month_cell_focus (GtkWidget *widget,
+                       GtkDirectionType direction)
 {
   GtkRoot *root = gtk_widget_get_root (widget);
 
@@ -361,7 +361,6 @@ gcal_month_cell_focus (GtkWidget        *widget,
   return GTK_WIDGET_CLASS (gcal_month_cell_parent_class)->focus (widget, direction);
 }
 
-
 /*
  * GObject overrides
  */
@@ -369,7 +368,7 @@ gcal_month_cell_focus (GtkWidget        *widget,
 static void
 gcal_month_cell_dispose (GObject *object)
 {
-  GcalMonthCell *self = (GcalMonthCell *)object;
+  GcalMonthCell *self = (GcalMonthCell *) object;
 
   GcalWeatherService *weather_service = gcal_context_get_weather_service (self->context);
   gcal_weather_service_release (weather_service);
@@ -381,12 +380,11 @@ gcal_month_cell_dispose (GObject *object)
   G_OBJECT_CLASS (gcal_month_cell_parent_class)->dispose (object);
 }
 
-
 static void
-gcal_month_cell_set_property (GObject       *object,
-                              guint          property_id,
-                              const GValue  *value,
-                              GParamSpec    *pspec)
+gcal_month_cell_set_property (GObject *object,
+                              guint property_id,
+                              const GValue *value,
+                              GParamSpec *pspec)
 {
   GcalMonthCell *self = (GcalMonthCell *) object;
 
@@ -403,10 +401,10 @@ gcal_month_cell_set_property (GObject       *object,
 }
 
 static void
-gcal_month_cell_get_property (GObject       *object,
-                              guint          property_id,
-                              GValue        *value,
-                              GParamSpec    *pspec)
+gcal_month_cell_get_property (GObject *object,
+                              guint property_id,
+                              GValue *value,
+                              GParamSpec *pspec)
 {
   GcalMonthCell *self = (GcalMonthCell *) object;
 
@@ -519,14 +517,13 @@ gcal_month_cell_init (GcalMonthCell *self)
                             "notify::current-breakpoint", G_CALLBACK (on_breakpoint_changed_cb), self);
 }
 
-GtkWidget*
+GtkWidget *
 gcal_month_cell_new (void)
 {
   return g_object_new (GCAL_TYPE_MONTH_CELL, NULL);
 }
 
-
-GDateTime*
+GDateTime *
 gcal_month_cell_get_date (GcalMonthCell *self)
 {
   g_return_val_if_fail (GCAL_IS_MONTH_CELL (self), NULL);
@@ -536,7 +533,7 @@ gcal_month_cell_get_date (GcalMonthCell *self)
 
 void
 gcal_month_cell_set_date (GcalMonthCell *self,
-                          GDateTime     *date)
+                          GDateTime *date)
 {
   gint day_of_month;
 
@@ -568,7 +565,7 @@ gcal_month_cell_set_date (GcalMonthCell *self,
   update_weather (self);
 }
 
-GcalContext*
+GcalContext *
 gcal_month_cell_get_context (GcalMonthCell *self)
 {
   g_return_val_if_fail (GCAL_IS_MONTH_CELL (self), NULL);
@@ -578,7 +575,7 @@ gcal_month_cell_get_context (GcalMonthCell *self)
 
 void
 gcal_month_cell_set_context (GcalMonthCell *self,
-                             GcalContext   *context)
+                             GcalContext *context)
 {
   g_return_if_fail (GCAL_IS_MONTH_CELL (self));
 
@@ -615,7 +612,7 @@ gcal_month_cell_get_overflow (GcalMonthCell *self)
 
 void
 gcal_month_cell_set_overflow (GcalMonthCell *self,
-                              guint          n_overflow)
+                              guint n_overflow)
 {
   g_return_if_fail (GCAL_IS_MONTH_CELL (self));
 
@@ -674,7 +671,7 @@ gcal_month_cell_get_selected (GcalMonthCell *self)
 
 void
 gcal_month_cell_set_selected (GcalMonthCell *self,
-                              gboolean       selected)
+                              gboolean selected)
 {
   GtkStateFlags flags;
 
@@ -708,4 +705,3 @@ gcal_month_cell_get_overflow_button (GcalMonthCell *self)
 
   return self->overflow_button;
 }
-

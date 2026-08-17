@@ -25,42 +25,42 @@
 
 G_DEFINE_QUARK (ICalErrorEnum, i_cal_error);
 
-static const gchar*
+static const gchar *
 i_cal_error_enum_to_string (ICalErrorEnum ical_error)
 {
   switch (ical_error)
     {
     case I_CAL_NO_ERROR:
-      return _("No error");
+      return _ ("No error");
 
     case I_CAL_BADARG_ERROR:
-      return _("Bad argument to function");
+      return _ ("Bad argument to function");
 
     case I_CAL_NEWFAILED_ERROR:
     case I_CAL_ALLOCATION_ERROR:
-      return _("Failed to allocate a new object in memory");
+      return _ ("Failed to allocate a new object in memory");
 
     case I_CAL_MALFORMEDDATA_ERROR:
-      return _("File is malformed, invalid, or corrupted");
+      return _ ("File is malformed, invalid, or corrupted");
 
     case I_CAL_PARSE_ERROR:
-      return _("Failed to parse the calendar contents");
+      return _ ("Failed to parse the calendar contents");
 
     case I_CAL_FILE_ERROR:
-      return _("Failed to read file");
+      return _ ("Failed to read file");
 
     case I_CAL_INTERNAL_ERROR:
     case I_CAL_USAGE_ERROR:
     case I_CAL_UNIMPLEMENTED_ERROR:
     case I_CAL_UNKNOWN_ERROR:
     default:
-      return _("Internal error");
+      return _ ("Internal error");
     }
 }
 
-static const gchar*
+static const gchar *
 guess_file_encoding (const gchar *contents,
-                     gsize        length)
+                     gsize length)
 {
   if (length > 4 && contents[0] == '\xFF' && contents[1] == '\xFE' && contents[2] == '\x00' && contents[3] == '\x00') /* UTF-32LE case */
     return "UTF-32LE";
@@ -75,9 +75,9 @@ guess_file_encoding (const gchar *contents,
 }
 
 static void
-read_file_in_thread (GTask        *task,
-                     gpointer      source_object,
-                     gpointer      task_data,
+read_file_in_thread (GTask *task,
+                     gpointer source_object,
+                     gpointer task_data,
                      GCancellable *cancellable)
 {
   g_autoptr (GFileInfo) file_info = NULL;
@@ -109,7 +109,7 @@ read_file_in_thread (GTask        *task,
                                G_FILE_ERROR,
                                G_FILE_ERROR_FAILED,
                                "%s",
-                               _("File is not an iCalendar (.ics) file"));
+                               _ ("File is not an iCalendar (.ics) file"));
       return;
     }
 
@@ -182,10 +182,10 @@ read_file_in_thread (GTask        *task,
  * Import an ICS file.
  */
 void
-gcal_importer_import_file (GFile               *file,
-                           GCancellable        *cancellable,
-                           GAsyncReadyCallback  callback,
-                           gpointer             user_data)
+gcal_importer_import_file (GFile *file,
+                           GCancellable *cancellable,
+                           GAsyncReadyCallback callback,
+                           gpointer user_data)
 {
 
   g_autoptr (GTask) task = NULL;
@@ -205,9 +205,9 @@ gcal_importer_import_file (GFile               *file,
  *
  * Returns: (nullable): an #ICalComponent
  */
-ICalComponent*
-gcal_importer_import_file_finish (GAsyncResult  *result,
-                                  GError       **error)
+ICalComponent *
+gcal_importer_import_file_finish (GAsyncResult *result,
+                                  GError **error)
 {
   g_return_val_if_fail (g_task_is_valid (result, NULL), FALSE);
 

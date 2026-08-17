@@ -44,21 +44,21 @@
 
 typedef struct _Node
 {
-  struct _Node       *left;
-  struct _Node       *right;
-  GcalRange          *range;
-  GDateTime          *max;
-  guint16             hits;
-  gint64              height;
-  GPtrArray          *data_array;
+  struct _Node *left;
+  struct _Node *right;
+  GcalRange *range;
+  GDateTime *max;
+  guint16 hits;
+  gint64 height;
+  GPtrArray *data_array;
 } Node;
 
 struct _GcalRangeTree
 {
-  guint               ref_count;
+  guint ref_count;
 
-  GDestroyNotify      destroy_func;
-  Node               *root;
+  GDestroyNotify destroy_func;
+  Node *root;
 };
 
 G_DEFINE_BOXED_TYPE (GcalRangeTree, gcal_range_tree, gcal_range_tree_ref, gcal_range_tree_unref)
@@ -82,10 +82,10 @@ balance (Node *n)
   return n ? height (n->left) - height (n->right) : 0;
 }
 
-static Node*
-node_new (GcalRange      *range,
-          gpointer        data,
-          GDestroyNotify  destroy_func)
+static Node *
+node_new (GcalRange *range,
+          gpointer data,
+          GDestroyNotify destroy_func)
 {
   Node *n;
 
@@ -126,7 +126,7 @@ destroy_tree (Node *n)
 }
 
 /* AVL rotations */
-static Node*
+static Node *
 rotate_left (Node *n)
 {
   Node *tmp;
@@ -142,7 +142,7 @@ rotate_left (Node *n)
   return tmp;
 }
 
-static Node*
+static Node *
 rotate_right (Node *n)
 {
   Node *tmp;
@@ -158,16 +158,16 @@ rotate_right (Node *n)
   return tmp;
 }
 
-static inline Node*
-hit_node (Node     *n,
-          gpointer  data)
+static inline Node *
+hit_node (Node *n,
+          gpointer data)
 {
   n->hits++;
   g_ptr_array_add (n->data_array, data);
   return n;
 }
 
-static inline Node*
+static inline Node *
 rebalance (Node *n)
 {
   gint32 node_balance;
@@ -195,11 +195,11 @@ rebalance (Node *n)
   return n;
 }
 
-static Node*
-insert (Node           *n,
-        GcalRange      *range,
-        gpointer        data,
-        GDestroyNotify  destroy_func)
+static Node *
+insert (Node *n,
+        GcalRange *range,
+        gpointer data,
+        GDestroyNotify destroy_func)
 {
   g_autoptr (GDateTime) range_end = NULL;
   gint result;
@@ -226,7 +226,7 @@ insert (Node           *n,
 }
 
 /* Remove */
-static Node*
+static Node *
 find_minimum (Node *n)
 {
   if (n->left)
@@ -235,7 +235,7 @@ find_minimum (Node *n)
   return n;
 }
 
-static Node*
+static Node *
 delete_minimum (Node *n)
 {
   if (!n->left)
@@ -246,9 +246,9 @@ delete_minimum (Node *n)
   return rebalance (n);
 }
 
-static inline Node*
-delete_node (Node     *n,
-             gpointer  data)
+static inline Node *
+delete_node (Node *n,
+             gpointer data)
 {
   Node *left, *right, *min;
 
@@ -274,10 +274,10 @@ delete_node (Node     *n,
   return rebalance (min);
 }
 
-static Node*
-remove_node (Node      *n,
+static Node *
+remove_node (Node *n,
              GcalRange *range,
-             gpointer   data)
+             gpointer data)
 {
   GcalRangePosition position;
 
@@ -308,9 +308,9 @@ remove_node (Node      *n,
 
 /* Traverse */
 static inline gboolean
-run_traverse_func (Node                  *n,
-                   GcalRangeTraverseFunc  func,
-                   gpointer               user_data)
+run_traverse_func (Node *n,
+                   GcalRangeTraverseFunc func,
+                   gpointer user_data)
 {
   guint i;
 
@@ -324,10 +324,10 @@ run_traverse_func (Node                  *n,
 }
 
 static gboolean
-traverse (Node                  *n,
-          GTraverseType          type,
-          GcalRangeTraverseFunc  func,
-          gpointer               user_data)
+traverse (Node *n,
+          GTraverseType type,
+          GcalRangeTraverseFunc func,
+          gpointer user_data)
 {
   if (!n)
     return GCAL_TRAVERSE_CONTINUE;
@@ -362,8 +362,8 @@ traverse (Node                  *n,
 /* Internal traverse functions */
 static inline gboolean
 gather_all_data (GcalRange *range,
-                 gpointer   data,
-                 gpointer   user_data)
+                 gpointer data,
+                 gpointer user_data)
 {
   GPtrArray *array = user_data;
 
@@ -374,13 +374,14 @@ gather_all_data (GcalRange *range,
 
 static inline gboolean
 gather_data_at_range (GcalRange *range,
-                      gpointer   data,
-                      gpointer   user_data)
+                      gpointer data,
+                      gpointer user_data)
 {
   GcalRangePosition position;
   GcalRangeOverlap overlap;
 
-  struct {
+  struct
+  {
     GcalRange *range;
     GPtrArray **array;
   } *gather_data = user_data;
@@ -405,13 +406,14 @@ gather_data_at_range (GcalRange *range,
 
 static inline gboolean
 count_entries_at_range (GcalRange *range,
-                        gpointer   data,
-                        gpointer   user_data)
+                        gpointer data,
+                        gpointer user_data)
 {
   GcalRangePosition position;
   GcalRangeOverlap overlap;
 
-  struct {
+  struct
+  {
     GcalRange *range;
     guint64 counter;
   } *gather_data = user_data;
@@ -433,12 +435,13 @@ count_entries_at_range (GcalRange *range,
 
 static inline gboolean
 remove_data_func (GcalRange *range,
-                  gpointer   data,
-                  gpointer   user_data)
+                  gpointer data,
+                  gpointer user_data)
 {
-  struct {
+  struct
+  {
     GcalRangeTree *range_tree;
-    gpointer      *data;
+    gpointer *data;
   } *remove_data = user_data;
 
   if (remove_data->data == data)
@@ -451,9 +454,9 @@ remove_data_func (GcalRange *range,
 }
 
 static void
-recursively_print_node_to_string (Node    *n,
+recursively_print_node_to_string (Node *n,
                                   GString *string,
-                                  gint     depth)
+                                  gint depth)
 {
   g_autofree gchar *range = NULL;
   gint64 i;
@@ -493,7 +496,7 @@ gcal_range_tree_free (GcalRangeTree *self)
  * Returns: (transfer full): a newly created #GcalRangeTree.
  * Free with gcal_range_tree_unref() when done.
  */
-GcalRangeTree*
+GcalRangeTree *
 gcal_range_tree_new (void)
 {
   GcalRangeTree *self;
@@ -514,7 +517,7 @@ gcal_range_tree_new (void)
  * Returns: (transfer full): a newly created #GcalRangeTree.
  * Free with gcal_range_tree_unref() when done.
  */
-GcalRangeTree*
+GcalRangeTree *
 gcal_range_tree_new_with_free_func (GDestroyNotify destroy_func)
 {
   GcalRangeTree *self;
@@ -535,7 +538,7 @@ gcal_range_tree_new_with_free_func (GDestroyNotify destroy_func)
  * Returns: (transfer full): a newly created #GcalRangeTree.
  * Free with gcal_range_tree_unref() when done.
  */
-GcalRangeTree*
+GcalRangeTree *
 gcal_range_tree_copy (GcalRangeTree *self)
 {
   GcalRangeTree *copy;
@@ -556,7 +559,7 @@ gcal_range_tree_copy (GcalRangeTree *self)
  *
  * Returns: (transfer full): pointer to the just-referenced tree.
  */
-GcalRangeTree*
+GcalRangeTree *
 gcal_range_tree_ref (GcalRangeTree *self)
 {
   g_return_val_if_fail (self, NULL);
@@ -597,8 +600,8 @@ gcal_range_tree_unref (GcalRangeTree *self)
  */
 void
 gcal_range_tree_add_range (GcalRangeTree *self,
-                           GcalRange     *range,
-                           gpointer       data)
+                           GcalRange *range,
+                           gpointer data)
 {
   g_return_if_fail (self);
   g_return_if_fail (range);
@@ -616,8 +619,8 @@ gcal_range_tree_add_range (GcalRangeTree *self,
  */
 void
 gcal_range_tree_remove_range (GcalRangeTree *self,
-                              GcalRange     *range,
-                              gpointer       data)
+                              GcalRange *range,
+                              gpointer data)
 {
   g_return_if_fail (self);
   g_return_if_fail (range);
@@ -634,11 +637,12 @@ gcal_range_tree_remove_range (GcalRangeTree *self,
  */
 void
 gcal_range_tree_remove_data (GcalRangeTree *self,
-                             gpointer       data)
+                             gpointer data)
 {
-  struct {
+  struct
+  {
     GcalRangeTree *range_tree;
-    gpointer      *data;
+    gpointer *data;
   } remove_data = { self, data };
 
   g_return_if_fail (self);
@@ -656,10 +660,10 @@ gcal_range_tree_remove_data (GcalRangeTree *self,
  * Traverse @self calling @func according to the @type specified.
  */
 void
-gcal_range_tree_traverse (GcalRangeTree         *self,
-                          GTraverseType          type,
-                          GcalRangeTraverseFunc  func,
-                          gpointer               user_data)
+gcal_range_tree_traverse (GcalRangeTree *self,
+                          GTraverseType type,
+                          GcalRangeTraverseFunc func,
+                          gpointer user_data)
 {
   g_return_if_fail (self);
 
@@ -674,7 +678,7 @@ gcal_range_tree_traverse (GcalRangeTree         *self,
  *
  * Returns: (transfer full): a #GPtrArray with the stored elements
  */
-GPtrArray*
+GPtrArray *
 gcal_range_tree_get_all_data (GcalRangeTree *self)
 {
   g_autoptr (GPtrArray) data = NULL;
@@ -698,13 +702,14 @@ gcal_range_tree_get_all_data (GcalRangeTree *self)
  * Returns: (transfer full): a #GPtrArray. Unref with g_ptr_array_unref()
  * when finished.
  */
-GPtrArray*
+GPtrArray *
 gcal_range_tree_get_data_at_range (GcalRangeTree *self,
-                                   GcalRange     *range)
+                                   GcalRange *range)
 {
   GPtrArray *data;
 
-  struct {
+  struct
+  {
     GcalRange *range;
     GPtrArray **array;
   } gather_data = { range, &data };
@@ -731,9 +736,10 @@ gcal_range_tree_get_data_at_range (GcalRangeTree *self,
  */
 guint64
 gcal_range_tree_count_entries_at_range (GcalRangeTree *self,
-                                        GcalRange     *range)
+                                        GcalRange *range)
 {
-  struct {
+  struct
+  {
     GcalRange *range;
     guint64 counter;
   } gather_data = { range, 0 };

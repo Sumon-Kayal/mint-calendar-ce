@@ -33,7 +33,7 @@
  */
 gboolean
 gcal_set_date_time (GDateTime **dest,
-                    GDateTime  *src)
+                    GDateTime *src)
 {
   if (*dest == src)
     return FALSE;
@@ -73,7 +73,7 @@ gcal_date_time_get_days_in_month (GDateTime *date)
  *
  * Returns: (transfer full): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_date_time_get_start_of_week (GDateTime *date)
 {
   g_autoptr (GDateTime) start_of_week = NULL;
@@ -107,7 +107,7 @@ gcal_date_time_get_start_of_week (GDateTime *date)
  *
  * Returns: (transfer full): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_date_time_get_end_of_week (GDateTime *date)
 {
   g_autoptr (GDateTime) week_start = NULL;
@@ -160,7 +160,7 @@ gcal_date_time_compare_date (GDateTime *dt1,
  *
  * Returns: (transfer full): a #ICalTime.
  */
-ICalTime*
+ICalTime *
 gcal_date_time_to_icaltime (GDateTime *dt)
 {
   ICalTime *idt;
@@ -179,12 +179,11 @@ gcal_date_time_to_icaltime (GDateTime *dt)
                        g_date_time_get_minute (dt),
                        g_date_time_get_seconds (dt));
   i_cal_time_set_is_date (idt,
-                  i_cal_time_get_hour (idt) == 0 &&
-                  i_cal_time_get_minute (idt) == 0 &&
-                  i_cal_time_get_second (idt) == 0);
+                          i_cal_time_get_hour (idt) == 0 &&
+                              i_cal_time_get_minute (idt) == 0 &&
+                              i_cal_time_get_second (idt) == 0);
 
   return idt;
-
 }
 
 /**
@@ -214,7 +213,7 @@ gcal_date_time_is_date (GDateTime *dt)
  *
  * Returns: (transfer full): a #GDateTime.
  */
-GDateTime*
+GDateTime *
 gcal_date_time_from_icaltime (const ICalTime *date)
 {
   g_autoptr (GTimeZone) tz = NULL;
@@ -256,7 +255,7 @@ gcal_date_time_from_icaltime (const ICalTime *date)
  *
  * Returns: (transfer none): an #ICalTimezone.
  */
-ICalTimezone*
+ICalTimezone *
 gcal_timezone_to_icaltimezone (GTimeZone *tz)
 {
   ICalTimezone *ical_tz;
@@ -282,9 +281,9 @@ gcal_timezone_to_icaltimezone (GTimeZone *tz)
  *
  * Returns: (transfer full): A new #GDateTime with initial + minutes
  */
-GDateTime*
+GDateTime *
 gcal_date_time_add_floating_minutes (GDateTime *initial,
-                                     gint       minutes)
+                                     gint minutes)
 {
   g_autoptr (GDateTime) result = NULL;
   GTimeSpan initial_offset = 0;
@@ -308,7 +307,7 @@ gcal_date_time_add_floating_minutes (GDateTime *initial,
  *
  * Returns: (transfer full): A new string.
  */
-gchar*
+gchar *
 gcal_date_time_format_utc_offset (GDateTime *date_time)
 {
   g_autoptr (GTimeZone) local_time_zone = NULL;
@@ -330,7 +329,7 @@ gcal_date_time_format_utc_offset (GDateTime *date_time)
         utc_offset_seconds = -utc_offset_seconds;
 
       hours = utc_offset_seconds / 3600;
-      minutes = (utc_offset_seconds - hours*3600) / 60;
+      minutes = (utc_offset_seconds - hours * 3600) / 60;
 
       g_string_append (utc_str, negative ? "-" : "+");
       g_string_append_printf (utc_str, "%ld", hours);

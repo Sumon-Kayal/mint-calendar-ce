@@ -18,25 +18,25 @@
 
 #define G_LOG_DOMAIN "GcalEventWidget"
 
-#include <libecal/libecal.h>
 #include <glib/gi18n.h>
+#include <libecal/libecal.h>
 #include <string.h>
 
-#include "gcal-fading-label.h"
 #include "gcal-application.h"
-#include "gcal-context.h"
 #include "gcal-clock.h"
+#include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-event-popover.h"
 #include "gcal-event-widget.h"
+#include "gcal-fading-label.h"
 #include "gcal-overflow-bin.h"
-#include "gcal-view.h"
 #include "gcal-utils.h"
+#include "gcal-view.h"
 
 #define LOCATION_MAX_LEN 50
-#define DESC_MAX_CHAR    200
-#define INTENSITY(c)     ((c->red) * 0.30 + (c->green) * 0.59 + (c->blue) * 0.11)
-#define ICON_SIZE        16
+#define DESC_MAX_CHAR 200
+#define INTENSITY(c) ((c->red) * 0.30 + (c->green) * 0.59 + (c->blue) * 0.11)
+#define ICON_SIZE 16
 
 typedef struct
 {
@@ -47,35 +47,35 @@ typedef struct
 
 struct _GcalEventWidget
 {
-  GtkWidget           parent;
+  GtkWidget parent;
 
   /* properties */
-  GDateTime          *dt_start;
-  GDateTime          *dt_end;
+  GDateTime *dt_start;
+  GDateTime *dt_end;
 
   /* widgets */
-  GtkWidget          *horizontal_box;
-  GtkWidget          *timestamp_label;
-  GtkWidget          *edge;
-  GtkWidget          *overflow_bin;
-  GtkWidget          *summary_label;
-  GtkWidget          *vertical_box;
+  GtkWidget *horizontal_box;
+  GtkWidget *timestamp_label;
+  GtkWidget *edge;
+  GtkWidget *overflow_bin;
+  GtkWidget *summary_label;
+  GtkWidget *vertical_box;
   GtkEventController *drag_source;
-  GtkWidget          *preview_popover;
+  GtkWidget *preview_popover;
 
   /* internal data */
-  gchar              *css_class;
+  gchar *css_class;
 
-  GcalEvent          *event;
+  GcalEvent *event;
 
-  GtkOrientation      orientation;
+  GtkOrientation orientation;
 
   GcalTimestampPolicy timestamp_policy;
 
-  gint                old_width;
-  gint                old_height;
+  gint old_width;
+  gint old_height;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 enum
@@ -101,15 +101,16 @@ typedef enum
   CURSOR_GRABBING
 } CursorType;
 
-static guint signals[NUM_SIGNALS] = { 0, };
+static guint signals[NUM_SIGNALS] = {
+  0,
+};
 
-static gboolean read_only_to_propagation_phase_cb (GBinding     *binding,
+static gboolean read_only_to_propagation_phase_cb (GBinding *binding,
                                                    const GValue *from_value,
-                                                   GValue       *to_value,
-                                                   gpointer      user_data);
+                                                   GValue *to_value,
+                                                   gpointer user_data);
 
-G_DEFINE_TYPE_WITH_CODE (GcalEventWidget, gcal_event_widget, GTK_TYPE_WIDGET,
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_ORIENTABLE, NULL));
+G_DEFINE_TYPE_WITH_CODE (GcalEventWidget, gcal_event_widget, GTK_TYPE_WIDGET, G_IMPLEMENT_INTERFACE (GTK_TYPE_ORIENTABLE, NULL));
 
 /*
  * Auxiliary methods
@@ -239,7 +240,7 @@ update_color (GcalEventWidget *self)
 
 static void
 gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
-                                     GcalEvent       *event)
+                                     GcalEvent *event)
 {
   g_autoptr (GDateTime) tooltip_start = NULL;
   g_autoptr (GDateTime) tooltip_end = NULL;
@@ -385,7 +386,7 @@ gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
           if (service_name)
             {
               /* Translators: %s is the meeting service name for the event (e.g. "Google Meet") */
-              g_string_append_printf (string, _("\n\nOn %s"), service_name);
+              g_string_append_printf (string, _ ("\n\nOn %s"), service_name);
             }
           else
             {
@@ -398,13 +399,13 @@ gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
                 }
 
               /* Translators: %s is a URL informed as the location of the event */
-              g_string_append_printf (string, _("\n\nAt %s"), truncated_location->str);
+              g_string_append_printf (string, _ ("\n\nAt %s"), truncated_location->str);
             }
         }
       else
         {
           /* Translators: %s is the location of the event (e.g. "Downtown, 3rd Avenue") */
-          g_string_append_printf (string, _("\n\nAt %s"), location);
+          g_string_append_printf (string, _ ("\n\nAt %s"), location);
         }
 
       escaped_location = g_markup_escape_text (string->str, -1);
@@ -463,7 +464,7 @@ gcal_event_widget_update_timestamp (GcalEventWidget *self)
          * More formats can be found on the doc:
          * https://docs.gtk.org/glib/method.DateTime.format.html
          */
-        timestamp_str = g_date_time_format (time, _("%a %B %d"));
+        timestamp_str = g_date_time_format (time, _ ("%a %B %d"));
       else if (gcal_context_get_time_format (self->context) == GCAL_TIME_FORMAT_24H)
         timestamp_str = g_date_time_format (time, "%R");
       else
@@ -476,7 +477,7 @@ gcal_event_widget_update_timestamp (GcalEventWidget *self)
 
 static void
 gcal_event_widget_set_event_internal (GcalEventWidget *self,
-                                      GcalEvent       *event)
+                                      GcalEvent *event)
 {
   /*
    * This function is called only once, since the property is
@@ -518,7 +519,6 @@ gcal_event_widget_set_event_internal (GcalEventWidget *self,
                            self,
                            G_CONNECT_SWAPPED);
 
-
   /* Tooltip */
   gcal_event_widget_set_event_tooltip (self, event);
 
@@ -544,9 +544,9 @@ gcal_event_widget_set_event_internal (GcalEventWidget *self,
 }
 
 static void
-reply_preview_callback (GtkWidget              *event_popover,
-                        PreviewData            *data,
-                        GcalEventPreviewAction  action)
+reply_preview_callback (GtkWidget *event_popover,
+                        PreviewData *data,
+                        GcalEventPreviewAction action)
 {
   if (data->callback)
     data->callback (data->event_widget, action, data->user_data);
@@ -562,16 +562,15 @@ reply_preview_callback (GtkWidget              *event_popover,
   g_clear_pointer (&data, g_free);
 }
 
-
 /*
  * Callbacks
  */
 
 static void
 on_click_gesture_pressed_cb (GtkGestureClick *click_gesture,
-                             gint             n_press,
-                             gdouble          x,
-                             gdouble          y,
+                             gint n_press,
+                             gdouble x,
+                             gdouble y,
                              GcalEventWidget *self)
 {
   gtk_gesture_set_state (GTK_GESTURE (click_gesture), GTK_EVENT_SEQUENCE_CLAIMED);
@@ -579,9 +578,9 @@ on_click_gesture_pressed_cb (GtkGestureClick *click_gesture,
 
 static void
 on_click_gesture_release_cb (GtkGestureClick *click_gesture,
-                             gint             n_press,
-                             gdouble          x,
-                             gdouble          y,
+                             gint n_press,
+                             gdouble x,
+                             gdouble y,
                              GcalEventWidget *self)
 {
   GdkRectangle rect;
@@ -605,8 +604,8 @@ on_click_gesture_release_cb (GtkGestureClick *click_gesture,
 }
 
 static void
-on_drag_source_begin_cb (GtkDragSource   *source,
-                         GdkDrag         *drag,
+on_drag_source_begin_cb (GtkDragSource *source,
+                         GdkDrag *drag,
                          GcalEventWidget *self)
 {
   g_autoptr (GdkPaintable) paintable = NULL;
@@ -615,34 +614,34 @@ on_drag_source_begin_cb (GtkDragSource   *source,
   gtk_drag_source_set_icon (source, paintable, 0, 0);
 }
 
-static GdkContentProvider*
-on_drag_source_prepare_cb (GtkDragSource   *source,
-                           gdouble          x,
-                           gdouble          y,
+static GdkContentProvider *
+on_drag_source_prepare_cb (GtkDragSource *source,
+                           gdouble x,
+                           gdouble y,
                            GcalEventWidget *self)
 {
   return gdk_content_provider_new_typed (GCAL_TYPE_EVENT_WIDGET, self);
 }
 
 static void
-on_event_popover_closed_cb (GtkWidget   *event_popover,
+on_event_popover_closed_cb (GtkWidget *event_popover,
                             PreviewData *data)
 {
   reply_preview_callback (event_popover, data, GCAL_EVENT_PREVIEW_ACTION_NONE);
 }
 
 static void
-on_event_popover_edit_cb (GtkWidget   *event_popover,
-                               PreviewData *data)
+on_event_popover_edit_cb (GtkWidget *event_popover,
+                          PreviewData *data)
 {
   reply_preview_callback (event_popover, data, GCAL_EVENT_PREVIEW_ACTION_EDIT);
 }
 
 static gboolean
-read_only_to_propagation_phase_cb (GBinding     *binding,
+read_only_to_propagation_phase_cb (GBinding *binding,
                                    const GValue *from_value,
-                                   GValue       *to_value,
-                                   gpointer      user_data)
+                                   GValue *to_value,
+                                   gpointer user_data)
 {
   GtkPropagationPhase phase;
 
@@ -656,16 +655,15 @@ read_only_to_propagation_phase_cb (GBinding     *binding,
   return TRUE;
 }
 
-
 /*
  * GObject overrides
  */
 
 static void
-gcal_event_widget_set_property (GObject      *object,
-                                guint         property_id,
+gcal_event_widget_set_property (GObject *object,
+                                guint property_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalEventWidget *self = GCAL_EVENT_WIDGET (object);
 
@@ -704,10 +702,10 @@ gcal_event_widget_set_property (GObject      *object,
 }
 
 static void
-gcal_event_widget_get_property (GObject      *object,
-                                guint         property_id,
-                                GValue       *value,
-                                GParamSpec   *pspec)
+gcal_event_widget_get_property (GObject *object,
+                                guint property_id,
+                                GValue *value,
+                                GParamSpec *pspec)
 {
   GcalEventWidget *self = GCAL_EVENT_WIDGET (object);
 
@@ -829,13 +827,13 @@ gcal_event_widget_class_init (GcalEventWidgetClass *klass)
   g_object_class_override_property (object_class, PROP_ORIENTATION, "orientation");
 
   signals[ACTIVATE] = g_signal_new ("activate",
-                                     GCAL_TYPE_EVENT_WIDGET,
-                                     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-                                     0,
-                                     NULL, NULL,
-                                     g_cclosure_marshal_VOID__VOID,
-                                     G_TYPE_NONE,
-                                     0);
+                                    GCAL_TYPE_EVENT_WIDGET,
+                                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+                                    0,
+                                    NULL, NULL,
+                                    g_cclosure_marshal_VOID__VOID,
+                                    G_TYPE_NONE,
+                                    0);
 
   gtk_widget_class_set_activate_signal (widget_class, signals[ACTIVATE]);
 
@@ -901,9 +899,9 @@ gcal_event_widget_init (GcalEventWidget *self)
                                -1);
 }
 
-GtkWidget*
+GtkWidget *
 gcal_event_widget_new (GcalContext *context,
-                       GcalEvent   *event)
+                       GcalEvent *event)
 {
   return g_object_new (GCAL_TYPE_EVENT_WIDGET,
                        "context", context,
@@ -920,7 +918,7 @@ gcal_event_widget_new (GcalContext *context,
  *
  * Returns: (transfer none): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_event_widget_get_date_end (GcalEventWidget *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT_WIDGET (self), NULL);
@@ -944,7 +942,7 @@ gcal_event_widget_get_date_end (GcalEventWidget *self)
  */
 void
 gcal_event_widget_set_date_end (GcalEventWidget *self,
-                                GDateTime       *date_end)
+                                GDateTime *date_end)
 {
   g_return_if_fail (GCAL_IS_EVENT_WIDGET (self));
 
@@ -972,7 +970,7 @@ gcal_event_widget_set_date_end (GcalEventWidget *self,
  *
  * Returns: (transfer none): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_event_widget_get_date_start (GcalEventWidget *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT_WIDGET (self), NULL);
@@ -996,7 +994,7 @@ gcal_event_widget_get_date_start (GcalEventWidget *self)
  */
 void
 gcal_event_widget_set_date_start (GcalEventWidget *self,
-                                  GDateTime       *date_start)
+                                  GDateTime *date_start)
 {
   g_return_if_fail (GCAL_IS_EVENT_WIDGET (self));
 
@@ -1024,8 +1022,8 @@ gcal_event_widget_set_date_start (GcalEventWidget *self,
  * event. Depending on the event's kind, it will be an hour or a day.
  */
 void
-gcal_event_widget_set_timestamp_policy (GcalEventWidget     *self,
-                                        GcalTimestampPolicy  policy)
+gcal_event_widget_set_timestamp_policy (GcalEventWidget *self,
+                                        GcalTimestampPolicy policy)
 {
   g_return_if_fail (GCAL_IS_EVENT_WIDGET (self));
   g_return_if_fail (policy >= GCAL_TIMESTAMP_POLICY_NONE && policy <= GCAL_TIMESTAMP_POLICY_END);
@@ -1051,9 +1049,9 @@ gcal_event_widget_set_timestamp_policy (GcalEventWidget     *self,
  * the edit button is clicked.
  */
 void
-gcal_event_widget_show_preview (GcalEventWidget          *self,
-                                GcalEventPreviewCallback  callback,
-                                gpointer                  user_data)
+gcal_event_widget_show_preview (GcalEventWidget *self,
+                                GcalEventPreviewCallback callback,
+                                gpointer user_data)
 {
   PreviewData *data;
 
@@ -1088,7 +1086,7 @@ gcal_event_widget_show_preview (GcalEventWidget          *self,
  *
  * Returns: (transfer none): a #GcalEvent
  */
-GcalEvent*
+GcalEvent *
 gcal_event_widget_get_event (GcalEventWidget *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT_WIDGET (self), NULL);
@@ -1096,7 +1094,7 @@ gcal_event_widget_get_event (GcalEventWidget *self)
   return self->event;
 }
 
-GtkWidget*
+GtkWidget *
 gcal_event_widget_clone (GcalEventWidget *widget)
 {
   return gcal_event_widget_new (widget->context, widget->event);

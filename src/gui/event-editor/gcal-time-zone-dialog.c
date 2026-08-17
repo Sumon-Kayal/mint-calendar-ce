@@ -21,8 +21,8 @@
 
 #include "gcal-date-time-utils.h"
 #include "gcal-debug.h"
-#include "gcal-time-zone-dialog.h"
 #include "gcal-time-zone-dialog-row.h"
+#include "gcal-time-zone-dialog.h"
 
 #include <glib/gi18n.h>
 
@@ -32,15 +32,15 @@ struct _GcalTimeZoneDialog
 {
   AdwDialog parent;
 
-  GtkStack          *stack;
-  AdwStatusPage     *empty_search;
+  GtkStack *stack;
+  AdwStatusPage *empty_search;
   GtkScrolledWindow *search_results;
-  GtkSearchEntry    *location_entry;
-  GtkListBox        *listbox;
+  GtkSearchEntry *location_entry;
+  GtkListBox *listbox;
 
-  GListStore       *locations;
-  GTimeZone        *time_zone;
-  GDateTime        *date_time;
+  GListStore *locations;
+  GTimeZone *time_zone;
+  GDateTime *date_time;
 };
 
 G_DEFINE_TYPE (GcalTimeZoneDialog, gcal_time_zone_dialog, ADW_TYPE_DIALOG)
@@ -51,14 +51,15 @@ enum
   N_SIGNALS,
 };
 
-static guint signals [N_SIGNALS] = { 0, };
-
+static guint signals[N_SIGNALS] = {
+  0,
+};
 
 /*
  * Auxiliary methods
  */
 
-static GtkWidget*
+static GtkWidget *
 create_row (gpointer item,
             gpointer user_data)
 {
@@ -81,15 +82,14 @@ create_row (gpointer item,
       /* Translators: "%1$s" is the city / region name, and
        * "%2$s" is the country name (already localized).
        */
-      label = g_strdup_printf (_("%1$s, %2$s"),
-                             gweather_location_get_name (location),
-                             country_name);
+      label = g_strdup_printf (_ ("%1$s, %2$s"),
+                               gweather_location_get_name (location),
+                               country_name);
     }
   else
     {
       label = g_strdup (gweather_location_get_name (location));
     }
-
 
   date_time = g_date_time_new (gweather_location_get_timezone (location),
                                g_date_time_get_year (self->date_time),
@@ -109,8 +109,8 @@ create_row (gpointer item,
 
 static void
 query_locations (GcalTimeZoneDialog *self,
-                 GWeatherLocation   *location,
-                 gchar              *search)
+                 GWeatherLocation *location,
+                 gchar *search)
 {
   gboolean contains_name;
   GWeatherLocation *loc;
@@ -132,19 +132,19 @@ query_locations (GcalTimeZoneDialog *self,
 
       switch (gweather_location_get_level (location))
         {
-          case GWEATHER_LOCATION_CITY:
-              if (contains_name)
-                g_list_store_append (self->locations, location);
-              return;
+        case GWEATHER_LOCATION_CITY:
+          if (contains_name)
+            g_list_store_append (self->locations, location);
+          return;
 
-          case GWEATHER_LOCATION_NAMED_TIMEZONE:
-              if (contains_name)
-                g_list_store_append (self->locations, location);
-              return;
+        case GWEATHER_LOCATION_NAMED_TIMEZONE:
+          if (contains_name)
+            g_list_store_append (self->locations, location);
+          return;
 
-          default:
-              break;
-      }
+        default:
+          break;
+        }
     }
 
   loc = gweather_location_next_child (location, NULL);
@@ -152,19 +152,18 @@ query_locations (GcalTimeZoneDialog *self,
     {
       query_locations (self, loc, search);
       if (g_list_model_get_n_items (G_LIST_MODEL (self->locations)) >= RESULT_COUNT_LIMIT)
-          return;
+        return;
 
       loc = gweather_location_next_child (location, loc);
     }
 }
-
 
 /*
  * Callbacks
  */
 
 static void
-on_search_changed (GtkSearchEntry     *entry,
+on_search_changed (GtkSearchEntry *entry,
                    GcalTimeZoneDialog *self)
 {
   gchar *temp, *search;
@@ -180,7 +179,7 @@ on_search_changed (GtkSearchEntry     *entry,
 
   temp = g_utf8_normalize (gtk_editable_get_text (GTK_EDITABLE (self->location_entry)), -1, G_NORMALIZE_ALL);
   search = g_utf8_casefold (temp, -1);
-  g_free(temp);
+  g_free (temp);
 
   world_location = gweather_location_get_world ();
   if (!world_location)
@@ -198,7 +197,7 @@ on_search_changed (GtkSearchEntry     *entry,
 }
 
 static void
-on_stop_search_cb (GtkSearchEntry     *entry,
+on_stop_search_cb (GtkSearchEntry *entry,
                    GcalTimeZoneDialog *self)
 {
   adw_dialog_close (ADW_DIALOG (self));
@@ -232,7 +231,6 @@ on_row_activated_cb (GtkListBox *list_box,
   GCAL_EXIT;
 }
 
-
 /*
  * Gobject overrides
  */
@@ -243,13 +241,13 @@ gcal_time_zone_dialog_class_init (GcalTimeZoneDialogClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   signals[TIME_ZONE_SELECTED] = g_signal_new ("timezone-selected",
-                                             GCAL_TYPE_TIME_ZONE_DIALOG,
-                                             G_SIGNAL_RUN_LAST,
-                                             0,
-                                             NULL, NULL,
-                                             NULL,
-                                             G_TYPE_NONE,
-                                             0);
+                                              GCAL_TYPE_TIME_ZONE_DIALOG,
+                                              G_SIGNAL_RUN_LAST,
+                                              0,
+                                              NULL, NULL,
+                                              NULL,
+                                              G_TYPE_NONE,
+                                              0);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/event-editor/gcal-time-zone-dialog.ui");
 
@@ -288,7 +286,7 @@ gcal_time_zone_dialog_init (GcalTimeZoneDialog *self)
  *
  * Returns: (transfer full): a #GcalTimeZoneDialog
  */
-GtkWidget*
+GtkWidget *
 gcal_time_zone_dialog_new (GDateTime *date_time)
 {
   GcalTimeZoneDialog *dialog = g_object_new (GCAL_TYPE_TIME_ZONE_DIALOG, NULL);
@@ -306,7 +304,7 @@ gcal_time_zone_dialog_new (GDateTime *date_time)
  *
  * Returns: (transfer none): the timezone selected in the dialog.
  */
-GTimeZone*
+GTimeZone *
 gcal_time_zone_dialog_get_time_zone (GcalTimeZoneDialog *self)
 {
   return self->time_zone;

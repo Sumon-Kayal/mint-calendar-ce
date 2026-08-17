@@ -21,40 +21,40 @@
 
 #include "gcal-context.h"
 #include "gcal-event-widget.h"
-#include "gcal-weather-service.h"
 #include "gcal-weather-info.h"
+#include "gcal-weather-service.h"
 
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_WEEK_HEADER (gcal_week_header_get_type())
+#define GCAL_TYPE_WEEK_HEADER (gcal_week_header_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalWeekHeader, gcal_week_header, GCAL, WEEK_HEADER, GtkWidget)
 
-void                 gcal_week_header_set_context                (GcalWeekHeader     *self,
-                                                                  GcalContext        *context);
+void gcal_week_header_set_context (GcalWeekHeader *self,
+                                   GcalContext *context);
 
-void                 gcal_week_header_add_event                  (GcalWeekHeader     *self,
-                                                                  GcalEvent          *event);
+void gcal_week_header_add_event (GcalWeekHeader *self,
+                                 GcalEvent *event);
 
-void                 gcal_week_header_remove_event               (GcalWeekHeader     *self,
-                                                                  const gchar        *uuid);
+void gcal_week_header_remove_event (GcalWeekHeader *self,
+                                    const gchar *uuid);
 
-GList*               gcal_week_header_get_children_by_uuid       (GcalWeekHeader        *self,
-                                                                  GcalRecurrenceModType  mod,
-                                                                  const gchar           *uuid);
+GList *gcal_week_header_get_children_by_uuid (GcalWeekHeader *self,
+                                              GcalRecurrenceModType mod,
+                                              const gchar *uuid);
 
-void                 gcal_week_header_clear_marks                (GcalWeekHeader     *self);
+void gcal_week_header_clear_marks (GcalWeekHeader *self);
 
-void                 gcal_week_header_set_date                   (GcalWeekHeader     *self,
-                                                                  GDateTime          *date);
+void gcal_week_header_set_date (GcalWeekHeader *self,
+                                GDateTime *date);
 
-gboolean             gcal_week_header_get_can_expand             (GcalWeekHeader     *self);
+gboolean gcal_week_header_get_can_expand (GcalWeekHeader *self);
 
-gboolean             gcal_week_header_get_expanded               (GcalWeekHeader     *self);
-void                 gcal_week_header_set_expanded               (GcalWeekHeader     *self,
-                                                                  gboolean            expanded);
+gboolean gcal_week_header_get_expanded (GcalWeekHeader *self);
+void gcal_week_header_set_expanded (GcalWeekHeader *self,
+                                    gboolean expanded);
 
 G_END_DECLS
 

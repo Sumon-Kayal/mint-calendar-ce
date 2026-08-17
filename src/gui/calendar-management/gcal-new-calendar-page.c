@@ -24,8 +24,8 @@
 
 #include <glib/gi18n.h>
 
-#include "gcal-context.h"
 #include "gcal-calendar-management-page.h"
+#include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-new-calendar-page.h"
 #include "gcal-source-discoverer.h"
@@ -43,43 +43,41 @@ typedef enum
 
 struct _GcalNewCalendarPage
 {
-  AdwNavigationPage   parent;
+  AdwNavigationPage parent;
 
-  GtkWidget          *add_button;
-  GtkEntry           *calendar_address_entry;
-  EntryState          calendar_address_entry_state;
-  AdwMessageDialog   *credentials_dialog;
-  GtkEntry           *credentials_password_entry;
-  GtkEntry           *credentials_user_entry;
+  GtkWidget *add_button;
+  GtkEntry *calendar_address_entry;
+  EntryState calendar_address_entry_state;
+  AdwMessageDialog *credentials_dialog;
+  GtkEntry *credentials_password_entry;
+  GtkEntry *credentials_user_entry;
   GtkColorDialogButton *local_calendar_color_button;
-  AdwEntryRow        *local_calendar_name_row;
-  GtkWidget          *web_sources_listbox;
-  GtkWidget          *web_sources_revealer;
+  AdwEntryRow *local_calendar_name_row;
+  GtkWidget *web_sources_listbox;
+  GtkWidget *web_sources_revealer;
 
-  guint               calendar_address_id;
-  GPtrArray          *remote_sources;
-  guint               validate_url_resource_id;
+  guint calendar_address_id;
+  GPtrArray *remote_sources;
+  guint validate_url_resource_id;
 
-  GCancellable       *cancellable;
+  GCancellable *cancellable;
 
-  ESource            *local_source;
+  ESource *local_source;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
-static gboolean      pulse_web_entry                             (gpointer           data);
+static gboolean pulse_web_entry (gpointer data);
 
-static void          sources_discovered_cb                       (GObject           *source_object,
-                                                                  GAsyncResult      *result,
-                                                                  gpointer           user_data);
+static void sources_discovered_cb (GObject *source_object,
+                                   GAsyncResult *result,
+                                   gpointer user_data);
 
-static void          cancel_validation_discover                               (GcalNewCalendarPage *self);
+static void cancel_validation_discover (GcalNewCalendarPage *self);
 
-static void          gcal_calendar_management_page_iface_init    (GcalCalendarManagementPageInterface *iface);
+static void gcal_calendar_management_page_iface_init (GcalCalendarManagementPageInterface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalNewCalendarPage, gcal_new_calendar_page, ADW_TYPE_NAVIGATION_PAGE,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_CALENDAR_MANAGEMENT_PAGE,
-                                                gcal_calendar_management_page_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalNewCalendarPage, gcal_new_calendar_page, ADW_TYPE_NAVIGATION_PAGE, G_IMPLEMENT_INTERFACE (GCAL_TYPE_CALENDAR_MANAGEMENT_PAGE, gcal_calendar_management_page_iface_init))
 
 enum
 {
@@ -100,8 +98,8 @@ update_add_button (GcalNewCalendarPage *self)
   uint32_t n_calendars;
 
   valid = (self->local_source != NULL || self->remote_sources != NULL) &&
-      self->calendar_address_entry_state != ENTRY_STATE_VALIDATING &&
-      self->calendar_address_entry_state != ENTRY_STATE_INVALID;
+          self->calendar_address_entry_state != ENTRY_STATE_VALIDATING &&
+          self->calendar_address_entry_state != ENTRY_STATE_INVALID;
 
   gtk_widget_set_sensitive (self->add_button, valid);
 
@@ -121,7 +119,7 @@ update_add_button (GcalNewCalendarPage *self)
     }
   else
     {
-      add_button_label = g_strdup (C_("button", "Add Calendar"));
+      add_button_label = g_strdup (C_ ("button", "Add Calendar"));
     }
 
   gtk_button_set_label (GTK_BUTTON (self->add_button), add_button_label);
@@ -166,7 +164,7 @@ update_local_source (GcalNewCalendarPage *self)
 
 static void
 toggle_url_entry_pulsing (GcalNewCalendarPage *self,
-                          gboolean             pulsing)
+                          gboolean pulsing)
 {
   if (pulsing && self->calendar_address_id == 0)
     {
@@ -182,8 +180,8 @@ toggle_url_entry_pulsing (GcalNewCalendarPage *self,
 
 static void
 update_url_entry_state (GcalNewCalendarPage *self,
-                        EntryState           state,
-                        const gchar         *error_message)
+                        EntryState state,
+                        const gchar *error_message)
 {
   self->calendar_address_entry_state = state;
 
@@ -193,7 +191,7 @@ update_url_entry_state (GcalNewCalendarPage *self,
       if (error_message)
         {
           g_autofree gchar *multiline_message = NULL;
-          g_auto(GStrv) split_message = NULL;
+          g_auto (GStrv) split_message = NULL;
 
           split_message = g_strsplit (error_message, ": ", -1);
           multiline_message = g_strjoinv (":\n", split_message);
@@ -261,9 +259,9 @@ pulse_web_entry (gpointer data)
 }
 
 static void
-sources_discovered_cb (GObject      *source_object,
+sources_discovered_cb (GObject *source_object,
                        GAsyncResult *result,
-                       gpointer      user_data)
+                       gpointer user_data)
 {
   GcalNewCalendarPage *self;
   g_autoptr (GPtrArray) sources = NULL;
@@ -329,7 +327,7 @@ validate_url_cb (gpointer data)
     }
   else
     {
-      update_url_entry_state (self, ENTRY_STATE_INVALID, _("The URL you have entered appears to be invalid."));
+      update_url_entry_state (self, ENTRY_STATE_INVALID, _ ("The URL you have entered appears to be invalid."));
       g_debug ("Invalid URL passed");
     }
 
@@ -337,7 +335,7 @@ validate_url_cb (gpointer data)
 }
 
 static void
-on_add_button_clicked_cb (GtkWidget           *button,
+on_add_button_clicked_cb (GtkWidget *button,
                           GcalNewCalendarPage *self)
 {
   GcalManager *manager;
@@ -366,7 +364,7 @@ on_add_button_clicked_cb (GtkWidget           *button,
 }
 
 static void
-on_calendar_address_activated_cb (GtkEntry            *entry,
+on_calendar_address_activated_cb (GtkEntry *entry,
                                   GcalNewCalendarPage *self)
 {
   cancel_validation_discover (self);
@@ -374,15 +372,15 @@ on_calendar_address_activated_cb (GtkEntry            *entry,
 }
 
 static void
-on_credentials_dialog_response_cb (AdwMessageDialog    *dialog,
-                                 const gchar         *response,
-                                 GcalNewCalendarPage *self)
+on_credentials_dialog_response_cb (AdwMessageDialog *dialog,
+                                   const gchar *response,
+                                   GcalNewCalendarPage *self)
 {
   if (g_str_equal (response, "connect"))
     discover_sources (self);
   else if (g_str_equal (response, "cancel"))
     update_url_entry_state (self, ENTRY_STATE_INVALID,
-                            _("A valid user and password are required to connect to this calendar."));
+                            _ ("A valid user and password are required to connect to this calendar."));
 
   gtk_editable_set_text (GTK_EDITABLE (self->credentials_user_entry), "");
   gtk_editable_set_text (GTK_EDITABLE (self->credentials_password_entry), "");
@@ -413,8 +411,8 @@ cancel_validation_discover (GcalNewCalendarPage *self)
 }
 
 static void
-on_url_entry_text_changed_cb (GtkEntry            *entry,
-                              GParamSpec          *pspec,
+on_url_entry_text_changed_cb (GtkEntry *entry,
+                              GParamSpec *pspec,
                               GcalNewCalendarPage *self)
 {
   const gchar *text;
@@ -443,31 +441,30 @@ on_url_entry_text_changed_cb (GtkEntry            *entry,
 }
 
 static void
-on_local_calendar_name_row_text_changed_cb (AdwEntryRow         *entry_row,
-                                            GParamSpec          *pspec,
+on_local_calendar_name_row_text_changed_cb (AdwEntryRow *entry_row,
+                                            GParamSpec *pspec,
                                             GcalNewCalendarPage *self)
 {
   update_local_source (self);
 }
 
 static void
-on_local_calendar_color_button_rgba_changed_cb (GtkColorChooser     *chooser,
-                                                GParamSpec          *pspec,
+on_local_calendar_color_button_rgba_changed_cb (GtkColorChooser *chooser,
+                                                GParamSpec *pspec,
                                                 GcalNewCalendarPage *self)
 {
   update_local_source (self);
 }
 
 static void
-on_web_description_label_link_activated_cb (GtkLabel            *label,
-                                            gchar               *uri,
+on_web_description_label_link_activated_cb (GtkLabel *label,
+                                            gchar *uri,
                                             GcalNewCalendarPage *self)
 {
   GDBusConnection *connection = g_application_get_dbus_connection (g_application_get_default ());
 
   gcal_utils_launch_gnome_settings (connection, "online-accounts", NULL);
 }
-
 
 /*
  * GcalCalendarManagementPage iface
@@ -507,7 +504,7 @@ gcal_calendar_management_page_iface_init (GcalCalendarManagementPageInterface *i
 static void
 gcal_new_calendar_page_dispose (GObject *object)
 {
-  GcalNewCalendarPage *self = (GcalNewCalendarPage *)object;
+  GcalNewCalendarPage *self = (GcalNewCalendarPage *) object;
 
   gtk_widget_dispose_template (GTK_WIDGET (self), GCAL_TYPE_NEW_CALENDAR_PAGE);
 
@@ -517,7 +514,7 @@ gcal_new_calendar_page_dispose (GObject *object)
 static void
 gcal_new_calendar_page_finalize (GObject *object)
 {
-  GcalNewCalendarPage *self = (GcalNewCalendarPage *)object;
+  GcalNewCalendarPage *self = (GcalNewCalendarPage *) object;
 
   g_clear_handle_id (&self->calendar_address_id, g_source_remove);
   g_clear_handle_id (&self->validate_url_resource_id, g_source_remove);
@@ -530,9 +527,9 @@ gcal_new_calendar_page_finalize (GObject *object)
 }
 
 static void
-gcal_new_calendar_page_get_property (GObject    *object,
-                                     guint       prop_id,
-                                     GValue     *value,
+gcal_new_calendar_page_get_property (GObject *object,
+                                     guint prop_id,
+                                     GValue *value,
                                      GParamSpec *pspec)
 {
   GcalNewCalendarPage *self = GCAL_NEW_CALENDAR_PAGE (object);
@@ -549,10 +546,10 @@ gcal_new_calendar_page_get_property (GObject    *object,
 }
 
 static void
-gcal_new_calendar_page_set_property (GObject      *object,
-                                     guint         prop_id,
+gcal_new_calendar_page_set_property (GObject *object,
+                                     guint prop_id,
                                      const GValue *value,
-                                     GParamSpec   *pspec)
+                                     GParamSpec *pspec)
 {
   GcalNewCalendarPage *self = GCAL_NEW_CALENDAR_PAGE (object);
 

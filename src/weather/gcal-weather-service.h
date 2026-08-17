@@ -19,50 +19,49 @@
 #ifndef GCAL_WEATHER_SERVICE_H
 #define GCAL_WEATHER_SERVICE_H
 
-#include <libgweather/gweather.h>
 #include <gtk/gtk.h>
+#include <libgweather/gweather.h>
 
 #include "gcal-weather-info.h"
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_WEATHER_SERVICE (gcal_weather_service_get_type())
+#define GCAL_TYPE_WEATHER_SERVICE (gcal_weather_service_get_type ())
 G_DECLARE_FINAL_TYPE (GcalWeatherService, gcal_weather_service, GCAL, WEATHER_SERVICE, GObject)
 
-GcalWeatherService*  gcal_weather_service_new                       (void);
+GcalWeatherService *gcal_weather_service_new (void);
 
-GTimeZone*           gcal_weather_service_get_time_zone             (GcalWeatherService *self);
+GTimeZone *gcal_weather_service_get_time_zone (GcalWeatherService *self);
 
-void                 gcal_weather_service_set_time_zone             (GcalWeatherService *self,
-                                                                     GTimeZone          *value);
+void gcal_weather_service_set_time_zone (GcalWeatherService *self,
+                                         GTimeZone *value);
 
-GWeatherLocation*   gcal_weather_service_get_location               (GcalWeatherService *self);
+GWeatherLocation *gcal_weather_service_get_location (GcalWeatherService *self);
 
-void                 gcal_weather_service_set_location              (GcalWeatherService *self,
-                                                                     GWeatherLocation   *value);
+void gcal_weather_service_set_location (GcalWeatherService *self,
+                                        GWeatherLocation *value);
 
-GcalWeatherInfo*     gcal_weather_service_get_weather_info_for_date (GcalWeatherService *self,
-                                                                     GDate              *date);
+GcalWeatherInfo *gcal_weather_service_get_weather_info_for_date (GcalWeatherService *self,
+                                                                 GDate *date);
 
-GPtrArray*           gcal_weather_service_get_weather_infos         (GcalWeatherService *self);
+GPtrArray *gcal_weather_service_get_weather_infos (GcalWeatherService *self);
 
-const gchar*         gcal_weather_service_get_attribution           (GcalWeatherService *self);
+const gchar *gcal_weather_service_get_attribution (GcalWeatherService *self);
 
-void                 gcal_weather_service_update                    (GcalWeatherService *self);
+void gcal_weather_service_update (GcalWeatherService *self);
 
-void                 gcal_weather_service_activate                  (GcalWeatherService *self);
+void gcal_weather_service_activate (GcalWeatherService *self);
 
-void                 gcal_weather_service_deactivate                (GcalWeatherService *self);
+void gcal_weather_service_deactivate (GcalWeatherService *self);
 
-void                 gcal_weather_service_start                     (GcalWeatherService *self);
+void gcal_weather_service_start (GcalWeatherService *self);
 
-void                 gcal_weather_service_stop                      (GcalWeatherService *self);
+void gcal_weather_service_stop (GcalWeatherService *self);
 
-void                 gcal_weather_service_hold                      (GcalWeatherService *self);
+void gcal_weather_service_hold (GcalWeatherService *self);
 
-void                 gcal_weather_service_release                   (GcalWeatherService *self);
+void gcal_weather_service_release (GcalWeatherService *self);
 
 G_END_DECLS
 
 #endif /* GCAL_WEATHER_SERVICE_H */
-

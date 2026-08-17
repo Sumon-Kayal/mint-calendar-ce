@@ -27,10 +27,10 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_DROP_OVERLAY (gcal_drop_overlay_get_type())
+#define GCAL_TYPE_DROP_OVERLAY (gcal_drop_overlay_get_type ())
 G_DECLARE_FINAL_TYPE (GcalDropOverlay, gcal_drop_overlay, GCAL, DROP_OVERLAY, AdwBin)
 
-void                 gcal_drop_overlay_set_drop_target           (GcalDropOverlay    *self,
-                                                                  GtkDropTarget      *drop_target);
+void gcal_drop_overlay_set_drop_target (GcalDropOverlay *self,
+                                        GtkDropTarget *drop_target);
 
 G_END_DECLS

@@ -29,9 +29,7 @@ typedef struct
 
 static void gcal_overflow_bin_buildable_init (GtkBuildableIface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalOverflowBin, gcal_overflow_bin, GTK_TYPE_WIDGET,
-                         G_ADD_PRIVATE (GcalOverflowBin)
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, gcal_overflow_bin_buildable_init))
+G_DEFINE_TYPE_WITH_CODE (GcalOverflowBin, gcal_overflow_bin, GTK_TYPE_WIDGET, G_ADD_PRIVATE (GcalOverflowBin) G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, gcal_overflow_bin_buildable_init))
 
 static GtkBuildableIface *parent_buildable_iface;
 
@@ -45,16 +43,15 @@ enum
 
 static GParamSpec *props[LAST_PROP];
 
-
 /*
  * GtkBuildable interface
  */
 
 static void
 gcal_overflow_bin_buildable_add_child (GtkBuildable *buildable,
-                                       GtkBuilder   *builder,
-                                       GObject      *child,
-                                       const char   *type)
+                                       GtkBuilder *builder,
+                                       GObject *child,
+                                       const char *type)
 {
   if (GTK_IS_WIDGET (child))
     gcal_overflow_bin_set_child (GCAL_OVERFLOW_BIN (buildable), GTK_WIDGET (child));
@@ -70,15 +67,14 @@ gcal_overflow_bin_buildable_init (GtkBuildableIface *iface)
   iface->add_child = gcal_overflow_bin_buildable_add_child;
 }
 
-
 /*
  * GtkWidget overrides
  */
 
 static void
 gcal_overflow_bin_compute_expand (GtkWidget *widget,
-                                  gboolean  *hexpand_p,
-                                  gboolean  *vexpand_p)
+                                  gboolean *hexpand_p,
+                                  gboolean *vexpand_p)
 {
   GtkWidget *child;
   gboolean hexpand = FALSE;
@@ -96,7 +92,6 @@ gcal_overflow_bin_compute_expand (GtkWidget *widget,
   *vexpand_p = vexpand;
 }
 
-
 /*
  * GObject overrides
  */
@@ -113,9 +108,9 @@ gcal_overflow_bin_dispose (GObject *object)
 }
 
 static void
-gcal_overflow_bin_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
+gcal_overflow_bin_get_property (GObject *object,
+                                guint prop_id,
+                                GValue *value,
                                 GParamSpec *pspec)
 {
   GcalOverflowBin *self = GCAL_OVERFLOW_BIN (object);
@@ -136,10 +131,10 @@ gcal_overflow_bin_get_property (GObject    *object,
 }
 
 static void
-gcal_overflow_bin_set_property (GObject      *object,
-                                guint         prop_id,
+gcal_overflow_bin_set_property (GObject *object,
+                                guint prop_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalOverflowBin *self = GCAL_OVERFLOW_BIN (object);
 
@@ -244,7 +239,7 @@ gcal_overflow_bin_get_child (GcalOverflowBin *self)
  */
 void
 gcal_overflow_bin_set_child (GcalOverflowBin *self,
-                             GtkWidget       *child)
+                             GtkWidget *child)
 {
   GcalOverflowBinPrivate *priv;
 
@@ -274,8 +269,8 @@ gcal_overflow_bin_set_child (GcalOverflowBin *self,
  * Sets the size request mode of @self.
  */
 void
-gcal_overflow_bin_set_request_mode (GcalOverflowBin    *self,
-                                    GtkSizeRequestMode  request_mode)
+gcal_overflow_bin_set_request_mode (GcalOverflowBin *self,
+                                    GtkSizeRequestMode request_mode)
 {
   GcalOverflowBinPrivate *priv;
   GtkLayoutManager *layout_manager;

@@ -27,8 +27,8 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_TIME_ZONE_DIALOG (gcal_time_zone_dialog_get_type ())
 G_DECLARE_FINAL_TYPE (GcalTimeZoneDialog, gcal_time_zone_dialog, GCAL, TIME_ZONE_DIALOG, AdwDialog);
 
-GtkWidget*           gcal_time_zone_dialog_new                   (GDateTime          *date_time);
+GtkWidget *gcal_time_zone_dialog_new (GDateTime *date_time);
 
-GTimeZone*           gcal_time_zone_dialog_get_time_zone         (GcalTimeZoneDialog *self);
+GTimeZone *gcal_time_zone_dialog_get_time_zone (GcalTimeZoneDialog *self);
 
 G_END_DECLS

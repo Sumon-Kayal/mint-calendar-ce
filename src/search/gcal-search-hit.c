@@ -22,13 +22,12 @@
 
 typedef struct
 {
-  gchar              *id;
-  gchar              *title;
-  gchar              *subtitle;
+  gchar *id;
+  gchar *title;
+  gchar *subtitle;
 
-  GdkPaintable       *primary_icon;
+  GdkPaintable *primary_icon;
 } GcalSearchHitPrivate;
-
 
 G_DEFINE_TYPE_WITH_PRIVATE (GcalSearchHit, gcal_search_hit, G_TYPE_OBJECT)
 
@@ -42,7 +41,7 @@ enum
   N_PROPS,
 };
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
 
 /*
  * GcalSearchHit overrides
@@ -50,7 +49,7 @@ static GParamSpec *properties [N_PROPS];
 
 static void
 gcal_search_hit_real_activate (GcalSearchHit *self,
-                               GtkWidget     *for_widget)
+                               GtkWidget *for_widget)
 {
 }
 
@@ -67,7 +66,6 @@ gcal_search_hit_real_get_priority (GcalSearchHit *self)
   return 0;
 }
 
-
 /*
  * GObject overrides
  */
@@ -75,7 +73,7 @@ gcal_search_hit_real_get_priority (GcalSearchHit *self)
 static void
 gcal_search_hit_finalize (GObject *object)
 {
-  GcalSearchHit *self = (GcalSearchHit *)object;
+  GcalSearchHit *self = (GcalSearchHit *) object;
   GcalSearchHitPrivate *priv = gcal_search_hit_get_instance_private (self);
 
   g_clear_pointer (&priv->id, g_free);
@@ -87,9 +85,9 @@ gcal_search_hit_finalize (GObject *object)
 }
 
 static void
-gcal_search_hit_get_property (GObject    *object,
-                              guint       prop_id,
-                              GValue     *value,
+gcal_search_hit_get_property (GObject *object,
+                              guint prop_id,
+                              GValue *value,
                               GParamSpec *pspec)
 {
   GcalSearchHit *self = GCAL_SEARCH_HIT (object);
@@ -118,10 +116,10 @@ gcal_search_hit_get_property (GObject    *object,
 }
 
 static void
-gcal_search_hit_set_property (GObject      *object,
-                              guint         prop_id,
+gcal_search_hit_set_property (GObject *object,
+                              guint prop_id,
                               const GValue *value,
-                              GParamSpec   *pspec)
+                              GParamSpec *pspec)
 {
   GcalSearchHit *self = GCAL_SEARCH_HIT (object);
 
@@ -161,36 +159,35 @@ gcal_search_hit_class_init (GcalSearchHitClass *klass)
   klass->compare = gcal_search_hit_real_compare;
   klass->get_priority = gcal_search_hit_real_get_priority;
 
-  properties [PROP_ID] =
-    g_param_spec_string ("id",
-                         "Id",
-                         "The suggestion identifier",
-                         NULL,
-                         G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_ID] =
+      g_param_spec_string ("id",
+                           "Id",
+                           "The suggestion identifier",
+                           NULL,
+                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
-  properties [PROP_TITLE] =
-    g_param_spec_string ("title",
-                         "Title",
-                         "The title of the suggestion",
-                         NULL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+  properties[PROP_TITLE] =
+      g_param_spec_string ("title",
+                           "Title",
+                           "The title of the suggestion",
+                           NULL,
+                           (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_SUBTITLE] =
-    g_param_spec_string ("subtitle",
-                         "Subtitle",
-                         "The subtitle of the suggestion",
-                         NULL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+  properties[PROP_SUBTITLE] =
+      g_param_spec_string ("subtitle",
+                           "Subtitle",
+                           "The subtitle of the suggestion",
+                           NULL,
+                           (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_PRIMARY_ICON] =
-    g_param_spec_object ("primary-icon",
-                         "Primary icon",
-                         "The primary icon for the suggestion",
-                         GDK_TYPE_PAINTABLE,
-                         G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  properties[PROP_PRIMARY_ICON] =
+      g_param_spec_object ("primary-icon",
+                           "Primary icon",
+                           "The primary icon for the suggestion",
+                           GDK_TYPE_PAINTABLE,
+                           G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
-
 }
 
 static void
@@ -223,7 +220,7 @@ gcal_search_hit_get_id (GcalSearchHit *self)
 
 void
 gcal_search_hit_set_id (GcalSearchHit *self,
-                       const gchar   *id)
+                        const gchar *id)
 {
   GcalSearchHitPrivate *priv = gcal_search_hit_get_instance_private (self);
 
@@ -233,7 +230,7 @@ gcal_search_hit_set_id (GcalSearchHit *self,
     {
       g_free (priv->id);
       priv->id = g_strdup (id);
-      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ID]);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ID]);
     }
 }
 
@@ -249,7 +246,7 @@ gcal_search_hit_get_title (GcalSearchHit *self)
 
 void
 gcal_search_hit_set_title (GcalSearchHit *self,
-                          const gchar   *title)
+                           const gchar *title)
 {
   GcalSearchHitPrivate *priv = gcal_search_hit_get_instance_private (self);
 
@@ -259,7 +256,7 @@ gcal_search_hit_set_title (GcalSearchHit *self,
     {
       g_clear_pointer (&priv->title, g_free);
       priv->title = g_strdup (title);
-      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
     }
 }
 
@@ -275,7 +272,7 @@ gcal_search_hit_get_subtitle (GcalSearchHit *self)
 
 void
 gcal_search_hit_set_subtitle (GcalSearchHit *self,
-                              const gchar   *subtitle)
+                              const gchar *subtitle)
 {
   GcalSearchHitPrivate *priv = gcal_search_hit_get_instance_private (self);
 
@@ -285,7 +282,7 @@ gcal_search_hit_set_subtitle (GcalSearchHit *self,
     {
       g_clear_pointer (&priv->subtitle, g_free);
       priv->subtitle = g_strdup (subtitle);
-      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SUBTITLE]);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SUBTITLE]);
     }
 }
 
@@ -301,7 +298,7 @@ gcal_search_hit_get_primary_icon (GcalSearchHit *self)
 
 void
 gcal_search_hit_set_primary_icon (GcalSearchHit *self,
-                                  GdkPaintable  *primary_icon)
+                                  GdkPaintable *primary_icon)
 {
   GcalSearchHitPrivate *priv = gcal_search_hit_get_instance_private (self);
 
@@ -314,7 +311,7 @@ gcal_search_hit_set_primary_icon (GcalSearchHit *self,
 
 void
 gcal_search_hit_activate (GcalSearchHit *self,
-                          GtkWidget     *for_widget)
+                          GtkWidget *for_widget)
 {
   g_return_if_fail (GCAL_IS_SEARCH_HIT (self));
 

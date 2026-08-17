@@ -8,14 +8,14 @@ rules. Please read them carefully and, if in doubt, ask a maintainer for directi
 The most important rule is: **see the surrounding code, and copy its style**.
 
 Another rule that applies to function declarations is that all parameters are
-aligned by the last '*'. There are plenty of examples below.
+aligned by the last '\*'. There are plenty of examples below.
 
 ## Header (.h) files
 
- * The '*' and the type come together, without any spaces in between.
- * Function name starts at column 22.
- * Parenthesis after function name is at column 66
- * The last '*' in parameters are at column 86
+- The '\*' and the type come together, without any spaces in between.
+- Function name starts at column 22.
+- Parenthesis after function name is at column 66
+- The last '\*' in parameters are at column 86
 
 As an example, this is how a function should look like:
 
@@ -28,18 +28,18 @@ GcalManager*         gcal_manager_foo_bar                        (GcalManager   
 
 The source file keeps an order of methods. The order will be as following:
 
-  1. GPL header
-  2. Structures
-  3. Function prototypes
-  4. G_DEFINE_TYPE()
-  5. Enums
-  6. Static variables
-  7. Auxiliary methods
-  8. Signal callbacks
-  9. Interface implementations
-  10. Parent class overrides
-  11. class_init and init
-  12. Public API
+1. GPL header
+2. Structures
+3. Function prototypes
+4. G_DEFINE_TYPE()
+5. Enums
+6. Static variables
+7. Auxiliary methods
+8. Signal callbacks
+9. Interface implementations
+10. Parent class overrides
+11. class_init and init
+12. Public API
 
 ### Structures
 
@@ -92,7 +92,7 @@ do_something_on_data (Foo *data,
 ### Signal Callbacks
 
 Signal callback names must have the name of the signal in the past. They don't have
-the gcal_foo prefix as well, but have a _cb suffix. For example:
+the gcal_foo prefix as well, but have a \_cb suffix. For example:
 
 ```c
 static void
@@ -134,11 +134,11 @@ foo_bar_do_somthing_sync (a, 1, object, data,
 
 ### Automatic Cleanup Variables
 
-GLib provides macros like `g_auto`, `g_autoptr`, and `g_autofree` for automatic 
+GLib provides macros like `g_auto`, `g_autoptr`, and `g_autofree` for automatic
 cleanup of variables when they go out of scope.
 
-Choose `g_auto` for non-pointer or stack-based types with custom cleanup, 
-`g_autoptr` for pointer types with type-specific cleanup functions, and 
+Choose `g_auto` for non-pointer or stack-based types with custom cleanup,
+`g_autoptr` for pointer types with type-specific cleanup functions, and
 `g_autofree` for memory allocated with `g_malloc()` that should be freed using `g_free()`.
 
 For more details, visit the official documentation [here](https://docs.gtk.org/glib/auto-cleanup.html).

@@ -28,29 +28,29 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (GcalDateTimeChooser, gcal_date_time_chooser, GCAL, DATE_TIME_CHOOSER, AdwPreferencesGroup)
 
-GtkWidget*           gcal_date_time_chooser_new                  (void);
+GtkWidget *gcal_date_time_chooser_new (void);
 
-void                 gcal_date_time_chooser_set_time_format      (GcalDateTimeChooser *chooser,
-                                                                  GcalTimeFormat      time_format);
+void gcal_date_time_chooser_set_time_format (GcalDateTimeChooser *chooser,
+                                             GcalTimeFormat time_format);
 
-GDateTime*           gcal_date_time_chooser_get_date_time        (GcalDateTimeChooser *chooser);
+GDateTime *gcal_date_time_chooser_get_date_time (GcalDateTimeChooser *chooser);
 
-void                 gcal_date_time_chooser_set_date_time        (GcalDateTimeChooser *chooser,
-                                                                  GDateTime          *date_time);
+void gcal_date_time_chooser_set_date_time (GcalDateTimeChooser *chooser,
+                                           GDateTime *date_time);
 
-GDateTime*           gcal_date_time_chooser_get_date             (GcalDateTimeChooser *chooser);
+GDateTime *gcal_date_time_chooser_get_date (GcalDateTimeChooser *chooser);
 
-void                 gcal_date_time_chooser_set_date             (GcalDateTimeChooser *chooser,
-                                                                  GDateTime          *date_time);
+void gcal_date_time_chooser_set_date (GcalDateTimeChooser *chooser,
+                                      GDateTime *date_time);
 
-const gchar*         gcal_date_time_chooser_get_date_label       (GcalDateTimeChooser *chooser);
+const gchar *gcal_date_time_chooser_get_date_label (GcalDateTimeChooser *chooser);
 
-void                 gcal_date_time_chooser_set_date_label       (GcalDateTimeChooser *chooser,
-                                                                  const gchar        *date_label);
+void gcal_date_time_chooser_set_date_label (GcalDateTimeChooser *chooser,
+                                            const gchar *date_label);
 
-const gchar*          gcal_date_time_chooser_get_time_label       (GcalDateTimeChooser *chooser);
+const gchar *gcal_date_time_chooser_get_time_label (GcalDateTimeChooser *chooser);
 
-void                 gcal_date_time_chooser_set_time_label       (GcalDateTimeChooser *chooser,
-                                                                  const gchar        *time_label);
+void gcal_date_time_chooser_set_time_label (GcalDateTimeChooser *chooser,
+                                            const gchar *time_label);
 
 G_END_DECLS

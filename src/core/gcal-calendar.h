@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include <libecal/libecal.h>
 #include <gdk/gdk.h>
+#include <libecal/libecal.h>
 
 G_BEGIN_DECLS
 
@@ -38,8 +38,7 @@ typedef enum
 
 #define GCAL_CALENDAR_ERROR (gcal_calendar_error_quark ())
 
-
-#define GCAL_TYPE_CALENDAR (gcal_calendar_get_type())
+#define GCAL_TYPE_CALENDAR (gcal_calendar_get_type ())
 G_DECLARE_DERIVABLE_TYPE (GcalCalendar, gcal_calendar, GCAL, CALENDAR, GObject)
 
 struct _GcalCalendarClass
@@ -47,40 +46,40 @@ struct _GcalCalendarClass
   GObjectClass parent_class;
 };
 
-GQuark               gcal_calendar_error_quark                   (void);
+GQuark gcal_calendar_error_quark (void);
 
-void                 gcal_calendar_new                           (ESource             *source,
-                                                                  ESource             *parent_source,
-                                                                  GCancellable        *cancellable,
-                                                                  GAsyncReadyCallback  callback,
-                                                                  gpointer             user_data);
+void gcal_calendar_new (ESource *source,
+                        ESource *parent_source,
+                        GCancellable *cancellable,
+                        GAsyncReadyCallback callback,
+                        gpointer user_data);
 
-GcalCalendar*        gcal_calendar_new_finish                    (GAsyncResult       *result,
-                                                                  GError            **error);
+GcalCalendar *gcal_calendar_new_finish (GAsyncResult *result,
+                                        GError **error);
 
-ECalClient*          gcal_calendar_get_client                    (GcalCalendar       *self);
+ECalClient *gcal_calendar_get_client (GcalCalendar *self);
 
-const GdkRGBA*       gcal_calendar_get_color                     (GcalCalendar       *self);
+const GdkRGBA *gcal_calendar_get_color (GcalCalendar *self);
 
-void                 gcal_calendar_set_color                     (GcalCalendar       *self,
-                                                                  const GdkRGBA      *color);
+void gcal_calendar_set_color (GcalCalendar *self,
+                              const GdkRGBA *color);
 
-const gchar*         gcal_calendar_get_id                        (GcalCalendar       *self);
+const gchar *gcal_calendar_get_id (GcalCalendar *self);
 
-const gchar*         gcal_calendar_get_name                      (GcalCalendar       *self);
+const gchar *gcal_calendar_get_name (GcalCalendar *self);
 
-void                 gcal_calendar_set_name                      (GcalCalendar       *self,
-                                                                  const gchar        *name);
+void gcal_calendar_set_name (GcalCalendar *self,
+                             const gchar *name);
 
-ESource*             gcal_calendar_get_parent_source             (GcalCalendar       *self);
+ESource *gcal_calendar_get_parent_source (GcalCalendar *self);
 
-gboolean             gcal_calendar_is_read_only                  (GcalCalendar       *self);
+gboolean gcal_calendar_is_read_only (GcalCalendar *self);
 
-ESource*             gcal_calendar_get_source                    (GcalCalendar       *self);
+ESource *gcal_calendar_get_source (GcalCalendar *self);
 
-gboolean             gcal_calendar_get_visible                   (GcalCalendar       *self);
+gboolean gcal_calendar_get_visible (GcalCalendar *self);
 
-void                 gcal_calendar_set_visible                   (GcalCalendar       *self,
-                                                                  gboolean            visible);
+void gcal_calendar_set_visible (GcalCalendar *self,
+                                gboolean visible);
 
 G_END_DECLS

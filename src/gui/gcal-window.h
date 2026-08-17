@@ -24,22 +24,21 @@
 
 G_BEGIN_DECLS
 
-
-#define GCAL_TYPE_WINDOW                    (gcal_window_get_type ())
+#define GCAL_TYPE_WINDOW (gcal_window_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalWindow, gcal_window, GCAL, WINDOW, AdwApplicationWindow)
 
-GtkWidget*           gcal_window_new_with_date                  (GcalApplication     *app,
-                                                                 GDateTime           *date);
+GtkWidget *gcal_window_new_with_date (GcalApplication *app,
+                                      GDateTime *date);
 
-void                 gcal_window_set_search_query               (GcalWindow          *self,
-                                                                const gchar          *query);
+void gcal_window_set_search_query (GcalWindow *self,
+                                   const gchar *query);
 
-void                 gcal_window_open_event_by_uuid             (GcalWindow          *self,
-                                                                 const gchar         *uuid);
+void gcal_window_open_event_by_uuid (GcalWindow *self,
+                                     const gchar *uuid);
 
-void                 gcal_window_import_files                   (GcalWindow          *self,
-                                                                 GFile             **files,
-                                                                 gint                n_files);
+void gcal_window_import_files (GcalWindow *self,
+                               GFile **files,
+                               gint n_files);
 
 G_END_DECLS

@@ -32,9 +32,9 @@
 typedef struct
 {
   GcalCalendarMonitor *monitor;
-  GPtrArray           *events;
-  GPtrArray           *event_ids;
-  gboolean             complete;
+  GPtrArray *events;
+  GPtrArray *event_ids;
+  gboolean complete;
 } IdleData;
 
 typedef enum
@@ -49,46 +49,48 @@ typedef enum
 
 struct _GcalCalendarMonitor
 {
-  GObject             parent;
+  GObject parent;
 
-  GThread            *thread;
-  GCancellable       *cancellable;
-  GMainContext       *thread_context;
-  GMainContext       *main_context;
+  GThread *thread;
+  GCancellable *cancellable;
+  GMainContext *thread_context;
+  GMainContext *main_context;
 
-  GAsyncQueue        *messages;
-  GcalCalendar       *calendar;
-  gboolean            complete;
+  GAsyncQueue *messages;
+  GcalCalendar *calendar;
+  gboolean complete;
 
   const GcalCalendarMonitorListener *listener;
-  gpointer                           listener_user_data;
+  gpointer listener_user_data;
 
   /*
    * These fields are only accessed on the monitor thread, and
    * never on the main thread.
    */
-  struct {
-    gboolean          populated;
-    GPtrArray        *events_to_add;
-    ECalClientView   *view;
+  struct
+  {
+    gboolean populated;
+    GPtrArray *events_to_add;
+    ECalClientView *view;
   } monitor_thread;
 
   /*
    * Accessing any of the fields below must be happen inside
    * a locked muxed.
    */
-  struct {
-    GRWLock           lock;
-    GHashTable       *events; /* gchar* -> GcalEvent* */
-    GcalRange        *range;
-    gchar            *filter;
+  struct
+  {
+    GRWLock lock;
+    GHashTable *events; /* gchar* -> GcalEvent* */
+    GcalRange *range;
+    gchar *filter;
   } shared;
 };
 
-static gboolean      add_events_to_timeline_in_idle_cb           (gpointer           user_data);
-static gboolean      update_events_in_idle_cb                    (gpointer           user_data);
-static gboolean      remove_events_from_timeline_in_idle_cb      (gpointer           user_data);
-static gboolean      complete_in_idle_cb                         (gpointer           user_data);
+static gboolean add_events_to_timeline_in_idle_cb (gpointer user_data);
+static gboolean update_events_in_idle_cb (gpointer user_data);
+static gboolean remove_events_from_timeline_in_idle_cb (gpointer user_data);
+static gboolean complete_in_idle_cb (gpointer user_data);
 
 G_DEFINE_TYPE (GcalCalendarMonitor, gcal_calendar_monitor, G_TYPE_OBJECT)
 
@@ -100,7 +102,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Threads
@@ -108,8 +112,8 @@ static GParamSpec *properties [N_PROPS] = { NULL, };
  * These methods must *never* be executed in the main thread.
  */
 
-static gchar*
-build_subscriber_filter (GcalRange   *range,
+static gchar *
+build_subscriber_filter (GcalRange *range,
                          const gchar *filter)
 {
   g_autoptr (GDateTime) inclusive_range_end = NULL;
@@ -162,8 +166,8 @@ maybe_init_event_arrays (GcalCalendarMonitor *self)
     self->monitor_thread.events_to_add = g_ptr_array_new_with_free_func (g_object_unref);
 }
 
-static GcalRange*
-get_monitor_ranges (GcalCalendarMonitor  *self)
+static GcalRange *
+get_monitor_ranges (GcalCalendarMonitor *self)
 {
   g_autoptr (GcalRange) range = NULL;
 
@@ -185,7 +189,7 @@ idle_data_free (IdleData *data)
 
 static void
 add_events_in_idle (GcalCalendarMonitor *self,
-                    GPtrArray           *events)
+                    GPtrArray *events)
 {
   IdleData *idle_data;
 
@@ -204,7 +208,7 @@ add_events_in_idle (GcalCalendarMonitor *self,
 
 static void
 update_events_in_idle (GcalCalendarMonitor *self,
-                       GPtrArray           *events)
+                       GPtrArray *events)
 {
   IdleData *idle_data;
 
@@ -223,7 +227,7 @@ update_events_in_idle (GcalCalendarMonitor *self,
 
 static void
 remove_events_in_idle (GcalCalendarMonitor *self,
-                       GPtrArray           *events)
+                       GPtrArray *events)
 {
   IdleData *idle_data;
 
@@ -242,7 +246,7 @@ remove_events_in_idle (GcalCalendarMonitor *self,
 
 static void
 set_complete_in_idle (GcalCalendarMonitor *self,
-                      gboolean             complete)
+                      gboolean complete)
 {
   IdleData *idle_data;
 
@@ -262,16 +266,16 @@ set_complete_in_idle (GcalCalendarMonitor *self,
 typedef struct
 {
   GcalCalendarMonitor *monitor;
-  GPtrArray           *expanded_events;
+  GPtrArray *expanded_events;
 } GenerateRecurrencesData;
 
 static gboolean
-client_instance_generated_cb (ICalComponent  *icomponent,
-                              ICalTime       *instance_start,
-                              ICalTime       *instance_end,
-                              gpointer        user_data,
-                              GCancellable   *cancellable,
-                              GError        **error)
+client_instance_generated_cb (ICalComponent *icomponent,
+                              ICalTime *instance_start,
+                              ICalTime *instance_end,
+                              gpointer user_data,
+                              GCancellable *cancellable,
+                              GError **error)
 {
   g_autoptr (GcalEvent) event = NULL;
   g_autoptr (GError) local_error = NULL;
@@ -305,8 +309,8 @@ client_instance_generated_cb (ICalComponent  *icomponent,
 }
 
 static void
-on_client_view_objects_added_cb (ECalClientView      *view,
-                                 const GSList        *objects,
+on_client_view_objects_added_cb (ECalClientView *view,
+                                 const GSList *objects,
                                  GcalCalendarMonitor *self)
 {
   g_autoptr (GPtrArray) components_to_expand = NULL;
@@ -423,15 +427,15 @@ on_client_view_objects_added_cb (ECalClientView      *view,
                                                            &recurrences_data);
 
 #if GCAL_ENABLE_TRACE
-            {
-              g_autofree gchar *range_str = gcal_range_to_string (range);
+          {
+            g_autofree gchar *range_str = gcal_range_to_string (range);
 
-              GCAL_TRACE_MSG ("Component %s (%s) added %d instance(s) between %s",
-                              i_cal_component_get_summary (icomponent),
-                              i_cal_component_get_uid (icomponent),
-                              recurrences_data.expanded_events->len - old_size,
-                              range_str);
-            }
+            GCAL_TRACE_MSG ("Component %s (%s) added %d instance(s) between %s",
+                            i_cal_component_get_summary (icomponent),
+                            i_cal_component_get_uid (icomponent),
+                            recurrences_data.expanded_events->len - old_size,
+                            range_str);
+          }
 #endif
         }
     }
@@ -443,8 +447,8 @@ on_client_view_objects_added_cb (ECalClientView      *view,
 }
 
 static void
-on_client_view_objects_modified_cb (ECalClientView      *view,
-                                    const GSList        *objects,
+on_client_view_objects_modified_cb (ECalClientView *view,
+                                    const GSList *objects,
                                     GcalCalendarMonitor *self)
 {
   g_autoptr (GHashTable) events_to_remove = NULL;
@@ -511,7 +515,7 @@ on_client_view_objects_modified_cb (ECalClientView      *view,
           const gchar *aux;
 
           g_hash_table_iter_init (&iter, self->shared.events);
-          while (g_hash_table_iter_next (&iter, (gpointer*) &aux, NULL))
+          while (g_hash_table_iter_next (&iter, (gpointer *) &aux, NULL))
             {
               if (!g_str_has_prefix (aux, event_id))
                 continue;
@@ -597,15 +601,15 @@ on_client_view_objects_modified_cb (ECalClientView      *view,
                                                            &recurrences_data);
 
 #if GCAL_ENABLE_TRACE
-            {
-              g_autofree gchar *range_str = gcal_range_to_string (range);
+          {
+            g_autofree gchar *range_str = gcal_range_to_string (range);
 
-              GCAL_TRACE_MSG ("Component %s (%s) added %d instance(s) between %s",
-                              i_cal_component_get_summary (icomponent),
-                              i_cal_component_get_uid (icomponent),
-                              expanded_events->len - old_size,
-                              range_str);
-            }
+            GCAL_TRACE_MSG ("Component %s (%s) added %d instance(s) between %s",
+                            i_cal_component_get_summary (icomponent),
+                            i_cal_component_get_uid (icomponent),
+                            expanded_events->len - old_size,
+                            range_str);
+          }
 #endif
         }
 
@@ -645,8 +649,8 @@ on_client_view_objects_modified_cb (ECalClientView      *view,
 }
 
 static void
-on_client_view_objects_removed_cb (ECalClientView      *view,
-                                   const GSList        *objects,
+on_client_view_objects_removed_cb (ECalClientView *view,
+                                   const GSList *objects,
                                    GcalCalendarMonitor *self)
 {
   g_autoptr (GPtrArray) event_ids = NULL;
@@ -691,7 +695,7 @@ on_client_view_objects_removed_cb (ECalClientView      *view,
           G_RW_LOCK_READER_AUTO_LOCK (&self->shared.lock, reader_locker);
 
           g_hash_table_iter_init (&iter, self->shared.events);
-          while (g_hash_table_iter_next (&iter, (gpointer*) &aux, NULL))
+          while (g_hash_table_iter_next (&iter, (gpointer *) &aux, NULL))
             {
               if (!g_str_equal (aux, event_id) && g_str_has_prefix (aux, event_id))
                 g_ptr_array_add (event_ids, g_strdup (aux));
@@ -708,8 +712,8 @@ on_client_view_objects_removed_cb (ECalClientView      *view,
 }
 
 static void
-on_client_view_complete_cb (ECalClientView      *view,
-                            const GError        *error,
+on_client_view_complete_cb (ECalClientView *view,
+                            const GError *error,
                             GcalCalendarMonitor *self)
 {
   g_autoptr (GPtrArray) events_to_add = NULL;
@@ -831,19 +835,19 @@ remove_view (GcalCalendarMonitor *self)
 
 typedef struct
 {
-  GSource              parent;
+  GSource parent;
   GcalCalendarMonitor *monitor;
-  GMainLoop           *mainloop;
+  GMainLoop *mainloop;
 } MessageQueueSource;
 
 static gboolean
 message_queue_source_prepare (GSource *source,
-                              gint    *timeout)
+                              gint *timeout)
 {
   GcalCalendarMonitor *self;
   MessageQueueSource *queue_source;
 
-  queue_source = (MessageQueueSource*) source;
+  queue_source = (MessageQueueSource *) source;
   self = queue_source->monitor;
 
   /*
@@ -859,9 +863,9 @@ message_queue_source_prepare (GSource *source,
 }
 
 static gboolean
-message_queue_source_dispatch (GSource     *source,
-                               GSourceFunc  callback,
-                               gpointer     user_data)
+message_queue_source_dispatch (GSource *source,
+                               GSourceFunc callback,
+                               gpointer user_data)
 {
   GcalCalendarMonitor *self;
   MessageQueueSource *queue_source;
@@ -869,7 +873,7 @@ message_queue_source_dispatch (GSource     *source,
 
   GCAL_ENTRY;
 
-  queue_source = (MessageQueueSource*) source;
+  queue_source = (MessageQueueSource *) source;
   self = queue_source->monitor;
   event = GPOINTER_TO_INT (g_async_queue_pop (self->messages));
 
@@ -901,24 +905,23 @@ message_queue_source_dispatch (GSource     *source,
   GCAL_RETURN (G_SOURCE_CONTINUE);
 }
 
-static GSourceFuncs monitor_queue_source_funcs =
-{
+static GSourceFuncs monitor_queue_source_funcs = {
   message_queue_source_prepare,
   NULL,
   message_queue_source_dispatch,
   NULL,
 };
 
-static MessageQueueSource*
+static MessageQueueSource *
 views_monitor_source_new (GcalCalendarMonitor *self,
-                          GMainLoop           *mainloop)
+                          GMainLoop *mainloop)
 {
   MessageQueueSource *queue_source;
   GSource *source;
 
   /* Prepare the message queue source */
   source = g_source_new (&monitor_queue_source_funcs, sizeof (MessageQueueSource));
-  queue_source = (MessageQueueSource*) source;
+  queue_source = (MessageQueueSource *) source;
   queue_source->monitor = self;
   queue_source->mainloop = mainloop;
   g_source_set_name (source, "Message Queue Source");
@@ -941,7 +944,7 @@ calendar_view_thread_func (gpointer data)
 
   /* Events source */
   queue_source = views_monitor_source_new (self, mainloop);
-  g_source_attach ((GSource*) queue_source, self->thread_context);
+  g_source_attach ((GSource *) queue_source, self->thread_context);
 
   g_main_loop_run (mainloop);
 
@@ -956,7 +959,7 @@ calendar_view_thread_func (gpointer data)
 
 static void
 notify_view_thread (GcalCalendarMonitor *self,
-                    MonitorThreadEvent   event)
+                    MonitorThreadEvent event)
 {
   g_assert (GCAL_IS_MAIN_THREAD ());
 
@@ -982,7 +985,7 @@ maybe_spawn_view_thread (GcalCalendarMonitor *self)
 
 static void
 remove_events_outside_range (GcalCalendarMonitor *self,
-                             GcalRange           *range)
+                             GcalRange *range)
 {
   g_autoptr (GPtrArray) events_to_remove = NULL;
   GHashTableIter iter;
@@ -999,7 +1002,7 @@ remove_events_outside_range (GcalCalendarMonitor *self,
                                            g_object_unref);
 
   g_hash_table_iter_init (&iter, self->shared.events);
-  while (g_hash_table_iter_next (&iter, NULL, (gpointer*) &event))
+  while (g_hash_table_iter_next (&iter, NULL, (gpointer *) &event))
     {
       GcalRange *event_range = gcal_event_get_range (event);
 
@@ -1033,7 +1036,7 @@ remove_all_events (GcalCalendarMonitor *self)
 
 static void
 set_complete (GcalCalendarMonitor *self,
-              gboolean             complete)
+              gboolean complete)
 {
   g_assert (GCAL_IS_MAIN_THREAD ());
 
@@ -1045,7 +1048,6 @@ set_complete (GcalCalendarMonitor *self,
   self->complete = complete;
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COMPLETE]);
 }
-
 
 /*
  * Callbacks
@@ -1126,8 +1128,8 @@ update_events_in_idle_cb (gpointer user_data)
 
       if (g_hash_table_steal_extended (self->shared.events,
                                        event_id,
-                                       (gpointer*) &old_event_id,
-                                       (gpointer*) &old_event))
+                                       (gpointer *) &old_event_id,
+                                       (gpointer *) &old_event))
         {
           g_hash_table_insert (self->shared.events, g_strdup (event_id), g_object_ref (event));
           g_ptr_array_add (old_events, g_steal_pointer (&old_event));
@@ -1187,8 +1189,8 @@ remove_events_from_timeline_in_idle_cb (gpointer user_data)
 }
 
 static void
-on_calendar_visible_changed_cb (GcalCalendar        *calendar,
-                                GParamSpec          *pspec,
+on_calendar_visible_changed_cb (GcalCalendar *calendar,
+                                GParamSpec *pspec,
                                 GcalCalendarMonitor *self)
 {
   if (gcal_calendar_get_visible (calendar))
@@ -1222,7 +1224,6 @@ complete_in_idle_cb (gpointer user_data)
   GCAL_RETURN (G_SOURCE_REMOVE);
 }
 
-
 /*
  * GObject overrides
  */
@@ -1230,7 +1231,7 @@ complete_in_idle_cb (gpointer user_data)
 static void
 gcal_calendar_monitor_dispose (GObject *object)
 {
-  GcalCalendarMonitor *self = (GcalCalendarMonitor *)object;
+  GcalCalendarMonitor *self = (GcalCalendarMonitor *) object;
 
   g_cancellable_cancel (self->cancellable);
   notify_view_thread (self, QUIT);
@@ -1251,7 +1252,7 @@ gcal_calendar_monitor_dispose (GObject *object)
 static void
 gcal_calendar_monitor_finalize (GObject *object)
 {
-  GcalCalendarMonitor *self = (GcalCalendarMonitor *)object;
+  GcalCalendarMonitor *self = (GcalCalendarMonitor *) object;
 
   g_clear_object (&self->calendar);
   g_clear_pointer (&self->thread_context, g_main_context_unref);
@@ -1265,9 +1266,9 @@ gcal_calendar_monitor_finalize (GObject *object)
 }
 
 static void
-gcal_calendar_monitor_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
+gcal_calendar_monitor_get_property (GObject *object,
+                                    guint prop_id,
+                                    GValue *value,
                                     GParamSpec *pspec)
 {
   GcalCalendarMonitor *self = GCAL_CALENDAR_MONITOR (object);
@@ -1288,10 +1289,10 @@ gcal_calendar_monitor_get_property (GObject    *object,
 }
 
 static void
-gcal_calendar_monitor_set_property (GObject      *object,
-                                    guint         prop_id,
+gcal_calendar_monitor_set_property (GObject *object,
+                                    guint prop_id,
                                     const GValue *value,
-                                    GParamSpec   *pspec)
+                                    GParamSpec *pspec)
 {
   GcalCalendarMonitor *self = GCAL_CALENDAR_MONITOR (object);
 
@@ -1345,10 +1346,10 @@ gcal_calendar_monitor_init (GcalCalendarMonitor *self)
   g_rw_lock_init (&self->shared.lock);
 }
 
-GcalCalendarMonitor*
-gcal_calendar_monitor_new (GcalCalendar                      *calendar,
+GcalCalendarMonitor *
+gcal_calendar_monitor_new (GcalCalendar *calendar,
                            const GcalCalendarMonitorListener *listener,
-                           gpointer                           user_data)
+                           gpointer user_data)
 {
   g_autoptr (GcalCalendarMonitor) monitor = NULL;
 
@@ -1376,7 +1377,7 @@ gcal_calendar_monitor_new (GcalCalendar                      *calendar,
  */
 void
 gcal_calendar_monitor_set_range (GcalCalendarMonitor *self,
-                                 GcalRange           *range)
+                                 GcalRange *range)
 {
   g_autoptr (GRWLockWriterLocker) writer_locker = NULL;
   gboolean range_changed;
@@ -1388,9 +1389,9 @@ gcal_calendar_monitor_set_range (GcalCalendarMonitor *self,
   writer_locker = g_rw_lock_writer_locker_new (&self->shared.lock);
 
   range_changed =
-    !self->shared.range ||
-    !range ||
-    gcal_range_calculate_overlap (self->shared.range, range, NULL) != GCAL_RANGE_EQUAL;
+      !self->shared.range ||
+      !range ||
+      gcal_range_calculate_overlap (self->shared.range, range, NULL) != GCAL_RANGE_EQUAL;
 
   if (!range_changed)
     GCAL_RETURN ();
@@ -1422,9 +1423,9 @@ gcal_calendar_monitor_set_range (GcalCalendarMonitor *self,
  *
  * Returns: (transfer full)(nullable): a #GcalEvent, or %NULL
  */
-GcalEvent*
+GcalEvent *
 gcal_calendar_monitor_get_cached_event (GcalCalendarMonitor *self,
-                                        const gchar         *event_id)
+                                        const gchar *event_id)
 {
   GcalEvent *event;
 
@@ -1440,7 +1441,7 @@ gcal_calendar_monitor_get_cached_event (GcalCalendarMonitor *self,
 
 void
 gcal_calendar_monitor_set_filter (GcalCalendarMonitor *self,
-                                  const gchar         *filter)
+                                  const gchar *filter)
 {
   g_return_if_fail (GCAL_IS_CALENDAR_MONITOR (self));
 

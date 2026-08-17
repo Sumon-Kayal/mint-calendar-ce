@@ -30,25 +30,25 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_CONTEXT (gcal_context_get_type())
+#define GCAL_TYPE_CONTEXT (gcal_context_get_type ())
 G_DECLARE_FINAL_TYPE (GcalContext, gcal_context, GCAL, CONTEXT, GObject)
 
-GcalContext*         gcal_context_new                            (void);
+GcalContext *gcal_context_new (void);
 
-GcalClock*           gcal_context_get_clock                      (GcalContext        *self);
+GcalClock *gcal_context_get_clock (GcalContext *self);
 
-GcalManager*         gcal_context_get_manager                    (GcalContext        *self);
+GcalManager *gcal_context_get_manager (GcalContext *self);
 
-GcalSearchEngine*    gcal_context_get_search_engine              (GcalContext        *self);
+GcalSearchEngine *gcal_context_get_search_engine (GcalContext *self);
 
-GSettings*           gcal_context_get_settings                   (GcalContext        *self);
+GSettings *gcal_context_get_settings (GcalContext *self);
 
-GcalTimeFormat       gcal_context_get_time_format                (GcalContext        *self);
+GcalTimeFormat gcal_context_get_time_format (GcalContext *self);
 
-GTimeZone*           gcal_context_get_timezone                   (GcalContext        *self);
+GTimeZone *gcal_context_get_timezone (GcalContext *self);
 
-GcalWeatherService*  gcal_context_get_weather_service            (GcalContext        *self);
+GcalWeatherService *gcal_context_get_weather_service (GcalContext *self);
 
-void                 gcal_context_startup                        (GcalContext        *self);
+void gcal_context_startup (GcalContext *self);
 
 G_END_DECLS

@@ -20,18 +20,18 @@
 
 #define G_LOG_DOMAIN "GcalTimeZoneMonitor"
 
-#include "gcal-debug.h"
 #include "gcal-time-zone-monitor.h"
+#include "gcal-debug.h"
 
 #include <gio/gio.h>
 
 struct _GcalTimeZoneMonitor
 {
-  GObject             parent;
+  GObject parent;
 
-  GTimeZone          *timezone;
+  GTimeZone *timezone;
 
-  GDBusProxy         *timedate1_proxy;
+  GDBusProxy *timedate1_proxy;
 };
 
 G_DEFINE_TYPE (GcalTimeZoneMonitor, gcal_time_zone_monitor, G_TYPE_OBJECT)
@@ -43,8 +43,7 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS];
-
+static GParamSpec *properties[N_PROPS];
 
 /*
  * Callbacks
@@ -52,9 +51,9 @@ static GParamSpec *properties [N_PROPS];
 
 static void
 on_timedate1_proxy_properties_changed_cb (GcalTimeZoneMonitor *self,
-                                          GVariant            *props,
-                                          const gchar * const *invalidated,
-                                          GDBusProxy          *proxy)
+                                          GVariant *props,
+                                          const gchar *const *invalidated,
+                                          GDBusProxy *proxy)
 {
   g_autoptr (GVariant) timezone_variant = NULL;
   const gchar *timezone_identifier = NULL;
@@ -79,7 +78,6 @@ on_timedate1_proxy_properties_changed_cb (GcalTimeZoneMonitor *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TIMEZONE]);
 }
 
-
 /*
  * GObject overrides
  */
@@ -87,7 +85,7 @@ on_timedate1_proxy_properties_changed_cb (GcalTimeZoneMonitor *self,
 static void
 gcal_time_zone_monitor_finalize (GObject *object)
 {
-  GcalTimeZoneMonitor *self = (GcalTimeZoneMonitor *)object;
+  GcalTimeZoneMonitor *self = (GcalTimeZoneMonitor *) object;
 
   g_clear_pointer (&self->timezone, g_time_zone_unref);
   g_clear_object (&self->timedate1_proxy);
@@ -96,9 +94,9 @@ gcal_time_zone_monitor_finalize (GObject *object)
 }
 
 static void
-gcal_time_zone_monitor_get_property (GObject    *object,
-                                     guint       prop_id,
-                                     GValue     *value,
+gcal_time_zone_monitor_get_property (GObject *object,
+                                     guint prop_id,
+                                     GValue *value,
                                      GParamSpec *pspec)
 {
   GcalTimeZoneMonitor *self = GCAL_TIME_ZONE_MONITOR (object);
@@ -173,13 +171,13 @@ gcal_time_zone_monitor_init (GcalTimeZoneMonitor *self)
   GCAL_EXIT;
 }
 
-GcalTimeZoneMonitor*
+GcalTimeZoneMonitor *
 gcal_time_zone_monitor_new (void)
 {
   return g_object_new (GCAL_TYPE_TIME_ZONE_MONITOR, NULL);
 }
 
-GTimeZone*
+GTimeZone *
 gcal_time_zone_monitor_get_timezone (GcalTimeZoneMonitor *self)
 {
   g_return_val_if_fail (GCAL_IS_TIME_ZONE_MONITOR (self), NULL);

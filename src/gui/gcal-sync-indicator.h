@@ -25,7 +25,7 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_SYNC_INDICATOR (gcal_sync_indicator_get_type())
+#define GCAL_TYPE_SYNC_INDICATOR (gcal_sync_indicator_get_type ())
 G_DECLARE_FINAL_TYPE (GcalSyncIndicator, gcal_sync_indicator, GCAL, SYNC_INDICATOR, AdwBin)
 
 G_END_DECLS

@@ -20,8 +20,8 @@
 
 #define G_LOG_DOMAIN "GcalCalendarRow"
 
-#include "config.h"
 #include "gcal-calendar-row.h"
+#include "config.h"
 #include "gcal-debug.h"
 #include "gcal-utils.h"
 
@@ -29,13 +29,13 @@
 
 struct _GcalCalendarRow
 {
-  AdwPreferencesRow   parent;
+  AdwPreferencesRow parent;
 
-  GtkBox             *suffix;
-  GtkBox             *header_box;
-  GtkImage           *color_image;
-  GtkImage           *visibility_image;
-  GcalCalendar       *calendar;
+  GtkBox *suffix;
+  GtkBox *header_box;
+  GtkImage *color_image;
+  GtkImage *visibility_image;
+  GcalCalendar *calendar;
 };
 
 G_DEFINE_TYPE (GcalCalendarRow, gcal_calendar_row, ADW_TYPE_PREFERENCES_ROW)
@@ -47,13 +47,15 @@ enum
   N_PROPS,
 };
 
-static GParamSpec *properties [N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 static gboolean
-paintable_from_gdk_rgb (GBinding     *binding,
+paintable_from_gdk_rgb (GBinding *binding,
                         const GValue *from_value,
-                        GValue       *to_value,
-                        gpointer      user_data)
+                        GValue *to_value,
+                        gpointer user_data)
 {
   GdkRGBA *rgba = g_value_get_boxed (from_value);
   g_value_take_object (to_value, get_circle_paintable_from_color (rgba, 16));
@@ -69,7 +71,7 @@ updated_visibility_cb (GcalCalendarRow *self)
   gtk_widget_set_visible (GTK_WIDGET (self->visibility_image), !gcal_calendar_get_visible (self->calendar));
 
   if (!gcal_calendar_get_visible (self->calendar))
-    accessible_description = g_strdup (_("This calendar is hidden"));
+    accessible_description = g_strdup (_ ("This calendar is hidden"));
 
   gtk_accessible_update_property (GTK_ACCESSIBLE (self),
                                   GTK_ACCESSIBLE_PROPERTY_DESCRIPTION, accessible_description, -1);
@@ -78,7 +80,7 @@ updated_visibility_cb (GcalCalendarRow *self)
 
 static void
 set_calendar (GcalCalendarRow *self,
-              GcalCalendar    *calendar)
+              GcalCalendar *calendar)
 {
   g_return_if_fail (GCAL_IS_CALENDAR (calendar));
   g_set_object (&self->calendar, calendar);
@@ -106,7 +108,7 @@ set_calendar (GcalCalendarRow *self,
 static void
 gcal_calendar_row_finalize (GObject *object)
 {
-  GcalCalendarRow *self = (GcalCalendarRow *)object;
+  GcalCalendarRow *self = (GcalCalendarRow *) object;
 
   g_clear_object (&self->calendar);
 
@@ -114,9 +116,9 @@ gcal_calendar_row_finalize (GObject *object)
 }
 
 static void
-gcal_calendar_row_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
+gcal_calendar_row_get_property (GObject *object,
+                                guint prop_id,
+                                GValue *value,
                                 GParamSpec *pspec)
 {
   GcalCalendarRow *self = GCAL_CALENDAR_ROW (object);
@@ -133,10 +135,10 @@ gcal_calendar_row_get_property (GObject    *object,
 }
 
 static void
-gcal_calendar_row_set_property (GObject      *object,
-                                guint         prop_id,
+gcal_calendar_row_set_property (GObject *object,
+                                guint prop_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalCalendarRow *self = GCAL_CALENDAR_ROW (object);
 
@@ -184,7 +186,7 @@ gcal_calendar_row_init (GcalCalendarRow *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-GtkWidget*
+GtkWidget *
 gcal_calendar_row_new (GcalCalendar *calendar)
 {
   return g_object_new (GCAL_TYPE_CALENDAR_ROW,
@@ -200,7 +202,7 @@ gcal_calendar_row_new (GcalCalendar *calendar)
  *
  * Returns: (transfer none): a #GcalCalendar
  */
-GcalCalendar*
+GcalCalendar *
 gcal_calendar_row_get_calendar (GcalCalendarRow *self)
 {
   g_return_val_if_fail (GCAL_IS_CALENDAR_ROW (self), NULL);
@@ -217,7 +219,7 @@ gcal_calendar_row_get_calendar (GcalCalendarRow *self)
  */
 void
 gcal_calendar_row_add_suffix (GcalCalendarRow *self,
-                              GtkWidget       *widget)
+                              GtkWidget *widget)
 {
   g_return_if_fail (GCAL_IS_CALENDAR_ROW (self));
   g_return_if_fail (GTK_IS_WIDGET (widget));
@@ -235,7 +237,7 @@ gcal_calendar_row_add_suffix (GcalCalendarRow *self,
  *
  * Returns: (transfer none): a #GtkWidget
  */
-GtkWidget*
+GtkWidget *
 gcal_calendar_row_get_first_suffix_child (GcalCalendarRow *self)
 {
   g_return_val_if_fail (GCAL_IS_CALENDAR_ROW (self), NULL);

@@ -25,36 +25,36 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (GcalDateChooser, gcal_date_chooser, GCAL, DATE_CHOOSER, AdwBin)
 
-GtkWidget*           gcal_date_chooser_new                       (void);
+GtkWidget *gcal_date_chooser_new (void);
 
-gboolean             gcal_date_chooser_get_show_heading          (GcalDateChooser    *self);
+gboolean gcal_date_chooser_get_show_heading (GcalDateChooser *self);
 
-void                 gcal_date_chooser_set_show_heading          (GcalDateChooser    *self,
-                                                                  gboolean            setting);
+void gcal_date_chooser_set_show_heading (GcalDateChooser *self,
+                                         gboolean setting);
 
-gboolean             gcal_date_chooser_get_show_day_names        (GcalDateChooser    *self);
+gboolean gcal_date_chooser_get_show_day_names (GcalDateChooser *self);
 
-void                 gcal_date_chooser_set_show_day_names        (GcalDateChooser    *self,
-                                                                  gboolean            setting);
+void gcal_date_chooser_set_show_day_names (GcalDateChooser *self,
+                                           gboolean setting);
 
-gboolean             gcal_date_chooser_get_show_week_numbers     (GcalDateChooser    *self);
+gboolean gcal_date_chooser_get_show_week_numbers (GcalDateChooser *self);
 
-void                 gcal_date_chooser_set_show_week_numbers     (GcalDateChooser    *self,
-                                                                  gboolean            setting);
+void gcal_date_chooser_set_show_week_numbers (GcalDateChooser *self,
+                                              gboolean setting);
 
-gboolean             gcal_date_chooser_get_show_selected_week    (GcalDateChooser    *self);
+gboolean gcal_date_chooser_get_show_selected_week (GcalDateChooser *self);
 
-void                 gcal_date_chooser_set_show_selected_week    (GcalDateChooser    *self,
-                                                                  gboolean            setting);
+void gcal_date_chooser_set_show_selected_week (GcalDateChooser *self,
+                                               gboolean setting);
 
-gboolean             gcal_date_chooser_get_show_events           (GcalDateChooser    *self);
+gboolean gcal_date_chooser_get_show_events (GcalDateChooser *self);
 
-void                 gcal_date_chooser_set_show_events           (GcalDateChooser    *self,
-                                                                  gboolean            setting);
+void gcal_date_chooser_set_show_events (GcalDateChooser *self,
+                                        gboolean setting);
 
-gboolean             gcal_date_chooser_get_split_month_year      (GcalDateChooser    *self);
+gboolean gcal_date_chooser_get_split_month_year (GcalDateChooser *self);
 
-void                 gcal_date_chooser_set_split_month_year      (GcalDateChooser    *self,
-                                                                  gboolean            setting);
+void gcal_date_chooser_set_split_month_year (GcalDateChooser *self,
+                                             gboolean setting);
 
 G_END_DECLS
