@@ -116,6 +116,12 @@ gcal_calendar_navigation_button_set_property (GObject *object,
     }
 }
 
+/**
+ * Initializes the class, including its properties, lifecycle handlers, and
+ * widget template bindings.
+ *
+ * @param klass The class to initialize.
+ */
 static void
 gcal_calendar_navigation_button_class_init (GcalCalendarNavigationButtonClass *klass)
 {
@@ -140,7 +146,7 @@ gcal_calendar_navigation_button_class_init (GcalCalendarNavigationButtonClass *k
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-calendar-navigation-button.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-calendar-navigation-button.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalCalendarNavigationButton, button);
   gtk_widget_class_bind_template_child (widget_class, GcalCalendarNavigationButton, stack);

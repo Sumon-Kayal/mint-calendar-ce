@@ -197,6 +197,12 @@ build_system_information (void)
   return g_string_free (str, FALSE);
 }
 
+/**
+ * Presents the application's About dialog with contributor, system, and weather information.
+ * @param simple The action that triggered the dialog.
+ * @param parameter The action parameter.
+ * @param user_data The application instance.
+ */
 static void
 gcal_application_show_about (GSimpleAction *simple,
                              GVariant      *parameter,
@@ -229,7 +235,7 @@ gcal_application_show_about (GSimpleAction *simple,
   copyright = build_about_copyright (self);
   troubleshooting = build_system_information ();
 
-  about = adw_about_dialog_new_from_appdata ("/org/gnome/calendar/appdata", MAJOR_VERSION);
+  about = adw_about_dialog_new_from_appdata ("/org/mint/calendar/ce/appdata", MAJOR_VERSION);
 
   adw_about_dialog_set_designers (ADW_ABOUT_DIALOG (about), designers);
   adw_about_dialog_set_copyright (ADW_ABOUT_DIALOG (about), copyright);
@@ -248,6 +254,9 @@ gcal_application_show_about (GSimpleAction *simple,
   adw_dialog_present (about, GTK_WIDGET (self->window));
 }
 
+/**
+ * Presents the keyboard shortcuts dialog for the main calendar window.
+ */
 static void
 gcal_application_show_shortcuts (GSimpleAction *simple,
                                  GVariant      *parameter,
@@ -259,7 +268,7 @@ gcal_application_show_shortcuts (GSimpleAction *simple,
 
   self = GCAL_APPLICATION (user_data);
 
-  builder = gtk_builder_new_from_resource ("/org/gnome/calendar/shortcuts-dialog.ui");
+  builder = gtk_builder_new_from_resource ("/org/mint/calendar/ce/shortcuts-dialog.ui");
   shortcuts_window = GTK_WIDGET (gtk_builder_get_object (builder, "shortcuts_window"));
 
   gtk_window_set_transient_for (GTK_WINDOW (shortcuts_window), GTK_WINDOW (self->window));
@@ -298,6 +307,11 @@ gcal_application_finalize (GObject *object)
   GCAL_EXIT;
 }
 
+/**
+ * Retrieves an application property.
+ *
+ * @param property_id Identifier of the property to retrieve.
+ */
 static void
 gcal_application_get_property (GObject    *object,
                                guint       property_id,
@@ -321,8 +335,10 @@ gcal_application_get_property (GObject    *object,
     }
 }
 
-/*
- * GApplication overrides
+/**
+ * Activates the application and presents its calendar window.
+ *
+ * Applies any pending initial date and event selection.
  */
 
 static void
@@ -365,6 +381,11 @@ gcal_application_activate (GApplication *application)
   GCAL_EXIT;
 }
 
+/**
+ * Initializes application actions, configures service inactivity handling, and starts the calendar context.
+ *
+ * @param app The application to initialize.
+ */
 static void
 gcal_application_startup (GApplication *app)
 {
@@ -406,6 +427,13 @@ gcal_application_startup (GApplication *app)
   GCAL_EXIT;
 }
 
+/**
+ * Processes command-line options, activates the application, and opens requested files.
+ *
+ * @param app Application receiving the command-line request.
+ * @param command_line Command-line invocation to process.
+ * @returns Zero after processing the request.
+ */
 static gint
 gcal_application_command_line (GApplication            *app,
                                GApplicationCommandLine *command_line)
@@ -501,6 +529,13 @@ gcal_application_command_line (GApplication            *app,
   GCAL_RETURN (0);
 }
 
+/**
+ * Processes local command-line options before application startup.
+ *
+ * @param app Application instance.
+ * @param options Parsed local command-line options.
+ * @return 0 if the version was printed, or -1 to continue normal option handling.
+ */
 static gint
 gcal_application_handle_local_options (GApplication *app,
                                        GVariantDict *options)
@@ -511,13 +546,22 @@ gcal_application_handle_local_options (GApplication *app,
 
   if (show_version)
     {
-      g_print ("gnome-calendar: Version %s\n", PACKAGE_VERSION);
+      g_print ("mint-calendar-ce: Version %s\n", PACKAGE_VERSION);
       return 0;
     }
 
   return -1;
 }
 
+/**
+ * Registers the application with D-Bus and exports its shell search provider.
+ *
+ * @param application The application to register.
+ * @param connection The D-Bus connection used for registration and export.
+ * @param object_path The D-Bus object path for the application.
+ * @param error Location for a returned error.
+ * @return `TRUE` if registration and export succeed, `FALSE` otherwise.
+ */
 static gboolean
 gcal_application_dbus_register (GApplication     *application,
                                 GDBusConnection  *connection,
@@ -534,7 +578,7 @@ gcal_application_dbus_register (GApplication     *application,
   if (!G_APPLICATION_CLASS (gcal_application_parent_class)->dbus_register (application, connection, object_path, error))
     GCAL_RETURN (FALSE);
 
-  search_provider_path = g_strconcat (object_path, PROFILE, "/SearchProvider", NULL);
+  search_provider_path = g_strconcat (object_path, "/SearchProvider", NULL);
 
   if (!gcal_shell_search_provider_dbus_export (self->search_provider, connection, search_provider_path, error))
     GCAL_RETURN (FALSE);
@@ -542,6 +586,13 @@ gcal_application_dbus_register (GApplication     *application,
   GCAL_RETURN (TRUE);
 }
 
+/**
+ * Unregisters the application and unexports its shell search provider from D-Bus.
+ *
+ * @param application The application to unregister.
+ * @param connection The D-Bus connection.
+ * @param object_path The application's D-Bus object path.
+ */
 static void
 gcal_application_dbus_unregister (GApplication    *application,
                                   GDBusConnection *connection,
@@ -580,6 +631,9 @@ gcal_application_open (GApplication  *application,
   GCAL_EXIT;
 }
 
+/**
+ * Initializes the application class and its readable properties.
+ */
 static void
 gcal_application_class_init (GcalApplicationClass *klass)
 {
@@ -614,6 +668,11 @@ gcal_application_class_init (GcalApplicationClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
+/**
+ * Initializes the application context and shell search provider.
+ *
+ * @param self The application to initialize.
+ */
 static void
 gcal_application_init (GcalApplication *self)
 {
@@ -623,12 +682,16 @@ gcal_application_init (GcalApplication *self)
   self->search_provider = gcal_shell_search_provider_new (self->context);
 }
 
-/* Public API */
+/**
+ * Creates a calendar application configured to handle command-line requests and file opening.
+ *
+ * @return A new #GcalApplication.
+ */
 GcalApplication*
 gcal_application_new (void)
 {
   return g_object_new (gcal_application_get_type (),
-                       "resource-base-path", "/org/gnome/calendar",
+                       "resource-base-path", "/org/mint/calendar/ce",
                        "application-id", APPLICATION_ID,
                        "flags", G_APPLICATION_HANDLES_COMMAND_LINE | G_APPLICATION_HANDLES_OPEN,
                        NULL);

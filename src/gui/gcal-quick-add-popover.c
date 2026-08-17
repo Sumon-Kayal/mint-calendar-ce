@@ -649,6 +649,10 @@ gcal_quick_add_popover_closed (GtkPopover *popover)
   bind_model (self);
 }
 
+/**
+ * Initializes the class metadata, properties, signals, template, and callbacks
+ * for #GcalQuickAddPopover.
+ */
 static void
 gcal_quick_add_popover_class_init (GcalQuickAddPopoverClass *klass)
 {
@@ -703,7 +707,7 @@ gcal_quick_add_popover_class_init (GcalQuickAddPopoverClass *klass)
                                                         GCAL_TYPE_CONTEXT,
                                                         G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-quick-add-popover.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-quick-add-popover.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalQuickAddPopover, add_button);
   gtk_widget_class_bind_template_child (widget_class, GcalQuickAddPopover, calendars_list_box);

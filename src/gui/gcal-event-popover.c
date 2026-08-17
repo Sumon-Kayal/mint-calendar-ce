@@ -737,6 +737,11 @@ gcal_event_popover_set_property (GObject      *object,
     }
 }
 
+/**
+ * Initializes the event popover class and its GTK template.
+ *
+ * @param klass The class to initialize.
+ */
 static void
 gcal_event_popover_class_init (GcalEventPopoverClass *klass)
 {
@@ -781,7 +786,7 @@ gcal_event_popover_class_init (GcalEventPopoverClass *klass)
                                 G_TYPE_NONE,
                                 0);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-event-popover.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-event-popover.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalEventPopover, date_time_label);
   gtk_widget_class_bind_template_child (widget_class, GcalEventPopover, description_label);

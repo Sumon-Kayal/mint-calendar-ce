@@ -321,6 +321,9 @@ gcal_weather_settings_set_property (GObject      *object,
     }
 }
 
+/**
+ * Initializes the weather settings widget class and its template bindings.
+ */
 static void
 gcal_weather_settings_class_init (GcalWeatherSettingsClass *klass)
 {
@@ -339,7 +342,7 @@ gcal_weather_settings_class_init (GcalWeatherSettingsClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-weather-settings.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-weather-settings.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalWeatherSettings, show_weather_switch);
   gtk_widget_class_bind_template_child (widget_class, GcalWeatherSettings, weather_auto_location_switch);

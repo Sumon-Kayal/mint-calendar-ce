@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/calendar">
+  <gresource prefix="/org/mint/calendar/ce">
     <file alias="appdata">@appid@.metainfo.xml</file>
   </gresource>
 </gresources>
