@@ -32,7 +32,7 @@ G_DECLARE_INTERFACE (GcalEventEditorSection, gcal_event_editor_section, GCAL, EV
 
 typedef enum
 {
-  GCAL_EVENT_EDITOR_FLAG_NONE      = 0,
+  GCAL_EVENT_EDITOR_FLAG_NONE = 0,
   GCAL_EVENT_EDITOR_FLAG_NEW_EVENT = 1 << 0,
 } GcalEventEditorFlags;
 
@@ -40,21 +40,21 @@ struct _GcalEventEditorSectionInterface
 {
   GTypeInterface parent;
 
-  void               (*set_event)                                (GcalEventEditorSection *self,
-                                                                  GcalEvent              *event,
-                                                                  GcalEventEditorFlags    flags);
+  void (*set_event) (GcalEventEditorSection *self,
+                     GcalEvent *event,
+                     GcalEventEditorFlags flags);
 
-  void               (*apply)                                    (GcalEventEditorSection *self);
+  void (*apply) (GcalEventEditorSection *self);
 
-  gboolean           (*changed)                                  (GcalEventEditorSection *self);
+  gboolean (*changed) (GcalEventEditorSection *self);
 };
 
-void                 gcal_event_editor_section_set_event         (GcalEventEditorSection *self,
-                                                                  GcalEvent              *event,
-                                                                  GcalEventEditorFlags    flags);
+void gcal_event_editor_section_set_event (GcalEventEditorSection *self,
+                                          GcalEvent *event,
+                                          GcalEventEditorFlags flags);
 
-void                 gcal_event_editor_section_apply             (GcalEventEditorSection *self);
+void gcal_event_editor_section_apply (GcalEventEditorSection *self);
 
-gboolean             gcal_event_editor_section_changed           (GcalEventEditorSection *self);
+gboolean gcal_event_editor_section_changed (GcalEventEditorSection *self);
 
 G_END_DECLS

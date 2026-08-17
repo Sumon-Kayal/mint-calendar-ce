@@ -24,11 +24,11 @@
 
 struct _GcalRange
 {
-  gatomicrefcount     ref_count;
+  gatomicrefcount ref_count;
 
-  GDateTime          *range_start;
-  GDateTime          *range_end;
-  GcalRangeType       range_type;
+  GDateTime *range_start;
+  GDateTime *range_end;
+  GcalRangeType range_type;
 };
 
 G_DEFINE_BOXED_TYPE (GcalRange, gcal_range, gcal_range_ref, gcal_range_unref)
@@ -122,10 +122,10 @@ gcal_range_unref (GcalRange *self)
  *
  * Returns: (transfer full): A newly created #GcalRange
  */
-GcalRange*
-gcal_range_new (GDateTime     *range_start,
-                GDateTime     *range_end,
-                GcalRangeType  range_type)
+GcalRange *
+gcal_range_new (GDateTime *range_start,
+                GDateTime *range_end,
+                GcalRangeType range_type)
 {
   g_return_val_if_fail (range_start, NULL);
   g_return_val_if_fail (range_end, NULL);
@@ -135,7 +135,6 @@ gcal_range_new (GDateTime     *range_start,
                               g_date_time_ref (range_end),
                               range_type);
 }
-
 
 /**
  * gcal_range_new_take:
@@ -147,10 +146,10 @@ gcal_range_new (GDateTime     *range_start,
  *
  * Returns: (transfer full): A newly created #GcalRange
  */
-GcalRange*
-gcal_range_new_take (GDateTime     *range_start,
-                     GDateTime     *range_end,
-                     GcalRangeType  range_type)
+GcalRange *
+gcal_range_new_take (GDateTime *range_start,
+                     GDateTime *range_end,
+                     GcalRangeType range_type)
 {
   GcalRange *self;
 
@@ -176,7 +175,7 @@ gcal_range_new_take (GDateTime     *range_start,
  *
  * Returns: (transfer full): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_range_get_start (GcalRange *self)
 {
   g_return_val_if_fail (self, NULL);
@@ -193,7 +192,7 @@ gcal_range_get_start (GcalRange *self)
  *
  * Returns: (transfer full): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_range_get_end (GcalRange *self)
 {
   g_return_val_if_fail (self, NULL);
@@ -238,8 +237,8 @@ gcal_range_get_range_type (GcalRange *self)
  * Returns: the overlap result between @a and @b
  */
 GcalRangeOverlap
-gcal_range_calculate_overlap (GcalRange         *a,
-                              GcalRange         *b,
+gcal_range_calculate_overlap (GcalRange *a,
+                              GcalRange *b,
                               GcalRangePosition *out_position)
 {
   CompareDateTimeFunc compare_func;
@@ -471,7 +470,7 @@ gcal_range_compare (GcalRange *a,
  *
  * Returns: (transfer full): a #GcalRange.
  */
-GcalRange*
+GcalRange *
 gcal_range_union (GcalRange *a,
                   GcalRange *b)
 {
@@ -512,7 +511,7 @@ gcal_range_union (GcalRange *a,
  *
  * Returns: (transfer full): a string representation of @self
  */
-gchar*
+gchar *
 gcal_range_to_string (GcalRange *self)
 {
   g_autofree gchar *start_string = NULL;

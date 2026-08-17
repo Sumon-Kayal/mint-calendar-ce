@@ -28,23 +28,23 @@
 #include "gcal-shell-search-provider.h"
 #include "gcal-window.h"
 
-#include <glib.h>
-#include <glib-object.h>
 #include <gio/gio.h>
+#include <glib-object.h>
+#include <glib.h>
 #include <glib/gi18n.h>
 
 struct _GcalApplication
 {
-  AdwApplication      parent;
+  AdwApplication parent;
 
-  GtkWidget          *window;
+  GtkWidget *window;
 
-  gchar              *uuid;
-  GDateTime          *initial_date;
+  gchar *uuid;
+  GDateTime *initial_date;
 
   GcalShellSearchProvider *search_provider;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 G_DEFINE_TYPE (GcalApplication, gcal_application, ADW_TYPE_APPLICATION);
@@ -52,31 +52,21 @@ G_DEFINE_TYPE (GcalApplication, gcal_application, ADW_TYPE_APPLICATION);
 static gboolean show_version = FALSE;
 
 static GOptionEntry gcal_application_goptions[] = {
-  { 
-    "quit", 'q', 0,
+  { "quit", 'q', 0,
     G_OPTION_ARG_NONE, NULL,
-    N_("Quit GNOME Calendar"), NULL
-  },
-  {
-    "version", 'v', 0,
+    N_ ("Quit GNOME Calendar"), NULL },
+  { "version", 'v', 0,
     G_OPTION_ARG_NONE, &show_version,
-    N_("Display version number"), NULL
-  },
-  {
-    "debug", 0, 0,
+    N_ ("Display version number"), NULL },
+  { "debug", 0, 0,
     G_OPTION_ARG_NONE, NULL,
-    N_("Enable debug messages"), NULL
-  },
-  {
-    "date", 'd', 0,
+    N_ ("Enable debug messages"), NULL },
+  { "date", 'd', 0,
     G_OPTION_ARG_STRING, NULL,
-    N_("Open calendar on the passed date"), NULL
-  },
-  {
-    "uuid", 'u', 0,
+    N_ ("Open calendar on the passed date"), NULL },
+  { "uuid", 'u', 0,
     G_OPTION_ARG_STRING, NULL,
-    N_("Open calendar showing the passed event"), NULL
-  },
+    N_ ("Open calendar showing the passed event"), NULL },
   { NULL }
 };
 
@@ -88,7 +78,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec* properties[N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Callbacks
@@ -96,8 +88,8 @@ static GParamSpec* properties[N_PROPS] = { NULL, };
 
 static void
 gcal_application_open_event (GSimpleAction *sync,
-                             GVariant      *parameter,
-                             gpointer       app)
+                             GVariant *parameter,
+                             gpointer app)
 {
   GcalApplication *self;
   const gchar *event_uuid;
@@ -114,8 +106,8 @@ gcal_application_open_event (GSimpleAction *sync,
 
 static void
 gcal_application_sync (GSimpleAction *sync,
-                       GVariant      *parameter,
-                       gpointer       app)
+                       GVariant *parameter,
+                       gpointer app)
 {
   GcalWeatherService *weather_service;
   GcalApplication *self;
@@ -129,20 +121,20 @@ gcal_application_sync (GSimpleAction *sync,
 
 static void
 gcal_application_launch_search (GSimpleAction *search,
-                                GVariant      *parameter,
-                                gpointer       app)
+                                GVariant *parameter,
+                                gpointer app)
 {
 }
 
-static gchar*
+static gchar *
 build_about_copyright (GcalApplication *self)
 {
   g_autoptr (GDateTime) dt = NULL;
 
   dt = g_date_time_new_now_local ();
 
-  return g_strdup_printf(_("Copyright \xC2\xA9 2012\xE2\x80\x93%d The Calendar authors"),
-                         g_date_time_get_year (dt));
+  return g_strdup_printf (_ ("Copyright \xC2\xA9 2012\xE2\x80\x93%d The Calendar authors"),
+                          g_date_time_get_year (dt));
 }
 
 static char *
@@ -205,8 +197,8 @@ build_system_information (void)
  */
 static void
 gcal_application_show_about (GSimpleAction *simple,
-                             GVariant      *parameter,
-                             gpointer       user_data)
+                             GVariant *parameter,
+                             gpointer user_data)
 {
   GcalWeatherService *weather_service;
   GcalApplication *self;
@@ -242,11 +234,11 @@ gcal_application_show_about (GSimpleAction *simple,
   adw_about_dialog_set_developers (ADW_ABOUT_DIALOG (about), developers);
   adw_about_dialog_set_debug_info (ADW_ABOUT_DIALOG (about), troubleshooting);
   adw_about_dialog_set_debug_info_filename (ADW_ABOUT_DIALOG (about), "Calendar.txt");
-  adw_about_dialog_set_translator_credits (ADW_ABOUT_DIALOG (about), _("translator-credits"));
+  adw_about_dialog_set_translator_credits (ADW_ABOUT_DIALOG (about), _ ("translator-credits"));
 
   weather_service = gcal_context_get_weather_service (self->context);
   adw_about_dialog_add_legal_section (ADW_ABOUT_DIALOG (about),
-                                      _("Weather"),
+                                      _ ("Weather"),
                                       NULL,
                                       GTK_LICENSE_CUSTOM,
                                       gcal_weather_service_get_attribution (weather_service));
@@ -259,8 +251,8 @@ gcal_application_show_about (GSimpleAction *simple,
  */
 static void
 gcal_application_show_shortcuts (GSimpleAction *simple,
-                                 GVariant      *parameter,
-                                 gpointer       user_data)
+                                 GVariant *parameter,
+                                 gpointer user_data)
 {
   GcalApplication *self;
   g_autoptr (GtkBuilder) builder = NULL;
@@ -277,14 +269,13 @@ gcal_application_show_shortcuts (GSimpleAction *simple,
 
 static void
 gcal_application_quit (GSimpleAction *simple,
-                       GVariant      *parameter,
-                       gpointer       user_data)
+                       GVariant *parameter,
+                       gpointer user_data)
 {
   GcalApplication *self = GCAL_APPLICATION (user_data);
 
   gtk_window_destroy (GTK_WINDOW (self->window));
 }
-
 
 /*
  * GObject overrides
@@ -293,7 +284,7 @@ gcal_application_quit (GSimpleAction *simple,
 static void
 gcal_application_finalize (GObject *object)
 {
- GcalApplication *self = GCAL_APPLICATION (object);
+  GcalApplication *self = GCAL_APPLICATION (object);
 
   GCAL_ENTRY;
 
@@ -313,9 +304,9 @@ gcal_application_finalize (GObject *object)
  * @param property_id Identifier of the property to retrieve.
  */
 static void
-gcal_application_get_property (GObject    *object,
-                               guint       property_id,
-                               GValue     *value,
+gcal_application_get_property (GObject *object,
+                               guint property_id,
+                               GValue *value,
                                GParamSpec *pspec)
 {
   GcalApplication *self = GCAL_APPLICATION (object);
@@ -355,13 +346,13 @@ gcal_application_activate (GApplication *application)
       if (!self->initial_date)
         self->initial_date = g_date_time_new_now (gcal_context_get_timezone (self->context));
 
-      self->window =  g_object_new (GCAL_TYPE_WINDOW,
-                                    "application", self,
-                                    "context", self->context,
-                                    "active-date", self->initial_date,
-                                    NULL);
+      self->window = g_object_new (GCAL_TYPE_WINDOW,
+                                   "application", self,
+                                   "context", self->context,
+                                   "active-date", self->initial_date,
+                                   NULL);
 
-      g_object_add_weak_pointer (G_OBJECT (self->window), (gpointer*) &self->window);
+      g_object_add_weak_pointer (G_OBJECT (self->window), (gpointer *) &self->window);
       gtk_widget_set_visible (self->window, TRUE);
     }
 
@@ -393,11 +384,11 @@ gcal_application_startup (GApplication *app)
 
   static const GActionEntry gcal_app_entries[] = {
     { "open-event", gcal_application_open_event, "s" },
-    { "sync",   gcal_application_sync },
+    { "sync", gcal_application_sync },
     { "search", gcal_application_launch_search },
-    { "about",  gcal_application_show_about },
+    { "about", gcal_application_show_about },
     { "shortcuts", gcal_application_show_shortcuts },
-    { "quit",   gcal_application_quit },
+    { "quit", gcal_application_quit },
   };
 
   GCAL_ENTRY;
@@ -435,15 +426,15 @@ gcal_application_startup (GApplication *app)
  * @returns Zero after processing the request.
  */
 static gint
-gcal_application_command_line (GApplication            *app,
+gcal_application_command_line (GApplication *app,
                                GApplicationCommandLine *command_line)
 {
   g_autoptr (GVariant) option = NULL;
   g_auto (GStrv) arguments = NULL;
   GcalApplication *self;
   GVariantDict *options;
-  const gchar* date = NULL;
-  const gchar* uuid = NULL;
+  const gchar *date = NULL;
+  const gchar *uuid = NULL;
   gsize length;
   gint n_arguments;
   gint i;
@@ -563,10 +554,10 @@ gcal_application_handle_local_options (GApplication *app,
  * @return `TRUE` if registration and export succeed, `FALSE` otherwise.
  */
 static gboolean
-gcal_application_dbus_register (GApplication     *application,
-                                GDBusConnection  *connection,
-                                const gchar      *object_path,
-                                GError          **error)
+gcal_application_dbus_register (GApplication *application,
+                                GDBusConnection *connection,
+                                const gchar *object_path,
+                                GError **error)
 {
   GcalApplication *self;
   g_autofree gchar *search_provider_path = NULL;
@@ -594,9 +585,9 @@ gcal_application_dbus_register (GApplication     *application,
  * @param object_path The application's D-Bus object path.
  */
 static void
-gcal_application_dbus_unregister (GApplication    *application,
+gcal_application_dbus_unregister (GApplication *application,
                                   GDBusConnection *connection,
-                                  const gchar     *object_path)
+                                  const gchar *object_path)
 {
   GcalApplication *self;
   g_autofree gchar *search_provider_path = NULL;
@@ -614,10 +605,10 @@ gcal_application_dbus_unregister (GApplication    *application,
 }
 
 static void
-gcal_application_open (GApplication  *application,
-                       GFile        **files,
-                       gint           n_files,
-                       const gchar   *hint)
+gcal_application_open (GApplication *application,
+                       GFile **files,
+                       gint n_files,
+                       const gchar *hint)
 {
   GcalApplication *self;
 
@@ -682,12 +673,8 @@ gcal_application_init (GcalApplication *self)
   self->search_provider = gcal_shell_search_provider_new (self->context);
 }
 
-/**
- * Creates a calendar application configured to handle command-line requests and file opening.
- *
- * @return A new #GcalApplication.
- */
-GcalApplication*
+/* Public API */
+GcalApplication *
 gcal_application_new (void)
 {
   return g_object_new (gcal_application_get_type (),
@@ -705,7 +692,7 @@ gcal_application_new (void)
  *
  * Returns: (transfer none): a #GcalContext
  */
-GcalContext*
+GcalContext *
 gcal_application_get_context (GcalApplication *self)
 {
   g_return_val_if_fail (GCAL_IS_APPLICATION (self), NULL);
@@ -715,7 +702,7 @@ gcal_application_get_context (GcalApplication *self)
 
 void
 gcal_application_set_uuid (GcalApplication *self,
-                           const gchar     *app_uuid)
+                           const gchar *app_uuid)
 {
   g_return_if_fail (GCAL_IS_APPLICATION (self));
 
@@ -725,7 +712,7 @@ gcal_application_set_uuid (GcalApplication *self,
 
 void
 gcal_application_set_initial_date (GcalApplication *self,
-                                   GDateTime       *initial_date)
+                                   GDateTime *initial_date)
 {
   g_return_if_fail (GCAL_IS_APPLICATION (self));
 

@@ -20,30 +20,28 @@
 
 #define G_LOG_DOMAIN "GcalSummarySection"
 
+#include "gcal-summary-section.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
 #include "gcal-event-editor-section.h"
-#include "gcal-summary-section.h"
 #include "gcal-utils.h"
 
 #include <glib/gi18n.h>
 
 struct _GcalSummarySection
 {
-  AdwBin              parent;
+  AdwBin parent;
 
-  AdwEntryRow        *summary_entry;
-  AdwEntryRow        *location_entry;
+  AdwEntryRow *summary_entry;
+  AdwEntryRow *location_entry;
 
-  GcalContext        *context;
-  GcalEvent          *event;
+  GcalContext *context;
+  GcalEvent *event;
 };
 
+static void gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface);
 
-static void          gcal_event_editor_section_iface_init        (GcalEventEditorSectionInterface *iface);
-
-G_DEFINE_TYPE_WITH_CODE (GcalSummarySection, gcal_summary_section, ADW_TYPE_BIN,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalSummarySection, gcal_summary_section, ADW_TYPE_BIN, G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
 
 enum
 {
@@ -58,8 +56,8 @@ enum
 
 static void
 gcal_reminders_section_set_event (GcalEventEditorSection *section,
-                                  GcalEvent              *event,
-                                  GcalEventEditorFlags    flags)
+                                  GcalEvent *event,
+                                  GcalEventEditorFlags flags)
 {
   GcalSummarySection *self;
 
@@ -131,7 +129,6 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
   iface->changed = gcal_reminders_section_changed;
 }
 
-
 /*
  * GObject overrides
  */
@@ -139,7 +136,7 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
 static void
 gcal_summary_section_finalize (GObject *object)
 {
-  GcalSummarySection *self = (GcalSummarySection *)object;
+  GcalSummarySection *self = (GcalSummarySection *) object;
 
   g_clear_object (&self->context);
   g_clear_object (&self->event);
@@ -148,9 +145,9 @@ gcal_summary_section_finalize (GObject *object)
 }
 
 static void
-gcal_summary_section_get_property (GObject    *object,
-                                   guint       prop_id,
-                                   GValue     *value,
+gcal_summary_section_get_property (GObject *object,
+                                   guint prop_id,
+                                   GValue *value,
                                    GParamSpec *pspec)
 {
   GcalSummarySection *self = GCAL_SUMMARY_SECTION (object);
@@ -167,10 +164,10 @@ gcal_summary_section_get_property (GObject    *object,
 }
 
 static void
-gcal_summary_section_set_property (GObject      *object,
-                                   guint         prop_id,
+gcal_summary_section_set_property (GObject *object,
+                                   guint prop_id,
                                    const GValue *value,
-                                   GParamSpec   *pspec)
+                                   GParamSpec *pspec)
 {
   GcalSummarySection *self = GCAL_SUMMARY_SECTION (object);
 

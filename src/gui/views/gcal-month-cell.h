@@ -25,41 +25,40 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_MONTH_CELL (gcal_month_cell_get_type())
+#define GCAL_TYPE_MONTH_CELL (gcal_month_cell_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalMonthCell, gcal_month_cell, GCAL, MONTH_CELL, GtkWidget)
 
-GtkWidget*           gcal_month_cell_new                         (void);
+GtkWidget *gcal_month_cell_new (void);
 
-GDateTime*           gcal_month_cell_get_date                    (GcalMonthCell      *self);
+GDateTime *gcal_month_cell_get_date (GcalMonthCell *self);
 
-void                 gcal_month_cell_set_date                    (GcalMonthCell      *self,
-                                                                  GDateTime          *date);
+void gcal_month_cell_set_date (GcalMonthCell *self,
+                               GDateTime *date);
 
-GcalContext*         gcal_month_cell_get_context                 (GcalMonthCell      *self);
+GcalContext *gcal_month_cell_get_context (GcalMonthCell *self);
 
-void                 gcal_month_cell_set_context                 (GcalMonthCell      *self,
-                                                                  GcalContext        *context);
+void gcal_month_cell_set_context (GcalMonthCell *self,
+                                  GcalContext *context);
 
-guint                gcal_month_cell_get_overflow                (GcalMonthCell      *self);
+guint gcal_month_cell_get_overflow (GcalMonthCell *self);
 
-void                 gcal_month_cell_set_overflow                (GcalMonthCell      *self,
-                                                                  guint               n_overflow);
+void gcal_month_cell_set_overflow (GcalMonthCell *self,
+                                   guint n_overflow);
 
-gint                 gcal_month_cell_get_content_space           (GcalMonthCell      *self);
+gint gcal_month_cell_get_content_space (GcalMonthCell *self);
 
-gint                 gcal_month_cell_get_header_height           (GcalMonthCell      *self);
+gint gcal_month_cell_get_header_height (GcalMonthCell *self);
 
-gint                 gcal_month_cell_get_overflow_height         (GcalMonthCell      *self);
+gint gcal_month_cell_get_overflow_height (GcalMonthCell *self);
 
-gboolean             gcal_month_cell_get_selected                (GcalMonthCell      *self);
+gboolean gcal_month_cell_get_selected (GcalMonthCell *self);
 
-void                 gcal_month_cell_set_selected                (GcalMonthCell      *self,
-                                                                  gboolean            selected);
+void gcal_month_cell_set_selected (GcalMonthCell *self,
+                                   gboolean selected);
 
-GtkWidget           *gcal_month_cell_get_overflow_button         (GcalMonthCell      *self);
+GtkWidget *gcal_month_cell_get_overflow_button (GcalMonthCell *self);
 
 G_END_DECLS
 
 #endif /* GCAL_MONTH_VIEW_CELL_H */
-

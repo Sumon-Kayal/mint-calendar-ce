@@ -21,11 +21,10 @@
 
 #include "gcal-debug.h"
 #include "gcal-event-widget.h"
-#include "gcal-view-private.h"
 #include "gcal-utils.h"
+#include "gcal-view-private.h"
 
 #include <glib.h>
-
 
 G_DEFINE_INTERFACE (GcalView, gcal_view, GTK_TYPE_WIDGET)
 
@@ -37,7 +36,9 @@ enum
   N_SIGNALS,
 };
 
-static guint signals[N_SIGNALS] = { 0, };
+static guint signals[N_SIGNALS] = {
+  0,
+};
 
 static void
 gcal_view_default_init (GcalViewInterface *iface)
@@ -131,7 +132,7 @@ gcal_view_default_init (GcalViewInterface *iface)
  * Sets the date of @view.
  */
 void
-gcal_view_set_date (GcalView  *view,
+gcal_view_set_date (GcalView *view,
                     GDateTime *date)
 {
   g_return_if_fail (GCAL_IS_VIEW (view));
@@ -148,7 +149,7 @@ gcal_view_set_date (GcalView  *view,
  *
  * Returns: (transfer none): a #GcalContext
  */
-GcalContext*
+GcalContext *
 gcal_view_get_context (GcalView *self)
 {
   GcalContext *context;
@@ -189,7 +190,7 @@ gcal_view_get_time_direction (GcalView *self)
  *
  * Returns: (transfer none): an #GDateTime.
  */
-GDateTime*
+GDateTime *
 gcal_view_get_date (GcalView *view)
 {
   g_return_val_if_fail (GCAL_IS_VIEW (view), NULL);
@@ -222,10 +223,10 @@ gcal_view_clear_marks (GcalView *view)
  *
  * Returns: (transfer full): a {@link GList} instance
  **/
-GList*
-gcal_view_get_children_by_uuid (GcalView              *view,
-                                GcalRecurrenceModType  mod,
-                                const gchar           *uuid)
+GList *
+gcal_view_get_children_by_uuid (GcalView *view,
+                                GcalRecurrenceModType mod,
+                                const gchar *uuid)
 {
   g_return_val_if_fail (GCAL_IS_VIEW (view), NULL);
   g_return_val_if_fail (GCAL_VIEW_GET_IFACE (view)->get_children_by_uuid, NULL);
@@ -244,7 +245,7 @@ gcal_view_get_children_by_uuid (GcalView              *view,
  *
  * Returns: (transfer full): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_view_get_next_date (GcalView *self)
 {
   g_autoptr (GDateTime) next_date = NULL;
@@ -255,12 +256,12 @@ gcal_view_get_next_date (GcalView *self)
   next_date = GCAL_VIEW_GET_IFACE (self)->get_next_date (self);
 
 #ifdef GCAL_ENABLE_TRACE
-    {
-      g_autofree gchar *str = NULL;
+  {
+    g_autofree gchar *str = NULL;
 
-      str = g_date_time_format (next_date, "%x %X %z");
-      g_debug ("%s's next date: %s", G_OBJECT_TYPE_NAME (self), str);
-    }
+    str = g_date_time_format (next_date, "%x %X %z");
+    g_debug ("%s's next date: %s", G_OBJECT_TYPE_NAME (self), str);
+  }
 #endif
 
   return g_steal_pointer (&next_date);
@@ -274,7 +275,7 @@ gcal_view_get_next_date (GcalView *self)
  *
  * Returns: (transfer full): a #GDateTime
  */
-GDateTime*
+GDateTime *
 gcal_view_get_previous_date (GcalView *self)
 {
   g_autoptr (GDateTime) previous_date = NULL;
@@ -285,22 +286,22 @@ gcal_view_get_previous_date (GcalView *self)
   previous_date = GCAL_VIEW_GET_IFACE (self)->get_previous_date (self);
 
 #ifdef GCAL_ENABLE_TRACE
-    {
-      g_autofree gchar *str = NULL;
+  {
+    g_autofree gchar *str = NULL;
 
-      str = g_date_time_format (previous_date, "%x %X %z");
-      g_debug ("%s's previous date: %s", G_OBJECT_TYPE_NAME (self), str);
-    }
+    str = g_date_time_format (previous_date, "%x %X %z");
+    g_debug ("%s's previous date: %s", G_OBJECT_TYPE_NAME (self), str);
+  }
 #endif
 
   return g_steal_pointer (&previous_date);
 }
 
 void
-gcal_view_create_event (GcalView  *self,
+gcal_view_create_event (GcalView *self,
                         GcalRange *range,
-                        gdouble    x,
-                        gdouble    y)
+                        gdouble x,
+                        gdouble y)
 {
   g_assert (GCAL_IS_VIEW (self));
   g_assert (range != NULL);
@@ -309,7 +310,7 @@ gcal_view_create_event (GcalView  *self,
 }
 
 void
-gcal_view_create_event_detailed (GcalView  *self,
+gcal_view_create_event_detailed (GcalView *self,
                                  GcalRange *range)
 {
   g_assert (GCAL_IS_VIEW (self));
@@ -319,7 +320,7 @@ gcal_view_create_event_detailed (GcalView  *self,
 }
 
 void
-gcal_view_event_activated (GcalView        *self,
+gcal_view_event_activated (GcalView *self,
                            GcalEventWidget *event_widget)
 {
   g_assert (GCAL_IS_VIEW (self));

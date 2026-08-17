@@ -27,14 +27,14 @@
 G_BEGIN_DECLS
 
 #define I_CAL_ERROR i_cal_error_quark ()
-GQuark               i_cal_error_quark                           (void);
+GQuark i_cal_error_quark (void);
 
-void                 gcal_importer_import_file                   (GFile               *file,
-                                                                  GCancellable        *cancellable,
-                                                                  GAsyncReadyCallback  callback,
-                                                                  gpointer             user_data);
+void gcal_importer_import_file (GFile *file,
+                                GCancellable *cancellable,
+                                GAsyncReadyCallback callback,
+                                gpointer user_data);
 
-ICalComponent*       gcal_importer_import_file_finish            (GAsyncResult       *result,
-                                                                  GError            **error);
+ICalComponent *gcal_importer_import_file_finish (GAsyncResult *result,
+                                                 GError **error);
 
 G_END_DECLS

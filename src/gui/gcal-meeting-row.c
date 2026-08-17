@@ -27,13 +27,13 @@
 
 struct _GcalMeetingRow
 {
-  GtkListBoxRow       parent_instance;
+  GtkListBoxRow parent_instance;
 
-  GtkWidget          *join_button;
-  GtkLabel           *title;
-  GtkLabel           *subtitle;
+  GtkWidget *join_button;
+  GtkLabel *title;
+  GtkLabel *subtitle;
 
-  gchar              *url;
+  gchar *url;
 };
 
 G_DEFINE_TYPE (GcalMeetingRow, gcal_meeting_row, GTK_TYPE_LIST_BOX_ROW)
@@ -51,9 +51,12 @@ enum
   N_SIGNALS,
 };
 
-static guint signals[N_SIGNALS] = { 0, };
-static GParamSpec *properties[N_PROPS] = { NULL, };
-
+static guint signals[N_SIGNALS] = {
+  0,
+};
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -69,7 +72,7 @@ setup_meeting (GcalMeetingRow *self)
   if (service_name)
     gtk_label_set_label (self->title, service_name);
   else
-    gtk_label_set_label (self->title, _("Unknown Service"));
+    gtk_label_set_label (self->title, _ ("Unknown Service"));
 
   markup_url = g_strdup_printf ("<a title=\"%1$s\" href=\"%1$s\">%1$s</a>", self->url);
   gtk_label_set_markup (self->subtitle, markup_url);
@@ -80,12 +83,11 @@ setup_meeting (GcalMeetingRow *self)
  */
 
 static void
-on_join_button_clicked_cb (GtkButton      *button,
+on_join_button_clicked_cb (GtkButton *button,
                            GcalMeetingRow *self)
 {
   g_signal_emit (self, signals[JOIN_MEETING], 0, self->url);
 }
-
 
 static gboolean
 gcal_meeting_row_grab_focus (GtkWidget *widget)
@@ -97,7 +99,6 @@ gcal_meeting_row_grab_focus (GtkWidget *widget)
   return TRUE;
 }
 
-
 /*
  * GObject overrides
  */
@@ -105,7 +106,7 @@ gcal_meeting_row_grab_focus (GtkWidget *widget)
 static void
 gcal_meeting_row_finalize (GObject *object)
 {
-  GcalMeetingRow *self = (GcalMeetingRow *)object;
+  GcalMeetingRow *self = (GcalMeetingRow *) object;
 
   g_clear_pointer (&self->url, g_free);
 
@@ -113,9 +114,9 @@ gcal_meeting_row_finalize (GObject *object)
 }
 
 static void
-gcal_meeting_row_get_property (GObject    *object,
-                               guint       prop_id,
-                               GValue     *value,
+gcal_meeting_row_get_property (GObject *object,
+                               guint prop_id,
+                               GValue *value,
                                GParamSpec *pspec)
 {
   GcalMeetingRow *self = GCAL_MEETING_ROW (object);
@@ -132,10 +133,10 @@ gcal_meeting_row_get_property (GObject    *object,
 }
 
 static void
-gcal_meeting_row_set_property (GObject      *object,
-                               guint         prop_id,
+gcal_meeting_row_set_property (GObject *object,
+                               guint prop_id,
                                const GValue *value,
-                               GParamSpec   *pspec)
+                               GParamSpec *pspec)
 {
   GcalMeetingRow *self = GCAL_MEETING_ROW (object);
 
@@ -203,7 +204,7 @@ gcal_meeting_row_init (GcalMeetingRow *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-GtkWidget*
+GtkWidget *
 gcal_meeting_row_new (const gchar *url)
 {
   return g_object_new (GCAL_TYPE_MEETING_ROW,

@@ -18,13 +18,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <libsoup/soup.h>
 #include <libedataserver/libedataserver.h>
+#include <libsoup/soup.h>
 
 #include "gcal-simple-server.h"
 #include "gcal-utils.h"
 
-static GcalSimpleServer*
+static GcalSimpleServer *
 init_server (void)
 {
   g_autoptr (GcalSimpleServer) server = NULL;
@@ -37,9 +37,9 @@ init_server (void)
 
 static gboolean
 fail_authenticate_cb (SoupMessage *message,
-                      SoupAuth    *auth,
-                      gboolean     retrying,
-                      gpointer     user_data)
+                      SoupAuth *auth,
+                      gboolean retrying,
+                      gpointer user_data)
 {
   GcalSimpleServer *server = user_data;
 
@@ -52,9 +52,9 @@ fail_authenticate_cb (SoupMessage *message,
 
 static gboolean
 authenticate_cb (SoupMessage *message,
-                 SoupAuth    *auth,
-                 gboolean     retrying,
-                 gpointer     user_data)
+                 SoupAuth *auth,
+                 gboolean retrying,
+                 gpointer user_data)
 {
   g_debug ("Authenticating...");
 
@@ -65,9 +65,9 @@ authenticate_cb (SoupMessage *message,
 
 static gboolean
 wrong_authenticate_cb (SoupMessage *message,
-                       SoupAuth    *auth,
-                       gboolean     retrying,
-                       gpointer     user_data)
+                       SoupAuth *auth,
+                       gboolean retrying,
+                       gpointer user_data)
 {
   g_debug ("Authenticating with wrong username...");
 
@@ -269,7 +269,7 @@ server_request_auth_wrong (void)
 /*********************************************************************************************************************/
 
 gint
-main (gint   argc,
+main (gint argc,
       gchar *argv[])
 {
   g_test_init (&argc, &argv, NULL);

@@ -8,11 +8,11 @@
 
 /* Copied from libadwaita 1.8 and adapted for use in gnome-calendar. */
 
-#include "config.h"
 #include "gcal-fading-label.h"
+#include "config.h"
 
-#include <glib/gi18n-lib.h>
 #include "gcal-bidi.h"
+#include <glib/gi18n-lib.h>
 
 #define FADE_WIDTH 18.0f
 
@@ -26,7 +26,8 @@ struct _GcalFadingLabel
 
 G_DEFINE_FINAL_TYPE (GcalFadingLabel, gcal_fading_label, GTK_TYPE_WIDGET)
 
-enum {
+enum
+{
   PROP_0,
   PROP_LABEL,
   PROP_ALIGN,
@@ -54,13 +55,13 @@ is_rtl (GcalFadingLabel *self)
 }
 
 static void
-gcal_fading_label_measure (GtkWidget      *widget,
-                          GtkOrientation  orientation,
-                          gint             for_size,
-                          gint             *min,
-                          gint             *nat,
-                          gint             *min_baseline,
-                          gint             *nat_baseline)
+gcal_fading_label_measure (GtkWidget *widget,
+                           GtkOrientation orientation,
+                           gint for_size,
+                           gint *min,
+                           gint *nat,
+                           gint *min_baseline,
+                           gint *nat_baseline)
 {
   GcalFadingLabel *self = GCAL_FADING_LABEL (widget);
 
@@ -76,9 +77,9 @@ gcal_fading_label_measure (GtkWidget      *widget,
 
 static void
 gcal_fading_label_size_allocate (GtkWidget *widget,
-                                gint        width,
-                                gint        height,
-                                gint        baseline)
+                                 gint width,
+                                 gint height,
+                                 gint baseline)
 {
   GcalFadingLabel *self = GCAL_FADING_LABEL (widget);
   GskTransform *transform;
@@ -100,7 +101,7 @@ gcal_fading_label_size_allocate (GtkWidget *widget,
 }
 
 static void
-gcal_fading_label_snapshot (GtkWidget   *widget,
+gcal_fading_label_snapshot (GtkWidget *widget,
                             GtkSnapshot *snapshot)
 {
   GcalFadingLabel *self = GCAL_FADING_LABEL (widget);
@@ -141,7 +142,7 @@ gcal_fading_label_snapshot (GtkWidget   *widget,
                                                                 FADE_WIDTH, bounds.size.height),
                                            &GRAPHENE_POINT_INIT (0, 0),
                                            &GRAPHENE_POINT_INIT (FADE_WIDTH, 0),
-                                           (GskColorStop[2]) {
+                                           (GskColorStop[2]){
                                                { 0, { 0, 0, 0, 1 } },
                                                { 1, { 0, 0, 0, 0 } },
                                            },
@@ -155,7 +156,7 @@ gcal_fading_label_snapshot (GtkWidget   *widget,
                                                                 FADE_WIDTH, bounds.size.height),
                                            &GRAPHENE_POINT_INIT (width, 0),
                                            &GRAPHENE_POINT_INIT (width - FADE_WIDTH, 0),
-                                           (GskColorStop[2]) {
+                                           (GskColorStop[2]){
                                                { 0, { 0, 0, 0, 1 } },
                                                { 1, { 0, 0, 0, 0 } },
                                            },
@@ -172,47 +173,49 @@ gcal_fading_label_snapshot (GtkWidget   *widget,
 }
 
 static void
-gcal_fading_label_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
+gcal_fading_label_get_property (GObject *object,
+                                guint prop_id,
+                                GValue *value,
                                 GParamSpec *pspec)
 {
   GcalFadingLabel *self = GCAL_FADING_LABEL (object);
 
-  switch (prop_id) {
-  case PROP_LABEL:
-    g_value_set_string (value, gcal_fading_label_get_label (self));
-    break;
+  switch (prop_id)
+    {
+    case PROP_LABEL:
+      g_value_set_string (value, gcal_fading_label_get_label (self));
+      break;
 
-  case PROP_ALIGN:
-    g_value_set_float (value, gcal_fading_label_get_align (self));
-    break;
+    case PROP_ALIGN:
+      g_value_set_float (value, gcal_fading_label_get_align (self));
+      break;
 
-  default:
-    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-  }
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
-gcal_fading_label_set_property (GObject      *object,
-                                guint         prop_id,
+gcal_fading_label_set_property (GObject *object,
+                                guint prop_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalFadingLabel *self = GCAL_FADING_LABEL (object);
 
-  switch (prop_id) {
-  case PROP_LABEL:
-    gcal_fading_label_set_label (self, g_value_get_string (value));
-    break;
+  switch (prop_id)
+    {
+    case PROP_LABEL:
+      gcal_fading_label_set_label (self, g_value_get_string (value));
+      break;
 
-  case PROP_ALIGN:
-    gcal_fading_label_set_align (self, g_value_get_float (value));
-    break;
+    case PROP_ALIGN:
+      gcal_fading_label_set_align (self, g_value_get_float (value));
+      break;
 
-  default:
-    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-  }
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
@@ -240,14 +243,14 @@ gcal_fading_label_class_init (GcalFadingLabelClass *klass)
   widget_class->snapshot = gcal_fading_label_snapshot;
 
   props[PROP_LABEL] =
-    g_param_spec_string ("label", NULL, NULL,
-                         NULL,
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
+      g_param_spec_string ("label", NULL, NULL,
+                           NULL,
+                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
 
   props[PROP_ALIGN] =
-    g_param_spec_float ("align", NULL, NULL,
-                        0.0, 1.0, 0.0,
-                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
+      g_param_spec_float ("align", NULL, NULL,
+                          0.0, 1.0, 0.0,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
 
   g_object_class_install_properties (object_class, LAST_PROP, props);
 }
@@ -271,7 +274,7 @@ gcal_fading_label_get_label (GcalFadingLabel *self)
 
 void
 gcal_fading_label_set_label (GcalFadingLabel *self,
-                             const gchar      *label)
+                             const gchar *label)
 {
   g_return_if_fail (GCAL_IS_FADING_LABEL (self));
 
@@ -293,7 +296,7 @@ gcal_fading_label_get_align (GcalFadingLabel *self)
 
 void
 gcal_fading_label_set_align (GcalFadingLabel *self,
-                             gfloat           align)
+                             gfloat align)
 {
   g_return_if_fail (GCAL_IS_FADING_LABEL (self));
 

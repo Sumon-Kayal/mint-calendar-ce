@@ -27,17 +27,17 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_EVENT_ATTENDEE (gcal_event_attendee_get_type ())
 G_DECLARE_FINAL_TYPE (GcalEventAttendee, gcal_event_attendee, GCAL, EVENT_ATTENDEE, GObject)
 
-GcalEventAttendee         *gcal_event_attendee_new                (ECalComponentAttendee *ecal_attendee);
-const gchar               *gcal_event_attendee_get_name           (GcalEventAttendee     *self);
-GcalEventAttendeeType      gcal_event_attendee_get_attendee_type  (GcalEventAttendee     *self);
-const gchar               *gcal_event_attendee_get_delegated_from (GcalEventAttendee     *self);
-const gchar               *gcal_event_attendee_get_delegated_to   (GcalEventAttendee     *self);
-const gchar               *gcal_event_attendee_get_language       (GcalEventAttendee     *self);
-const gchar               *gcal_event_attendee_get_member         (GcalEventAttendee     *self);
-GcalEventAttendeePartStat  gcal_event_attendee_get_part_status    (GcalEventAttendee     *self);
-GcalEventAttendeeRole      gcal_event_attendee_get_role           (GcalEventAttendee     *self);
-gboolean                   gcal_event_attendee_get_requires_rsvp  (GcalEventAttendee     *self);
-const gchar               *gcal_event_attendee_get_sent_by        (GcalEventAttendee     *self);
-const gchar               *gcal_event_attendee_get_uri            (GcalEventAttendee     *self);
+GcalEventAttendee *gcal_event_attendee_new (ECalComponentAttendee *ecal_attendee);
+const gchar *gcal_event_attendee_get_name (GcalEventAttendee *self);
+GcalEventAttendeeType gcal_event_attendee_get_attendee_type (GcalEventAttendee *self);
+const gchar *gcal_event_attendee_get_delegated_from (GcalEventAttendee *self);
+const gchar *gcal_event_attendee_get_delegated_to (GcalEventAttendee *self);
+const gchar *gcal_event_attendee_get_language (GcalEventAttendee *self);
+const gchar *gcal_event_attendee_get_member (GcalEventAttendee *self);
+GcalEventAttendeePartStat gcal_event_attendee_get_part_status (GcalEventAttendee *self);
+GcalEventAttendeeRole gcal_event_attendee_get_role (GcalEventAttendee *self);
+gboolean gcal_event_attendee_get_requires_rsvp (GcalEventAttendee *self);
+const gchar *gcal_event_attendee_get_sent_by (GcalEventAttendee *self);
+const gchar *gcal_event_attendee_get_uri (GcalEventAttendee *self);
 
 G_END_DECLS

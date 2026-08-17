@@ -19,69 +19,70 @@
 
 #define G_LOG_DOMAIN "GcalWeekGrid"
 
+#include "gcal-week-grid.h"
 #include "gcal-application.h"
 #include "gcal-clock.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
+#include "gcal-event-widget.h"
 #include "gcal-gui-utils.h"
-#include "gcal-week-grid.h"
-#include "gcal-week-view.h"
-#include "gcal-week-view-common.h"
+#include "gcal-range-tree.h"
 #include "gcal-utils.h"
 #include "gcal-view-private.h"
-#include "gcal-event-widget.h"
-#include "gcal-range-tree.h"
+#include "gcal-week-view-common.h"
+#include "gcal-week-view.h"
 
 #include <glib/gi18n.h>
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 typedef struct
 {
-  GcalWeekGrid       *self;
-  GcalEvent          *event;
-  gint                drop_cell;
+  GcalWeekGrid *self;
+  GcalEvent *event;
+  gint drop_cell;
 } DropData;
 
 typedef struct
 {
-  GtkWidget          *widget;
-  GcalEvent          *event;
+  GtkWidget *widget;
+  GcalEvent *event;
 } ChildData;
 
 struct _GcalWeekGrid
 {
-  GtkWidget           parent;
+  GtkWidget parent;
 
-  GtkWidget          *hours_sidebar;
-  GtkWidget          *now_strip;
+  GtkWidget *hours_sidebar;
+  GtkWidget *now_strip;
   GtkEventController *motion_controller;
 
-  GDateTime          *active_date;
+  GDateTime *active_date;
 
-  GcalRangeTree      *events;
+  GcalRangeTree *events;
 
   /*
    * These fields are "cells" rather than minutes. Each cell
    * correspond to 30 minutes.
    */
-  struct {
-    gint              start;
-    gint              end;
-    GtkWidget        *widget;
+  struct
+  {
+    gint start;
+    gint end;
+    GtkWidget *widget;
   } selection;
 
-  struct {
-    gint              cell;
-    GtkWidget        *widget;
-    gint              event_minutes;
+  struct
+  {
+    gint cell;
+    GtkWidget *widget;
+    gint event_minutes;
   } dnd;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 G_DEFINE_TYPE (GcalWeekGrid, gcal_week_grid, GTK_TYPE_WIDGET);
-
 
 enum
 {
@@ -89,13 +90,15 @@ enum
   LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static guint signals[LAST_SIGNAL] = {
+  0,
+};
 
 /*
  * Auxiliary methods
  */
 
-static ChildData*
+static ChildData *
 child_data_new (GtkWidget *widget,
                 GcalEvent *event)
 {
@@ -125,12 +128,12 @@ static inline gint
 uint16_compare (gconstpointer a,
                 gconstpointer b)
 {
-  return GPOINTER_TO_UINT (*(gint*)a) - GPOINTER_TO_UINT (*(gint*)b);
+  return GPOINTER_TO_UINT (*(gint *) a) - GPOINTER_TO_UINT (*(gint *) b);
 }
 
 static inline guint
 get_event_index (GcalRangeTree *tree,
-                 GcalRange     *range)
+                 GcalRange *range)
 {
   g_autoptr (GPtrArray) array = NULL;
   gint idx, i;
@@ -156,7 +159,7 @@ get_event_index (GcalRangeTree *tree,
 
 static guint
 count_overlaps_at_range (GcalRangeTree *self,
-                         GcalRange     *range)
+                         GcalRange *range)
 {
   g_autoptr (GDateTime) start = NULL;
   g_autoptr (GDateTime) end = NULL;
@@ -196,10 +199,10 @@ count_overlaps_at_range (GcalRangeTree *self,
 
 static void
 on_click_gesture_pressed_cb (GtkGestureClick *click_gesture,
-                             gint             n_press,
-                             gdouble          x,
-                             gdouble          y,
-                             GcalWeekGrid    *self)
+                             gint n_press,
+                             gdouble x,
+                             gdouble y,
+                             GcalWeekGrid *self)
 {
   gdouble minute_height;
   gint column_width;
@@ -225,16 +228,16 @@ on_click_gesture_pressed_cb (GtkGestureClick *click_gesture,
 
 static void
 on_event_widget_activated_cb (GcalEventWidget *widget,
-                              GcalWeekGrid    *self)
+                              GcalWeekGrid *self)
 {
   g_signal_emit (self, signals[EVENT_ACTIVATED], 0, widget);
 }
 
 static void
 on_motion_controller_motion_cb (GtkEventControllerMotion *motion_controller,
-                                gdouble                   x,
-                                gdouble                   y,
-                                GcalWeekGrid             *self)
+                                gdouble x,
+                                gdouble y,
+                                GcalWeekGrid *self)
 {
   gdouble minute_height;
   gint column;
@@ -252,10 +255,10 @@ on_motion_controller_motion_cb (GtkEventControllerMotion *motion_controller,
 
 static void
 on_click_gesture_released_cb (GtkGestureClick *click_gesture,
-                              gint             n_press,
-                              gdouble          x,
-                              gdouble          y,
-                              GcalWeekGrid    *self)
+                              gint n_press,
+                              gdouble x,
+                              gdouble y,
+                              GcalWeekGrid *self)
 {
   g_autoptr (GDateTime) week_start = NULL;
   g_autoptr (GcalRange) range = NULL;
@@ -332,8 +335,8 @@ on_click_gesture_released_cb (GtkGestureClick *click_gesture,
 
 static gint
 get_dnd_cell (GcalWeekGrid *self,
-              gdouble       x,
-              gdouble       y)
+              gdouble x,
+              gdouble y)
 {
   gdouble column_width, cell_height;
   gint column, row;
@@ -347,10 +350,10 @@ get_dnd_cell (GcalWeekGrid *self,
 }
 
 static void
-move_event_to_cell (GcalWeekGrid          *self,
-                    GcalEvent             *event,
-                    guint                  cell,
-                    GcalRecurrenceModType  mod_type)
+move_event_to_cell (GcalWeekGrid *self,
+                    GcalEvent *event,
+                    guint cell,
+                    GcalRecurrenceModType mod_type)
 {
 
   g_autoptr (GDateTime) week_start = NULL;
@@ -396,9 +399,9 @@ move_event_to_cell (GcalWeekGrid          *self,
 }
 
 static void
-on_ask_recurrence_response_cb (GcalEvent             *event,
-                               GcalRecurrenceModType  mod_type,
-                               gpointer               user_data)
+on_ask_recurrence_response_cb (GcalEvent *event,
+                               GcalRecurrenceModType mod_type,
+                               gpointer user_data)
 {
   DropData *data = user_data;
 
@@ -411,10 +414,10 @@ on_ask_recurrence_response_cb (GcalEvent             *event,
 
 static gboolean
 on_drop_target_drop_cb (GtkDropTarget *drop_target,
-                        const GValue  *value,
-                        gdouble        x,
-                        gdouble        y,
-                        GcalWeekGrid  *self)
+                        const GValue *value,
+                        gdouble x,
+                        gdouble y,
+                        GcalWeekGrid *self)
 {
   GcalEventWidget *event_widget;
   GcalEvent *event;
@@ -454,9 +457,9 @@ on_drop_target_drop_cb (GtkDropTarget *drop_target,
 
 static GdkDragAction
 on_drop_target_enter_cb (GtkDropTarget *drop_target,
-                         gdouble        x,
-                         gdouble        y,
-                         GcalWeekGrid  *self)
+                         gdouble x,
+                         gdouble y,
+                         GcalWeekGrid *self)
 {
 
   GCAL_ENTRY;
@@ -469,7 +472,7 @@ on_drop_target_enter_cb (GtkDropTarget *drop_target,
 
 static void
 on_drop_target_leave_cb (GtkDropTarget *drop_target,
-                         GcalWeekGrid  *self)
+                         GcalWeekGrid *self)
 {
   GCAL_ENTRY;
 
@@ -481,9 +484,9 @@ on_drop_target_leave_cb (GtkDropTarget *drop_target,
 
 static GdkDragAction
 on_drop_target_motion_cb (GtkDropTarget *drop_target,
-                          gdouble        x,
-                          gdouble        y,
-                          GcalWeekGrid  *self)
+                          gdouble x,
+                          gdouble y,
+                          GcalWeekGrid *self)
 {
   GCAL_ENTRY;
   GcalEventWidget *event_widget;
@@ -528,19 +531,19 @@ gcal_week_grid_finalize (GObject *object)
 }
 
 static void
-gcal_week_grid_get_property (GObject    *object,
-                             guint       prop_id,
-                             GValue     *value,
+gcal_week_grid_get_property (GObject *object,
+                             guint prop_id,
+                             GValue *value,
                              GParamSpec *pspec)
 {
   G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 }
 
 static void
-gcal_week_grid_set_property (GObject      *object,
-                             guint         prop_id,
+gcal_week_grid_set_property (GObject *object,
+                             guint prop_id,
                              const GValue *value,
-                             GParamSpec   *pspec)
+                             GParamSpec *pspec)
 {
   G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 }
@@ -548,8 +551,8 @@ gcal_week_grid_set_property (GObject      *object,
 static inline gint
 get_today_column (GcalWeekGrid *self)
 {
-  g_autoptr(GDateTime) week_start = NULL;
-  g_autoptr(GDateTime) today = NULL;
+  g_autoptr (GDateTime) week_start = NULL;
+  g_autoptr (GDateTime) today = NULL;
   gint days_diff;
 
   today = g_date_time_new_now_local ();
@@ -564,13 +567,13 @@ get_today_column (GcalWeekGrid *self)
 }
 
 static void
-gcal_week_grid_measure (GtkWidget      *widget,
-                        GtkOrientation  orientation,
-                        gint            for_size,
-                        gint           *minimum,
-                        gint           *natural,
-                        gint           *minimum_baseline,
-                        gint           *natural_baseline)
+gcal_week_grid_measure (GtkWidget *widget,
+                        GtkOrientation orientation,
+                        gint for_size,
+                        gint *minimum,
+                        gint *natural,
+                        gint *minimum_baseline,
+                        gint *natural_baseline)
 {
   if (minimum)
     *minimum = 1;
@@ -579,7 +582,7 @@ gcal_week_grid_measure (GtkWidget      *widget,
 }
 
 static void
-gcal_week_grid_snapshot (GtkWidget   *widget,
+gcal_week_grid_snapshot (GtkWidget *widget,
                          GtkSnapshot *snapshot)
 {
   g_autoptr (GPtrArray) widgets = NULL;
@@ -610,9 +613,9 @@ gcal_week_grid_snapshot (GtkWidget   *widget,
 
 static void
 gcal_week_grid_size_allocate (GtkWidget *widget,
-                              gint       width,
-                              gint       height,
-                              gint       baseline)
+                              gint width,
+                              gint height,
+                              gint baseline)
 {
   GcalWeekGrid *self = GCAL_WEEK_GRID (widget);
   g_autoptr (GDateTime) week_start = NULL;
@@ -656,7 +659,7 @@ gcal_week_grid_size_allocate (GtkWidget *widget,
 
       column = (int) floor (start * 30 / (double) MINUTES_PER_DAY);
 
-#define Y_POSITION(row_) ((gint) round (((row_) * 30) * minutes_height))
+#define Y_POSITION(row_) ((gint) round (((row_) *30) * minutes_height))
 
       start_row = start - column * 48;
       end_row = (end + 1) - column * 48;
@@ -668,11 +671,11 @@ gcal_week_grid_size_allocate (GtkWidget *widget,
 #undef Y_POSITION
 
       gtk_widget_size_allocate (self->selection.widget,
-                                &(GtkAllocation) {
-                                  .x = x,
-                                  .y = y,
-                                  .width = column_width - 1,
-                                  .height = selection_height,
+                                &(GtkAllocation){
+                                    .x = x,
+                                    .y = y,
+                                    .width = column_width - 1,
+                                    .height = selection_height,
                                 },
                                 baseline);
     }
@@ -690,11 +693,11 @@ gcal_week_grid_size_allocate (GtkWidget *widget,
       row = self->dnd.cell - column * 48;
 
       gtk_widget_size_allocate (self->dnd.widget,
-                                &(GtkAllocation) {
-                                  .x = column * column_width,
-                                  .y = row * cell_height,
-                                  .width = column_width,
-                                  .height = event_height,
+                                &(GtkAllocation){
+                                    .x = column * column_width,
+                                    .y = row * cell_height,
+                                    .width = column_width,
+                                    .height = event_height,
                                 },
                                 baseline);
     }
@@ -738,7 +741,7 @@ gcal_week_grid_size_allocate (GtkWidget *widget,
           gint x;
           gint y;
 
-          data =  g_ptr_array_index (widgets_data, j);
+          data = g_ptr_array_index (widgets_data, j);
           event_widget = data->widget;
 
           if (!gtk_widget_should_layout (event_widget))
@@ -850,7 +853,7 @@ gcal_week_grid_class_init (GcalWeekGridClass *klass)
   signals[EVENT_ACTIVATED] = g_signal_new ("event-activated",
                                            GCAL_TYPE_WEEK_GRID,
                                            G_SIGNAL_RUN_FIRST,
-                                           0,  NULL, NULL, NULL,
+                                           0, NULL, NULL, NULL,
                                            G_TYPE_NONE,
                                            1,
                                            GCAL_TYPE_EVENT_WIDGET);
@@ -905,7 +908,7 @@ gcal_week_grid_init (GcalWeekGrid *self)
 /* Public API */
 void
 gcal_week_grid_set_context (GcalWeekGrid *self,
-                            GcalContext  *context)
+                            GcalContext *context)
 {
   g_return_if_fail (GCAL_IS_WEEK_GRID (self));
 
@@ -920,7 +923,7 @@ gcal_week_grid_set_context (GcalWeekGrid *self,
 
 void
 gcal_week_grid_add_event (GcalWeekGrid *self,
-                          GcalEvent    *event)
+                          GcalEvent *event)
 {
   GtkWidget *widget;
 
@@ -946,7 +949,7 @@ gcal_week_grid_add_event (GcalWeekGrid *self,
 
 void
 gcal_week_grid_remove_event (GcalWeekGrid *self,
-                             const gchar  *uid)
+                             const gchar *uid)
 {
   g_autoptr (GPtrArray) widgets = NULL;
   guint i;
@@ -971,10 +974,10 @@ gcal_week_grid_remove_event (GcalWeekGrid *self,
     }
 }
 
-GList*
-gcal_week_grid_get_children_by_uuid (GcalWeekGrid          *self,
-                                     GcalRecurrenceModType  mod,
-                                     const gchar           *uid)
+GList *
+gcal_week_grid_get_children_by_uuid (GcalWeekGrid *self,
+                                     GcalRecurrenceModType mod,
+                                     const gchar *uid)
 {
   g_autoptr (GList) result = NULL;
 
@@ -997,11 +1000,10 @@ gcal_week_grid_clear_marks (GcalWeekGrid *self)
 
 void
 gcal_week_grid_set_date (GcalWeekGrid *self,
-                         GDateTime    *date)
+                         GDateTime *date)
 {
   gcal_set_date_time (&self->active_date, date);
 
   gtk_widget_queue_resize (GTK_WIDGET (self));
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
-

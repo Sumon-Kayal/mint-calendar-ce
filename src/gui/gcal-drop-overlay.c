@@ -23,18 +23,18 @@
 
 #define G_LOG_DOMAIN "GcalDropOverlay"
 
-#include "gcal-debug.h"
 #include "gcal-drop-overlay.h"
+#include "gcal-debug.h"
 
 struct _GcalDropOverlay
 {
-  AdwBin              parent;
+  AdwBin parent;
 
-  GtkOverlay         *overlay;
-  GtkRevealer        *revealer;
-  GtkDropTarget      *drop_target;
+  GtkOverlay *overlay;
+  GtkRevealer *revealer;
+  GtkDropTarget *drop_target;
 
-  guint              hide_timeout_id;
+  guint hide_timeout_id;
 };
 
 static void on_current_drop_notify_cb (GcalDropOverlay *self);
@@ -49,7 +49,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties[N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 static gboolean
 hide_internal_overlay_cb (gpointer data)
@@ -109,15 +111,15 @@ gcal_drop_overlay_dispose (GObject *object)
 }
 
 static void
-gcal_drop_overlay_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
+gcal_drop_overlay_get_property (GObject *object,
+                                guint prop_id,
+                                GValue *value,
                                 GParamSpec *pspec)
 {
   GcalDropOverlay *self = GCAL_DROP_OVERLAY (object);
 
   switch (prop_id)
-  {
+    {
     case PROP_CHILD:
       g_value_set_object (value, gtk_overlay_get_child (self->overlay));
       break;
@@ -128,14 +130,14 @@ gcal_drop_overlay_get_property (GObject    *object,
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-  }
+    }
 }
 
 static void
-gcal_drop_overlay_set_property (GObject      *object,
-                                guint         prop_id,
+gcal_drop_overlay_set_property (GObject *object,
+                                guint prop_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalDropOverlay *self = GCAL_DROP_OVERLAY (object);
 
@@ -191,7 +193,7 @@ gcal_drop_overlay_init (GcalDropOverlay *self)
 
 void
 gcal_drop_overlay_set_drop_target (GcalDropOverlay *self,
-                                   GtkDropTarget   *drop_target)
+                                   GtkDropTarget *drop_target)
 {
   GCAL_ENTRY;
 

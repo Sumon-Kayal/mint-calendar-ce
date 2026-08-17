@@ -59,8 +59,8 @@ typedef enum
 typedef enum
 {
   GCAL_RANGE_BEFORE = -1,
-  GCAL_RANGE_MATCH  = 0,
-  GCAL_RANGE_AFTER  = 1,
+  GCAL_RANGE_MATCH = 0,
+  GCAL_RANGE_AFTER = 1,
 } GcalRangePosition;
 
 /**
@@ -78,36 +78,36 @@ typedef enum
   GCAL_RANGE_DATE_ONLY,
 } GcalRangeType;
 
-GType                gcal_range_get_type                         (void) G_GNUC_CONST;
+GType gcal_range_get_type (void) G_GNUC_CONST;
 
-GcalRange*           gcal_range_new                              (GDateTime          *range_start,
-                                                                  GDateTime          *range_end,
-                                                                  GcalRangeType       range_type);
-GcalRange*           gcal_range_new_take                         (GDateTime          *range_start,
-                                                                  GDateTime          *range_end,
-                                                                  GcalRangeType       range_type);
-GcalRange*           gcal_range_copy                             (GcalRange          *self);
-GcalRange*           gcal_range_ref                              (GcalRange          *self);
-void                 gcal_range_unref                            (GcalRange          *self);
+GcalRange *gcal_range_new (GDateTime *range_start,
+                           GDateTime *range_end,
+                           GcalRangeType range_type);
+GcalRange *gcal_range_new_take (GDateTime *range_start,
+                                GDateTime *range_end,
+                                GcalRangeType range_type);
+GcalRange *gcal_range_copy (GcalRange *self);
+GcalRange *gcal_range_ref (GcalRange *self);
+void gcal_range_unref (GcalRange *self);
 
-GDateTime*           gcal_range_get_start                        (GcalRange          *self);
-GDateTime*           gcal_range_get_end                          (GcalRange          *self);
-GcalRangeType        gcal_range_get_range_type                   (GcalRange          *self);
+GDateTime *gcal_range_get_start (GcalRange *self);
+GDateTime *gcal_range_get_end (GcalRange *self);
+GcalRangeType gcal_range_get_range_type (GcalRange *self);
 
-GcalRangeOverlap     gcal_range_calculate_overlap                (GcalRange          *a,
-                                                                  GcalRange          *b,
-                                                                  GcalRangePosition  *out_position);
+GcalRangeOverlap gcal_range_calculate_overlap (GcalRange *a,
+                                               GcalRange *b,
+                                               GcalRangePosition *out_position);
 
-gint                 gcal_range_compare                          (GcalRange          *a,
-                                                                  GcalRange          *b);
+gint gcal_range_compare (GcalRange *a,
+                         GcalRange *b);
 
-GcalRange*           gcal_range_union                            (GcalRange          *a,
-                                                                  GcalRange          *b);
+GcalRange *gcal_range_union (GcalRange *a,
+                             GcalRange *b);
 
-gchar*               gcal_range_to_string                        (GcalRange          *self);
+gchar *gcal_range_to_string (GcalRange *self);
 
-gboolean             gcal_range_contains_datetime                (GcalRange          *self,
-                                                                  GDateTime          *datetime);
+gboolean gcal_range_contains_datetime (GcalRange *self,
+                                       GDateTime *datetime);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (GcalRange, gcal_range_unref)
 

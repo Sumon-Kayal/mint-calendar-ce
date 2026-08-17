@@ -25,21 +25,19 @@
 
 G_BEGIN_DECLS
 
-
 #define GCAL_TEST_SERVER_EMPTY_CALENDAR \
-"BEGIN:VCALENDAR\n" \
-"END:VCALENDAR"
+  "BEGIN:VCALENDAR\n"                   \
+  "END:VCALENDAR"
 
-
-#define GCAL_TYPE_SIMPLE_SERVER (gcal_simple_server_get_type())
+#define GCAL_TYPE_SIMPLE_SERVER (gcal_simple_server_get_type ())
 G_DECLARE_FINAL_TYPE (GcalSimpleServer, gcal_simple_server, GCAL, SIMPLE_SERVER, GObject)
 
-GcalSimpleServer*    gcal_simple_server_new                      (void);
+GcalSimpleServer *gcal_simple_server_new (void);
 
-void                 gcal_simple_server_start                    (GcalSimpleServer   *self);
+void gcal_simple_server_start (GcalSimpleServer *self);
 
-void                 gcal_simple_server_stop                     (GcalSimpleServer   *self);
+void gcal_simple_server_stop (GcalSimpleServer *self);
 
-GUri*                gcal_simple_server_get_uri                  (GcalSimpleServer   *self);
+GUri *gcal_simple_server_get_uri (GcalSimpleServer *self);
 
 G_END_DECLS

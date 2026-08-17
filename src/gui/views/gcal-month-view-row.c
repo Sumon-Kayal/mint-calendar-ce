@@ -21,12 +21,12 @@
 
 #define G_LOG_DOMAIN "GcalMonthViewRow"
 
+#include "gcal-month-view-row.h"
 #include "config.h"
 #include "gcal-date-time-utils.h"
 #include "gcal-debug.h"
 #include "gcal-event-widget.h"
 #include "gcal-month-cell.h"
-#include "gcal-month-view-row.h"
 #include "gcal-range-tree.h"
 #include "gcal-utils.h"
 
@@ -34,43 +34,43 @@
 
 typedef struct
 {
-  GtkWidget          *event_widget;
-  guint8              length;
-  guint8              cell;
+  GtkWidget *event_widget;
+  guint8 length;
+  guint8 cell;
 
   /* These are updated during allocation */
-  gboolean            visible;
-  gint                height;
+  gboolean visible;
+  gint height;
 } GcalEventBlock;
 
 struct _GcalMonthViewRow
 {
-  GtkWidget           parent;
+  GtkWidget parent;
 
-  GtkWidget          *day_cells[N_WEEKDAYS];
+  GtkWidget *day_cells[N_WEEKDAYS];
 
-  GcalRange          *range;
+  GcalRange *range;
 
-  GListStore         *events;
-  GHashTable         *layout_blocks;
-  gboolean            layout_blocks_valid;
+  GListStore *events;
+  GHashTable *layout_blocks;
+  gboolean layout_blocks_valid;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
-static gint          compare_events_cb                           (gconstpointer      a,
-                                                                  gconstpointer      b,
-                                                                  gpointer           user_data);
+static gint compare_events_cb (gconstpointer a,
+                               gconstpointer b,
+                               gpointer user_data);
 
-static void          on_event_widget_activated_cb                (GcalEventWidget    *widget,
-                                                                  GcalMonthViewRow   *self);
+static void on_event_widget_activated_cb (GcalEventWidget *widget,
+                                          GcalMonthViewRow *self);
 
-static void          on_cell_activated_cb                        (GcalMonthCell    *cell,
-                                                                  GcalMonthViewRow *self);
+static void on_cell_activated_cb (GcalMonthCell *cell,
+                                  GcalMonthViewRow *self);
 
-static gboolean      widget_tick_cb                              (GtkWidget          *widget,
-                                                                  GdkFrameClock      *frame_clock,
-                                                                  gpointer            user_data);
+static gboolean widget_tick_cb (GtkWidget *widget,
+                                GdkFrameClock *frame_clock,
+                                gpointer user_data);
 
 G_DEFINE_FINAL_TYPE (GcalMonthViewRow, gcal_month_view_row, GTK_TYPE_WIDGET)
 
@@ -89,9 +89,10 @@ enum
   N_SIGNALS,
 };
 
-static guint signals[N_SIGNALS] = { 0, };
-static GParamSpec *properties [N_PROPS];
-
+static guint signals[N_SIGNALS] = {
+  0,
+};
+static GParamSpec *properties[N_PROPS];
 
 /*
  * FocusEventData
@@ -115,9 +116,9 @@ focus_event_data_free (gpointer data)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (FocusEventData, focus_event_data_free)
 
 static FocusEventData *
-focus_event_data_new (GtkWidget             *widget,
+focus_event_data_new (GtkWidget *widget,
                       const graphene_rect_t *rect,
-                      gint                   focal_x)
+                      gint focal_x)
 {
   g_autoptr (FocusEventData) focus_event_data = NULL;
 
@@ -131,7 +132,7 @@ focus_event_data_new (GtkWidget             *widget,
 
 static inline void
 swap_focus_event_data (FocusEventData **dest,
-                       FocusEventData  *src)
+                       FocusEventData *src)
 {
   g_assert (dest != NULL);
 
@@ -139,14 +140,13 @@ swap_focus_event_data (FocusEventData **dest,
   *dest = g_steal_pointer (&src);
 }
 
-
 /*
  * Auxiliary methods
  */
 
 static FocusEventData *
 create_focus_event_data (GcalMonthViewRow *self,
-                         GtkWidget        *child)
+                         GtkWidget *child)
 {
   graphene_rect_t rect;
   gboolean is_rtl;
@@ -165,7 +165,7 @@ create_focus_event_data (GcalMonthViewRow *self,
 
 static FocusEventData *
 create_focus_event_data_candidate (GcalMonthViewRow *self,
-                                   GtkWidget        *child)
+                                   GtkWidget *child)
 {
   g_autoptr (FocusEventData) candidate = NULL;
 
@@ -257,9 +257,9 @@ find_last_event_widget (GcalMonthViewRow *self)
 }
 
 static GtkWidget *
-find_nearest_vertical_event_widget (GcalMonthViewRow  *self,
-                                    FocusEventData    *focused,
-                                    GtkDirectionType   direction)
+find_nearest_vertical_event_widget (GcalMonthViewRow *self,
+                                    FocusEventData *focused,
+                                    GtkDirectionType direction)
 {
   g_autoptr (FocusEventData) candidate = NULL;
   g_autoptr (FocusEventData) nearest = NULL;
@@ -317,9 +317,9 @@ find_nearest_vertical_event_widget (GcalMonthViewRow  *self,
 }
 
 static GtkWidget *
-find_nearest_horizontal_event_widget (GcalMonthViewRow  *self,
-                                      FocusEventData    *focused,
-                                      GtkDirectionType   direction)
+find_nearest_horizontal_event_widget (GcalMonthViewRow *self,
+                                      FocusEventData *focused,
+                                      GtkDirectionType direction)
 {
   g_autoptr (FocusEventData) candidate = NULL;
   g_autoptr (FocusEventData) nearest = NULL;
@@ -415,7 +415,7 @@ is_overflow_focused (GtkWidget *focused)
 
 static inline gboolean
 focus_vertical_cell (GcalMonthViewRow *self,
-                     GtkWidget        *focused_cell)
+                     GtkWidget *focused_cell)
 {
   graphene_point_t point;
   GtkWidget *row, *cell;
@@ -439,8 +439,8 @@ focus_vertical_cell (GcalMonthViewRow *self,
 
 static gboolean
 focus_horizontal_cell (GcalMonthViewRow *self,
-                       GtkWidget        *focused_cell,
-                       GtkDirectionType  direction)
+                       GtkWidget *focused_cell,
+                       GtkDirectionType direction)
 {
   gint width;
   GtkWidget *new_cell;
@@ -480,7 +480,7 @@ layout_block_free (gpointer data)
 
 static void
 setup_child_widget (GcalMonthViewRow *self,
-                    GtkWidget        *widget)
+                    GtkWidget *widget)
 {
   gtk_widget_insert_after (widget, GTK_WIDGET (self), self->day_cells[N_WEEKDAYS - 1]);
 
@@ -489,9 +489,9 @@ setup_child_widget (GcalMonthViewRow *self,
 
 static void
 calculate_event_cells (GcalMonthViewRow *self,
-                       GcalEvent        *event,
-                       gint             *out_first_cell,
-                       gint             *out_last_cell)
+                       GcalEvent *event,
+                       gint *out_first_cell,
+                       gint *out_last_cell)
 {
   g_autoptr (GDateTime) range_start = NULL;
   g_autoptr (GDateTime) start_date = NULL;
@@ -544,13 +544,21 @@ calculate_event_cells (GcalMonthViewRow *self,
 
 static void
 prepare_layout_blocks (GcalMonthViewRow *self,
-                       guint             overflows[N_WEEKDAYS])
+                       guint overflows[N_WEEKDAYS])
 {
   GPtrArray *blocks_per_day[N_WEEKDAYS];
-  gboolean cell_will_overflow[N_WEEKDAYS] = { FALSE, };
-  guint available_height_without_overflow[N_WEEKDAYS] = { 0, };
-  guint available_height_with_overflow[N_WEEKDAYS] = { 0, };
-  guint weekday_heights[N_WEEKDAYS] = { 0, };
+  gboolean cell_will_overflow[N_WEEKDAYS] = {
+    FALSE,
+  };
+  guint available_height_without_overflow[N_WEEKDAYS] = {
+    0,
+  };
+  guint available_height_with_overflow[N_WEEKDAYS] = {
+    0,
+  };
+  guint weekday_heights[N_WEEKDAYS] = {
+    0,
+  };
   guint n_events;
 
   g_assert (self->layout_blocks_valid);
@@ -653,7 +661,9 @@ static void
 recalculate_layout_blocks (GcalMonthViewRow *self)
 {
   g_autoptr (GDateTime) range_start = NULL;
-  guint events_at_weekday[N_WEEKDAYS] = { 0, };
+  guint events_at_weekday[N_WEEKDAYS] = {
+    0,
+  };
   guint n_events;
 
   GCAL_ENTRY;
@@ -731,7 +741,6 @@ recalculate_layout_blocks (GcalMonthViewRow *self)
                                                   g_date_time_get_day_of_month (range_start),
                                                   0, 0, 0);
 
-
           for (guint j = 0; j < blocks->len; j++)
             {
               g_autoptr (GDateTime) block_start = NULL;
@@ -773,7 +782,6 @@ invalidate_layout_blocks (GcalMonthViewRow *self)
   GCAL_EXIT;
 }
 
-
 /*
  * Callbacks
  */
@@ -781,10 +789,10 @@ invalidate_layout_blocks (GcalMonthViewRow *self)
 static gint
 compare_events_cb (gconstpointer a,
                    gconstpointer b,
-                   gpointer      user_data)
+                   gpointer user_data)
 {
-  GcalEvent *event_a = (GcalEvent *)a;
-  GcalEvent *event_b = (GcalEvent *)b;
+  GcalEvent *event_a = (GcalEvent *) a;
+  GcalEvent *event_b = (GcalEvent *) b;
 
   if (gcal_event_is_multiday (event_a) != gcal_event_is_multiday (event_b))
     return gcal_event_is_multiday (event_b) - gcal_event_is_multiday (event_a);
@@ -793,31 +801,31 @@ compare_events_cb (gconstpointer a,
 }
 
 static void
-on_event_widget_activated_cb (GcalEventWidget  *widget,
+on_event_widget_activated_cb (GcalEventWidget *widget,
                               GcalMonthViewRow *self)
 {
   g_signal_emit (self, signals[EVENT_ACTIVATED], 0, widget);
 }
 
 static void
-on_cell_activated_cb (GcalMonthCell    *cell,
+on_cell_activated_cb (GcalMonthCell *cell,
                       GcalMonthViewRow *self)
 {
   g_signal_emit (self, signals[CELL_ACTIVATED], 0, cell);
 }
 
 static void
-on_month_cell_show_overflow_cb (GcalMonthCell    *cell,
-                                GtkWidget        *button,
+on_month_cell_show_overflow_cb (GcalMonthCell *cell,
+                                GtkWidget *button,
                                 GcalMonthViewRow *self)
 {
   g_signal_emit (self, signals[SHOW_OVERFLOW], 0, cell);
 }
 
 static gboolean
-widget_tick_cb (GtkWidget     *widget,
+widget_tick_cb (GtkWidget *widget,
                 GdkFrameClock *frame_clock,
-                gpointer       user_data)
+                gpointer user_data)
 {
   GcalMonthViewRow *self = (GcalMonthViewRow *) widget;
 
@@ -829,7 +837,6 @@ widget_tick_cb (GtkWidget     *widget,
 
   GCAL_RETURN (G_SOURCE_REMOVE);
 }
-
 
 /*
  * GtkWidget overrides
@@ -849,8 +856,8 @@ gcal_month_view_row_map (GtkWidget *widget)
 }
 
 static gboolean
-gcal_month_view_row_focus (GtkWidget        *widget,
-                           GtkDirectionType  direction)
+gcal_month_view_row_focus (GtkWidget *widget,
+                           GtkDirectionType direction)
 {
   GcalMonthViewRow *self = GCAL_MONTH_VIEW_ROW (widget);
   g_autoptr (FocusEventData) data = NULL;
@@ -932,13 +939,13 @@ gcal_month_view_row_focus (GtkWidget        *widget,
 }
 
 static void
-gcal_month_view_row_measure (GtkWidget      *widget,
-                             GtkOrientation  orientation,
-                             gint            for_size,
-                             gint           *out_minimum,
-                             gint           *out_natural,
-                             gint           *out_minimum_baseline,
-                             gint           *out_natural_baseline)
+gcal_month_view_row_measure (GtkWidget *widget,
+                             GtkOrientation orientation,
+                             gint for_size,
+                             gint *out_minimum,
+                             gint *out_natural,
+                             gint *out_minimum_baseline,
+                             gint *out_natural_baseline)
 {
   GcalMonthViewRow *self = GCAL_MONTH_VIEW_ROW (widget);
   gint minimum = 0;
@@ -957,7 +964,6 @@ gcal_month_view_row_measure (GtkWidget      *widget,
                           NULL,
                           NULL);
 
-
       if (orientation == GTK_ORIENTATION_HORIZONTAL)
         {
           minimum += child_minimum;
@@ -965,8 +971,8 @@ gcal_month_view_row_measure (GtkWidget      *widget,
         }
       else
         {
-          minimum = MAX(minimum, child_minimum);
-          natural = MAX(natural, child_natural);
+          minimum = MAX (minimum, child_minimum);
+          natural = MAX (natural, child_natural);
         }
     }
 
@@ -985,9 +991,9 @@ gcal_month_view_row_measure (GtkWidget      *widget,
 
 static void
 gcal_month_view_row_size_allocate (GtkWidget *widget,
-                                   gint       width,
-                                   gint       height,
-                                   gint       baseline)
+                                   gint width,
+                                   gint height,
+                                   gint baseline)
 {
   GcalMonthViewRow *self = GCAL_MONTH_VIEW_ROW (widget);
   gboolean is_ltr;
@@ -1015,7 +1021,9 @@ gcal_month_view_row_size_allocate (GtkWidget *widget,
   if (self->layout_blocks_valid)
     {
       gdouble cell_y[N_WEEKDAYS];
-      guint overflows[N_WEEKDAYS] = { 0, };
+      guint overflows[N_WEEKDAYS] = {
+        0,
+      };
       guint n_events;
 
       prepare_layout_blocks (self, overflows);
@@ -1065,7 +1073,6 @@ gcal_month_view_row_size_allocate (GtkWidget *widget,
     }
 }
 
-
 /*
  * GObject overrides
  */
@@ -1073,7 +1080,7 @@ gcal_month_view_row_size_allocate (GtkWidget *widget,
 static void
 gcal_month_view_row_dispose (GObject *object)
 {
-  GcalMonthViewRow *self = (GcalMonthViewRow *)object;
+  GcalMonthViewRow *self = (GcalMonthViewRow *) object;
 
   for (guint i = 0; i < N_WEEKDAYS; i++)
     g_clear_pointer (&self->day_cells[i], gtk_widget_unparent);
@@ -1087,7 +1094,7 @@ gcal_month_view_row_dispose (GObject *object)
 static void
 gcal_month_view_row_finalize (GObject *object)
 {
-  GcalMonthViewRow *self = (GcalMonthViewRow *)object;
+  GcalMonthViewRow *self = (GcalMonthViewRow *) object;
 
   g_clear_pointer (&self->range, gcal_range_unref);
 
@@ -1095,9 +1102,9 @@ gcal_month_view_row_finalize (GObject *object)
 }
 
 static void
-gcal_month_view_row_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
+gcal_month_view_row_get_property (GObject *object,
+                                  guint prop_id,
+                                  GValue *value,
                                   GParamSpec *pspec)
 {
   GcalMonthViewRow *self = GCAL_MONTH_VIEW_ROW (object);
@@ -1114,10 +1121,10 @@ gcal_month_view_row_get_property (GObject    *object,
 }
 
 static void
-gcal_month_view_row_set_property (GObject      *object,
-                                  guint         prop_id,
+gcal_month_view_row_set_property (GObject *object,
+                                  guint prop_id,
                                   const GValue *value,
-                                  GParamSpec   *pspec)
+                                  GParamSpec *pspec)
 {
   GcalMonthViewRow *self = GCAL_MONTH_VIEW_ROW (object);
 
@@ -1159,7 +1166,7 @@ gcal_month_view_row_class_init (GcalMonthViewRowClass *klass)
   signals[EVENT_ACTIVATED] = g_signal_new ("event-activated",
                                            GCAL_TYPE_MONTH_VIEW_ROW,
                                            G_SIGNAL_RUN_FIRST,
-                                           0,  NULL, NULL, NULL,
+                                           0, NULL, NULL, NULL,
                                            G_TYPE_NONE,
                                            1,
                                            GCAL_TYPE_EVENT_WIDGET);
@@ -1167,7 +1174,7 @@ gcal_month_view_row_class_init (GcalMonthViewRowClass *klass)
   signals[CELL_ACTIVATED] = g_signal_new ("cell-activated",
                                           GCAL_TYPE_MONTH_VIEW_ROW,
                                           G_SIGNAL_RUN_FIRST,
-                                          0,  NULL, NULL, NULL,
+                                          0, NULL, NULL, NULL,
                                           G_TYPE_NONE,
                                           1,
                                           GCAL_TYPE_MONTH_CELL);
@@ -1175,7 +1182,7 @@ gcal_month_view_row_class_init (GcalMonthViewRowClass *klass)
   signals[SHOW_OVERFLOW] = g_signal_new ("show-overflow",
                                          GCAL_TYPE_MONTH_VIEW_ROW,
                                          G_SIGNAL_RUN_FIRST,
-                                         0,  NULL, NULL, NULL,
+                                         0, NULL, NULL, NULL,
                                          G_TYPE_NONE,
                                          1,
                                          GCAL_TYPE_MONTH_CELL);
@@ -1209,7 +1216,7 @@ gcal_month_view_row_new (void)
   return g_object_new (GCAL_TYPE_MONTH_VIEW_ROW, NULL);
 }
 
-GcalContext*
+GcalContext *
 gcal_month_view_row_get_context (GcalMonthViewRow *self)
 {
   g_assert (GCAL_IS_MONTH_VIEW_ROW (self));
@@ -1219,7 +1226,7 @@ gcal_month_view_row_get_context (GcalMonthViewRow *self)
 
 void
 gcal_month_view_row_set_context (GcalMonthViewRow *self,
-                                 GcalContext      *context)
+                                 GcalContext *context)
 {
   g_assert (GCAL_IS_MONTH_VIEW_ROW (self));
 
@@ -1242,7 +1249,7 @@ gcal_month_view_row_get_range (GcalMonthViewRow *self)
 
 void
 gcal_month_view_row_set_range (GcalMonthViewRow *self,
-                               GcalRange        *range)
+                               GcalRange *range)
 {
   g_autoptr (GDateTime) start = NULL;
 
@@ -1274,7 +1281,7 @@ gcal_month_view_row_set_range (GcalMonthViewRow *self,
 
 void
 gcal_month_view_row_add_event (GcalMonthViewRow *self,
-                               GcalEvent        *event)
+                               GcalEvent *event)
 {
   g_assert (GCAL_IS_MONTH_VIEW_ROW (self));
   g_assert (GCAL_IS_EVENT (event));
@@ -1285,7 +1292,7 @@ gcal_month_view_row_add_event (GcalMonthViewRow *self,
 
 void
 gcal_month_view_row_remove_event (GcalMonthViewRow *self,
-                                  GcalEvent        *event)
+                                  GcalEvent *event)
 {
   guint position;
 
@@ -1309,19 +1316,19 @@ gcal_month_view_row_remove_event (GcalMonthViewRow *self,
   GCAL_EXIT;
 }
 
-GList*
-gcal_month_view_row_get_children_by_uuid (GcalMonthViewRow      *self,
-                                          GcalRecurrenceModType  mod,
-                                          const gchar           *uuid)
+GList *
+gcal_month_view_row_get_children_by_uuid (GcalMonthViewRow *self,
+                                          GcalRecurrenceModType mod,
+                                          const gchar *uuid)
 {
   g_assert (GCAL_IS_MONTH_VIEW_ROW (self));
 
   return filter_children_by_uid_and_modtype (GTK_WIDGET (self), mod, uuid);
 }
 
-GtkWidget*
+GtkWidget *
 gcal_month_view_row_get_cell_at_x (GcalMonthViewRow *self,
-                                   gdouble           x)
+                                   gdouble x)
 {
   gint column;
   gint width;
@@ -1342,7 +1349,7 @@ gcal_month_view_row_get_cell_at_x (GcalMonthViewRow *self,
 
 void
 gcal_month_view_row_update_selection (GcalMonthViewRow *self,
-                                      GcalRange        *selection_range)
+                                      GcalRange *selection_range)
 {
   g_assert (GCAL_IS_MONTH_VIEW_ROW (self));
 
@@ -1362,7 +1369,7 @@ gcal_month_view_row_update_selection (GcalMonthViewRow *self,
 
 gboolean
 gcal_month_view_row_focus_adjacent_cell (GcalMonthViewRow *self,
-                                         GtkWidget        *widget)
+                                         GtkWidget *widget)
 {
   GtkWidget *cell;
   g_autoptr (FocusEventData) data = NULL;

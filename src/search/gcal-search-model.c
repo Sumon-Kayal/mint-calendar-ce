@@ -20,41 +20,37 @@
 
 #define G_LOG_DOMAIN "GcalSearchModel"
 
+#include "gcal-search-model.h"
 #include "gcal-application.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
-#include "gcal-timeline-subscriber.h"
-#include "gcal-search-hit.h"
 #include "gcal-search-hit-event.h"
-#include "gcal-search-model.h"
+#include "gcal-search-hit.h"
+#include "gcal-timeline-subscriber.h"
 #include "gcal-utils.h"
 
-#define MIN_RESULTS         5
+#define MIN_RESULTS 5
 #define WAIT_FOR_RESULTS_MS 0.150
 
 struct _GcalSearchModel
 {
-  GObject             parent;
+  GObject parent;
 
-  GCancellable       *cancellable;
-  GDateTime          *range_start;
-  GDateTime          *range_end;
+  GCancellable *cancellable;
+  GDateTime *range_start;
+  GDateTime *range_end;
 
-  GListModel         *model;
+  GListModel *model;
 
-  GTimer             *timer;
-  guint               idle_id;
+  GTimer *timer;
+  guint idle_id;
 };
 
-static void          gcal_timeline_subscriber_interface_init     (GcalTimelineSubscriberInterface *iface);
+static void gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface);
 
-static void g_list_model_interface_init                (GListModelInterface              *iface);
+static void g_list_model_interface_init (GListModelInterface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalSearchModel, gcal_search_model, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER,
-                                                gcal_timeline_subscriber_interface_init)
-                         G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL,
-                                                g_list_model_interface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalSearchModel, gcal_search_model, G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER, gcal_timeline_subscriber_interface_init) G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, g_list_model_interface_init))
 
 /*
  * Callbacks
@@ -90,7 +86,7 @@ stop_idle:
 static gint
 compare_search_hits_cb (gconstpointer a,
                         gconstpointer b,
-                        gpointer      user_data)
+                        gpointer user_data)
 {
   GcalSearchHit *hit_a, *hit_b;
   gint result;
@@ -119,21 +115,20 @@ search_hits_equals_cb (gconstpointer a,
 }
 
 static void
-on_search_model_items_changed_cb (GListModel      *model,
-                                  guint            position,
-                                  guint            removed,
-                                  guint            added,
+on_search_model_items_changed_cb (GListModel *model,
+                                  guint position,
+                                  guint removed,
+                                  guint added,
                                   GcalSearchModel *self)
 {
   g_list_model_items_changed (G_LIST_MODEL (self), position, removed, added);
 }
 
-
 /*
  * GcalTimelineSubscriber interface
  */
 
-static GcalRange*
+static GcalRange *
 gcal_search_model_get_range (GcalTimelineSubscriber *subscriber)
 {
   GcalSearchModel *self = GCAL_SEARCH_MODEL (subscriber);
@@ -143,7 +138,7 @@ gcal_search_model_get_range (GcalTimelineSubscriber *subscriber)
 
 static void
 gcal_search_model_add_event (GcalTimelineSubscriber *subscriber,
-                             GcalEvent              *event)
+                             GcalEvent *event)
 {
   g_autoptr (GcalSearchHitEvent) search_hit = NULL;
   GcalSearchModel *self;
@@ -171,14 +166,14 @@ gcal_search_model_add_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_search_model_update_event (GcalTimelineSubscriber *subscriber,
-                                GcalEvent              *old_event,
-                                GcalEvent              *event)
+                                GcalEvent *old_event,
+                                GcalEvent *event)
 {
 }
 
 static void
 gcal_search_model_remove_event (GcalTimelineSubscriber *subscriber,
-                                GcalEvent              *event)
+                                GcalEvent *event)
 {
 }
 
@@ -190,7 +185,6 @@ gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface)
   iface->update_event = gcal_search_model_update_event;
   iface->remove_event = gcal_search_model_remove_event;
 }
-
 
 /*
  * GListModel interface
@@ -205,15 +199,15 @@ gcal_search_model_get_item_type (GListModel *model)
 static guint
 gcal_search_model_get_n_items (GListModel *model)
 {
-  GcalSearchModel *self = (GcalSearchModel *)model;
+  GcalSearchModel *self = (GcalSearchModel *) model;
   return g_list_model_get_n_items (self->model);
 }
 
 static gpointer
 gcal_search_model_get_item (GListModel *model,
-                            guint       position)
+                            guint position)
 {
-  GcalSearchModel *self = (GcalSearchModel *)model;
+  GcalSearchModel *self = (GcalSearchModel *) model;
   return g_list_model_get_item (self->model, position);
 }
 
@@ -225,7 +219,6 @@ g_list_model_interface_init (GListModelInterface *iface)
   iface->get_item = gcal_search_model_get_item;
 }
 
-
 /*
  * GObject overrides
  */
@@ -233,7 +226,7 @@ g_list_model_interface_init (GListModelInterface *iface)
 static void
 gcal_search_model_finalize (GObject *object)
 {
-  GcalSearchModel *self = (GcalSearchModel *)object;
+  GcalSearchModel *self = (GcalSearchModel *) object;
 
   g_assert (self->timer == NULL);
   g_assert (self->idle_id == 0);
@@ -259,14 +252,14 @@ gcal_search_model_class_init (GcalSearchModelClass *klass)
 static void
 gcal_search_model_init (GcalSearchModel *self)
 {
-  self->model = (GListModel*) g_list_store_new (GCAL_TYPE_SEARCH_HIT);
+  self->model = (GListModel *) g_list_store_new (GCAL_TYPE_SEARCH_HIT);
   g_signal_connect (self->model, "items-changed", G_CALLBACK (on_search_model_items_changed_cb), self);
 }
 
 GcalSearchModel *
 gcal_search_model_new (GCancellable *cancellable,
-                       GDateTime    *range_start,
-                       GDateTime    *range_end)
+                       GDateTime *range_start,
+                       GDateTime *range_end)
 {
   GcalSearchModel *model;
 
@@ -279,10 +272,10 @@ gcal_search_model_new (GCancellable *cancellable,
 }
 
 void
-gcal_search_model_wait_for_hits (GcalSearchModel     *self,
-                                 GCancellable        *cancellable,
-                                 GAsyncReadyCallback  callback,
-                                 gpointer             user_data)
+gcal_search_model_wait_for_hits (GcalSearchModel *self,
+                                 GCancellable *cancellable,
+                                 GAsyncReadyCallback callback,
+                                 gpointer user_data)
 {
   g_autoptr (GTask) task = NULL;
 
@@ -305,9 +298,9 @@ gcal_search_model_wait_for_hits (GcalSearchModel     *self,
 }
 
 gboolean
-gcal_search_model_wait_for_hits_finish (GcalSearchModel  *self,
-                                        GAsyncResult     *result,
-                                        GError          **error)
+gcal_search_model_wait_for_hits_finish (GcalSearchModel *self,
+                                        GAsyncResult *result,
+                                        GError **error)
 {
   g_return_val_if_fail (GCAL_IS_SEARCH_MODEL (self), FALSE);
   g_return_val_if_fail (g_task_is_valid (result, self), FALSE);

@@ -20,15 +20,15 @@
 
 #define G_LOG_DOMAIN "GcalSearchHitEvent"
 
-#include "gcal-search-hit.h"
 #include "gcal-search-hit-event.h"
+#include "gcal-search-hit.h"
 #include "gcal-utils.h"
 
 struct _GcalSearchHitEvent
 {
-  GcalSearchHit       parent;
+  GcalSearchHit parent;
 
-  GcalEvent          *event;
+  GcalEvent *event;
 };
 
 G_DEFINE_TYPE (GcalSearchHitEvent, gcal_search_hit_event, GCAL_TYPE_SEARCH_HIT)
@@ -40,7 +40,7 @@ enum
   N_PROPS,
 };
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
 
 /*
  * Auxiliary methods
@@ -48,7 +48,7 @@ static GParamSpec *properties [N_PROPS];
 
 static void
 set_event (GcalSearchHitEvent *self,
-           GcalEvent          *event)
+           GcalEvent *event)
 {
   g_autoptr (GdkPaintable) paintable = NULL;
   g_autofree gchar *date_string = NULL;
@@ -71,14 +71,13 @@ set_event (GcalSearchHitEvent *self,
   gcal_search_hit_set_primary_icon (search_hit, paintable);
 }
 
-
 /*
  * GcalSearchHit overrides
  */
 
 static void
 gcal_search_hit_event_activate (GcalSearchHit *search_hit,
-                                GtkWidget     *for_widget)
+                                GtkWidget *for_widget)
 {
   GcalSearchHitEvent *self;
   GApplication *application;
@@ -129,7 +128,6 @@ gcal_search_hit_event_compare (GcalSearchHit *a,
   return g_strcmp0 (gcal_calendar_get_name (calendar_b), gcal_calendar_get_name (calendar_a));
 }
 
-
 /*
  * GObject overrides
  */
@@ -137,7 +135,7 @@ gcal_search_hit_event_compare (GcalSearchHit *a,
 static void
 gcal_search_hit_event_finalize (GObject *object)
 {
-  GcalSearchHitEvent *self = (GcalSearchHitEvent *)object;
+  GcalSearchHitEvent *self = (GcalSearchHitEvent *) object;
 
   g_clear_object (&self->event);
 
@@ -145,9 +143,9 @@ gcal_search_hit_event_finalize (GObject *object)
 }
 
 static void
-gcal_search_hit_event_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
+gcal_search_hit_event_get_property (GObject *object,
+                                    guint prop_id,
+                                    GValue *value,
                                     GParamSpec *pspec)
 {
   GcalSearchHitEvent *self = GCAL_SEARCH_HIT_EVENT (object);
@@ -164,10 +162,10 @@ gcal_search_hit_event_get_property (GObject    *object,
 }
 
 static void
-gcal_search_hit_event_set_property (GObject      *object,
-                                    guint         prop_id,
+gcal_search_hit_event_set_property (GObject *object,
+                                    guint prop_id,
                                     const GValue *value,
-                                    GParamSpec   *pspec)
+                                    GParamSpec *pspec)
 {
   GcalSearchHitEvent *self = GCAL_SEARCH_HIT_EVENT (object);
 
@@ -218,7 +216,7 @@ gcal_search_hit_event_new (GcalEvent *event)
                        NULL);
 }
 
-GcalEvent*
+GcalEvent *
 gcal_search_hit_event_get_event (GcalSearchHitEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_SEARCH_HIT_EVENT (self), NULL);

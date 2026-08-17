@@ -34,36 +34,36 @@
 
 typedef struct
 {
-  GtkWidget          *widget;
-  GcalEvent          *event;
-  GcalAgendaView     *self;
+  GtkWidget *widget;
+  GcalEvent *event;
+  GcalAgendaView *self;
 } ChildData;
 
 struct _GcalAgendaView
 {
-  GtkBox              parent;
+  GtkBox parent;
 
-  GtkWidget          *list_box;
-  GtkWidget          *no_events_row;
-  GtkWidget          *scrolled_window;
+  GtkWidget *list_box;
+  GtkWidget *no_events_row;
+  GtkWidget *scrolled_window;
 
   /* property */
-  GDateTime          *date;
-  GcalContext        *context;
+  GDateTime *date;
+  GcalContext *context;
 
-  GcalRangeTree      *events;
-  guint               scroll_grid_timeout_id;
-  gulong              stack_page_changed_id;
+  GcalRangeTree *events;
+  guint scroll_grid_timeout_id;
+  gulong stack_page_changed_id;
 
-  gint                events_on_date;
-  gint                clicked_cell;
+  gint events_on_date;
+  gint clicked_cell;
 };
 
-static void          schedule_position_scroll                    (GcalAgendaView       *self);
+static void schedule_position_scroll (GcalAgendaView *self);
 
-static void          gcal_view_interface_init                    (GcalViewInterface  *iface);
+static void gcal_view_interface_init (GcalViewInterface *iface);
 
-static void          gcal_timeline_subscriber_interface_init     (GcalTimelineSubscriberInterface *iface);
+static void gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface);
 
 enum
 {
@@ -74,19 +74,15 @@ enum
   N_PROPS,
 };
 
-
-G_DEFINE_TYPE_WITH_CODE (GcalAgendaView, gcal_agenda_view, GTK_TYPE_BOX,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init)
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER,
-                                                gcal_timeline_subscriber_interface_init));
+G_DEFINE_TYPE_WITH_CODE (GcalAgendaView, gcal_agenda_view, GTK_TYPE_BOX, G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init) G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER, gcal_timeline_subscriber_interface_init));
 
 /*
  * Auxiliary methods
  */
 
-static ChildData*
-child_data_new (GtkWidget      *widget,
-                GcalEvent      *event,
+static ChildData *
+child_data_new (GtkWidget *widget,
+                GcalEvent *event,
                 GcalAgendaView *self)
 {
   ChildData *data;
@@ -119,7 +115,7 @@ child_data_free (gpointer data)
 
 static GDateTime *
 get_start_date_for_row (GcalAgendaView *self,
-                        GtkListBoxRow  *row)
+                        GtkListBoxRow *row)
 {
   GtkWidget *widget = gtk_list_box_row_get_child (row);
 
@@ -134,13 +130,12 @@ get_start_date_for_row (GcalAgendaView *self,
         return self->date;
     }
 
-
   return self->date;
 }
 
 static GDateTime *
 get_end_date_for_row (GcalAgendaView *self,
-                      GtkListBoxRow  *row)
+                      GtkListBoxRow *row)
 {
   GtkWidget *widget = gtk_list_box_row_get_child (row);
 
@@ -195,11 +190,11 @@ new_date_header_string (GDateTime *date)
   yesterday = g_date_time_add_days (today, -1);
 
   if (gcal_date_time_compare_date (date, today) == 0)
-    return g_strdup (_("Today"));
+    return g_strdup (_ ("Today"));
   else if (gcal_date_time_compare_date (date, tomorrow) == 0)
-    return g_strdup (_("Tomorrow"));
+    return g_strdup (_ ("Tomorrow"));
   else if (gcal_date_time_compare_date (date, yesterday) == 0)
-    return g_strdup (_("Yesterday"));
+    return g_strdup (_ ("Yesterday"));
   else
     /*
      * Translators: %A is the full day name, %B is the month name
@@ -207,20 +202,19 @@ new_date_header_string (GDateTime *date)
      * More formats can be found on the doc:
      * https://docs.gtk.org/glib/method.DateTime.format.html
      */
-    return g_date_time_format (date, _("%A %B %d"));
+    return g_date_time_format (date, _ ("%A %B %d"));
 }
-
 
 /*
  * Callbacks
  */
 
 static void
-stack_visible_child_changed_cb (AdwViewStack   *stack,
-                                GParamSpec     *pspec,
+stack_visible_child_changed_cb (AdwViewStack *stack,
+                                GParamSpec *pspec,
                                 GcalAgendaView *self)
 {
-  if (adw_view_stack_get_visible_child (stack) != (GtkWidget*) self)
+  if (adw_view_stack_get_visible_child (stack) != (GtkWidget *) self)
     return;
 
   schedule_position_scroll (self);
@@ -245,9 +239,9 @@ update_no_events_row (GcalAgendaView *self)
 static gboolean
 update_grid_scroll_position (GcalAgendaView *self)
 {
-  g_autoptr(GDateTime) week_start = NULL;
-  g_autoptr(GDateTime) week_end = NULL;
-  g_autoptr(GDateTime) now = NULL;
+  g_autoptr (GDateTime) week_start = NULL;
+  g_autoptr (GDateTime) week_end = NULL;
+  g_autoptr (GDateTime) now = NULL;
   GtkAdjustment *vadjustment;
   gdouble minutes, real_value;
   gdouble max, page, page_increment, value;
@@ -320,7 +314,7 @@ schedule_position_scroll (GcalAgendaView *self)
 static int
 sort_func (GtkListBoxRow *row1,
            GtkListBoxRow *row2,
-           gpointer       user_data)
+           gpointer user_data)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (user_data);
   gboolean multiday1, multiday2;
@@ -353,7 +347,7 @@ sort_func (GtkListBoxRow *row1,
 static void
 update_header (GtkListBoxRow *row,
                GtkListBoxRow *before,
-               gpointer       user_data)
+               gpointer user_data)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (user_data);
   GDateTime *start = get_start_date_for_row (self, row);
@@ -412,7 +406,7 @@ update_header (GtkListBoxRow *row,
       g_autofree gchar *end_label = NULL;
       if (gcal_date_time_compare_date (start, today) == 0)
         {
-          label = g_strdup (_("On-going"));
+          label = g_strdup (_ ("On-going"));
         }
       else
         {
@@ -436,12 +430,11 @@ update_header (GtkListBoxRow *row,
   gtk_list_box_row_set_header (row, header);
 }
 
-
 /*
  * GcalView interface
  */
 
-static GDateTime*
+static GDateTime *
 gcal_agenda_view_get_date (GcalView *view)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (view);
@@ -451,8 +444,8 @@ gcal_agenda_view_get_date (GcalView *view)
 
 static inline gboolean
 count_events_on_data (GcalRange *range,
-                      gpointer   data,
-                      gpointer   user_data)
+                      gpointer data,
+                      gpointer user_data)
 {
   ChildData *child_data = data;
   GcalAgendaView *self = user_data;
@@ -464,7 +457,7 @@ count_events_on_data (GcalRange *range,
 }
 
 static void
-gcal_agenda_view_set_date (GcalView  *view,
+gcal_agenda_view_set_date (GcalView *view,
                            GDateTime *date)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (view);
@@ -487,10 +480,10 @@ gcal_agenda_view_set_date (GcalView  *view,
   GCAL_EXIT;
 }
 
-static GList*
-gcal_agenda_view_get_children_by_uuid (GcalView              *view,
-                                       GcalRecurrenceModType  mod,
-                                       const gchar           *uuid)
+static GList *
+gcal_agenda_view_get_children_by_uuid (GcalView *view,
+                                       GcalRecurrenceModType mod,
+                                       const gchar *uuid)
 {
   GCAL_ENTRY;
 
@@ -505,7 +498,7 @@ gcal_agenda_view_clear_marks (GcalView *view)
   /* FIXME Not sure what to do here. */
 }
 
-static GDateTime*
+static GDateTime *
 gcal_agenda_view_get_next_date (GcalView *view)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (view);
@@ -514,8 +507,7 @@ gcal_agenda_view_get_next_date (GcalView *view)
   return g_date_time_add_weeks (self->date, 1);
 }
 
-
-static GDateTime*
+static GDateTime *
 gcal_agenda_view_get_previous_date (GcalView *view)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (view);
@@ -535,21 +527,20 @@ gcal_view_interface_init (GcalViewInterface *iface)
   iface->get_previous_date = gcal_agenda_view_get_previous_date;
 }
 
-
 /*
  * GcalTimelineSubscriber iface
  */
 
 static void
 on_event_widget_activated_cb (GcalEventWidget *event_widget,
-                              GcalAgendaView  *self)
+                              GcalAgendaView *self)
 {
   gcal_view_event_activated (GCAL_VIEW (self), event_widget);
 }
 
 static void
-on_list_box_row_activated_cb (GtkListBox     *list_box,
-                              GtkListBoxRow  *row,
+on_list_box_row_activated_cb (GtkListBox *list_box,
+                              GtkListBoxRow *row,
                               GcalAgendaView *self)
 {
   GtkWidget *child = gtk_list_box_row_get_child (row);
@@ -559,7 +550,7 @@ on_list_box_row_activated_cb (GtkListBox     *list_box,
   gcal_view_event_activated (GCAL_VIEW (self), GCAL_EVENT_WIDGET (child));
 }
 
-static GcalRange*
+static GcalRange *
 gcal_agenda_view_get_range (GcalTimelineSubscriber *subscriber)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (subscriber);
@@ -571,7 +562,7 @@ gcal_agenda_view_get_range (GcalTimelineSubscriber *subscriber)
 
 static void
 gcal_agenda_view_add_event (GcalTimelineSubscriber *subscriber,
-                            GcalEvent              *event)
+                            GcalEvent *event)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (subscriber);
   GtkWidget *widget, *row;
@@ -630,7 +621,7 @@ gcal_agenda_view_add_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_agenda_view_remove_event (GcalTimelineSubscriber *subscriber,
-                               GcalEvent              *event)
+                               GcalEvent *event)
 {
   GcalAgendaView *self = GCAL_AGENDA_VIEW (subscriber);
   const gchar *uid = gcal_event_get_uid (event);
@@ -673,8 +664,8 @@ gcal_agenda_view_remove_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_agenda_view_update_event (GcalTimelineSubscriber *subscriber,
-                               GcalEvent              *old_event,
-                               GcalEvent              *event)
+                               GcalEvent *old_event,
+                               GcalEvent *event)
 {
   GCAL_ENTRY;
 
@@ -692,7 +683,6 @@ gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface)
   iface->update_event = gcal_agenda_view_update_event;
   iface->remove_event = gcal_agenda_view_remove_event;
 }
-
 
 /*
  * GObject overrides
@@ -712,7 +702,7 @@ gcal_agenda_view_dispose (GObject *object)
 }
 
 static void
-gcal_agenda_view_finalize (GObject       *object)
+gcal_agenda_view_finalize (GObject *object)
 {
   GcalAgendaView *self;
 
@@ -727,10 +717,10 @@ gcal_agenda_view_finalize (GObject       *object)
 }
 
 static void
-gcal_agenda_view_set_property (GObject      *object,
-                               guint         property_id,
+gcal_agenda_view_set_property (GObject *object,
+                               guint property_id,
                                const GValue *value,
-                               GParamSpec   *pspec)
+                               GParamSpec *pspec)
 {
   GcalAgendaView *self = (GcalAgendaView *) object;
 
@@ -752,9 +742,9 @@ gcal_agenda_view_set_property (GObject      *object,
 }
 
 static void
-gcal_agenda_view_get_property (GObject    *object,
-                               guint       property_id,
-                               GValue     *value,
+gcal_agenda_view_get_property (GObject *object,
+                               guint property_id,
+                               GValue *value,
                                GParamSpec *pspec)
 {
   GcalAgendaView *self;

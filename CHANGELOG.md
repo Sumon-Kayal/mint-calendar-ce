@@ -139,7 +139,7 @@ tests passing — but two packaging-step issues only showed up once that CI run 
 them:
 
 - `dpkg-buildpackage` runs meson with `--wrap-mode=nodownload`, which blocks the wrap from
-  being fetched mid-build (`nodownload` only blocks *downloading*, not *using* an
+  being fetched mid-build (`nodownload` only blocks _downloading_, not _using_ an
   already-fetched wrap). Added an explicit `meson subprojects download` step to
   `release-deb.yml`, run before `dpkg-buildpackage`, while the job still has network access.
 - `debhelper`'s meson support installs via plain `ninja install` rather than `meson install`
@@ -148,7 +148,7 @@ them:
   subproject's own files out of this package. Plain `ninja` has never supported that flag, so
   the combination failed outright (`unrecognized option '--skip-subprojects'`). Fixed by
   having `debian/rules`' `override_dh_auto_install` call `meson install --skip-subprojects
-  blueprint-compiler` directly instead of going through `dh_auto_install`'s default path.
+blueprint-compiler` directly instead of going through `dh_auto_install`'s default path.
 
 ### 5. Rebranding
 
@@ -186,16 +186,16 @@ All **77 languages** from GNOME Calendar's community translations are carried ov
 
 ### 8. Release Comparison
 
-| | Linux Mint `gnome-calendar` 48.1+mint1 | GNOME Calendar 50 | Mint Calendar CE 1.0 |
-|---|---|---|---|
-| Based on | GNOME Calendar 48 | GNOME Calendar 50 | GNOME Calendar 50 |
-| Linux Mint compatibility patch | Yes | No | Yes |
-| Branding | Stock GNOME | Stock GNOME | Mint-branded |
-| Mint-Y-Dark-inspired icon | No | No | Yes |
-| Runs on current Mint 22 | Yes | No — requires newer GTK4/libadwaita | Yes |
-| Own GSettings schema | — | — | Yes (`org.mint.calendar.ce`) |
-| Official Mint project | Yes | — | No — independent/community |
-| Distribution | Mint repositories | GNOME / Flathub | Project releases |
+|                                | Linux Mint `gnome-calendar` 48.1+mint1 | GNOME Calendar 50                   | Mint Calendar CE 1.0         |
+| ------------------------------ | -------------------------------------- | ----------------------------------- | ---------------------------- |
+| Based on                       | GNOME Calendar 48                      | GNOME Calendar 50                   | GNOME Calendar 50            |
+| Linux Mint compatibility patch | Yes                                    | No                                  | Yes                          |
+| Branding                       | Stock GNOME                            | Stock GNOME                         | Mint-branded                 |
+| Mint-Y-Dark-inspired icon      | No                                     | No                                  | Yes                          |
+| Runs on current Mint 22        | Yes                                    | No — requires newer GTK4/libadwaita | Yes                          |
+| Own GSettings schema           | —                                      | —                                   | Yes (`org.mint.calendar.ce`) |
+| Official Mint project          | Yes                                    | —                                   | No — independent/community   |
+| Distribution                   | Mint repositories                      | GNOME / Flathub                     | Project releases             |
 
 ### 9. v1.0 Release Milestone
 

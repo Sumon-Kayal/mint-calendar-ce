@@ -33,11 +33,10 @@ G_DEFINE_QUARK (GcalSourceDiscoverer, gcal_source_discoverer_error);
 
 typedef struct
 {
-  gchar              *uri;
-  gchar              *username;
-  gchar              *password;
+  gchar *uri;
+  gchar *username;
+  gchar *password;
 } DiscovererData;
-
 
 /*
  * Auxiliary methods
@@ -57,8 +56,8 @@ discoverer_data_free (gpointer data)
   g_free (discoverer_data);
 }
 
-static ESource*
-create_source_for_uri (DiscovererData  *data)
+static ESource *
+create_source_for_uri (DiscovererData *data)
 {
   ESourceAuthentication *auth;
   g_autoptr (GUri) guri = NULL;
@@ -107,9 +106,9 @@ create_source_for_uri (DiscovererData  *data)
   return source;
 }
 
-static ESource*
-create_discovered_source (ESource                 *source,
-                          GSList                  *user_addresses,
+static ESource *
+create_discovered_source (ESource *source,
+                          GSList *user_addresses,
                           EWebDAVDiscoveredSource *discovered_source)
 {
   g_autoptr (GUri) guri = NULL;
@@ -209,8 +208,8 @@ is_authentication_error (gint code)
 }
 
 static GUri *
-create_and_validate_uri (const gchar  *uri,
-                         GError      **error)
+create_and_validate_uri (const gchar *uri,
+                         GError **error)
 {
   g_autoptr (GUri) guri = NULL;
 
@@ -228,16 +227,15 @@ create_and_validate_uri (const gchar  *uri,
   return g_steal_pointer (&guri);
 }
 
-
 /*
  * Callbacks
  */
 
 static gboolean
 on_soup_message_authenticate_cb (SoupMessage *message,
-                                 SoupAuth    *auth,
-                                 gboolean     retrying,
-                                 gpointer     user_data)
+                                 SoupAuth *auth,
+                                 gboolean retrying,
+                                 gpointer user_data)
 {
   DiscovererData *data = user_data;
 
@@ -247,14 +245,14 @@ on_soup_message_authenticate_cb (SoupMessage *message,
   return TRUE;
 }
 
-typedef GPtrArray* (*DiscoverFunc) (DiscovererData  *data,
-                                    GCancellable    *cancellable,
-                                    GError         **error);
+typedef GPtrArray *(*DiscoverFunc) (DiscovererData *data,
+                                    GCancellable *cancellable,
+                                    GError **error);
 
-static GPtrArray*
-discover_file_in_thread (DiscovererData  *data,
-                         GCancellable    *cancellable,
-                         GError         **error)
+static GPtrArray *
+discover_file_in_thread (DiscovererData *data,
+                         GCancellable *cancellable,
+                         GError **error)
 {
   g_autoptr (GInputStream) input_stream = NULL;
   g_autoptr (SoupMessage) message = NULL;
@@ -330,10 +328,10 @@ discover_file_in_thread (DiscovererData  *data,
   GCAL_RETURN (g_steal_pointer (&source));
 }
 
-static GPtrArray*
-discover_webdav_in_thread (DiscovererData  *data,
-                           GCancellable    *cancellable,
-                           GError         **error)
+static GPtrArray *
+discover_webdav_in_thread (DiscovererData *data,
+                           GCancellable *cancellable,
+                           GError **error)
 {
   g_autoptr (ENamedParameters) credentials = NULL;
   g_autoptr (GPtrArray) sources = NULL;
@@ -417,9 +415,9 @@ discover_webdav_in_thread (DiscovererData  *data,
 }
 
 static void
-discover_sources_in_thread_cb (GTask        *task,
-                               gpointer      source_object,
-                               gpointer      task_data,
+discover_sources_in_thread_cb (GTask *task,
+                               gpointer source_object,
+                               gpointer task_data,
                                GCancellable *cancellable)
 {
   g_autoptr (GError) error = NULL;
@@ -436,7 +434,7 @@ discover_sources_in_thread_cb (GTask        *task,
       g_autoptr (GPtrArray) sources = NULL;
       g_autoptr (GError) local_error = NULL;
 
-      sources = discover_funcs[i] (data, cancellable, &local_error);
+      sources = discover_funcs[i](data, cancellable, &local_error);
 
       if (sources)
         {
@@ -457,12 +455,12 @@ discover_sources_in_thread_cb (GTask        *task,
 }
 
 void
-gcal_discover_sources_from_uri (const gchar         *uri,
-                                const gchar         *username,
-                                const gchar         *password,
-                                GCancellable        *cancellable,
-                                GAsyncReadyCallback  callback,
-                                gpointer             user_data)
+gcal_discover_sources_from_uri (const gchar *uri,
+                                const gchar *username,
+                                const gchar *password,
+                                GCancellable *cancellable,
+                                GAsyncReadyCallback callback,
+                                gpointer user_data)
 {
   g_autoptr (GTask) task = NULL;
   DiscovererData *data;
@@ -481,9 +479,9 @@ gcal_discover_sources_from_uri (const gchar         *uri,
   g_task_run_in_thread (task, discover_sources_in_thread_cb);
 }
 
-GPtrArray*
-gcal_discover_sources_from_uri_finish (GAsyncResult  *result,
-                                       GError       **error)
+GPtrArray *
+gcal_discover_sources_from_uri_finish (GAsyncResult *result,
+                                       GError **error)
 {
   g_return_val_if_fail (g_task_is_valid (result, NULL), NULL);
   g_return_val_if_fail (!error || !*error, NULL);

@@ -20,50 +20,48 @@
 
 #define G_LOG_DOMAIN "GcalRemindersSection"
 
+#include "gcal-reminders-section.h"
 #include "gcal-alarm-row.h"
 #include "gcal-debug.h"
 #include "gcal-event-editor-section.h"
-#include "gcal-reminders-section.h"
 #include "gcal-utils.h"
 
 #include <libecal/libecal.h>
 
 struct _GcalRemindersSection
 {
-  GtkBox              parent;
+  GtkBox parent;
 
-  GtkListBox         *alarms_listbox;
-  GtkWidget          *alarms_popover;
-  GtkListBoxRow      *new_alarm_row;
-  GtkWidget          *new_alarm_row_icon;
+  GtkListBox *alarms_listbox;
+  GtkWidget *alarms_popover;
+  GtkListBoxRow *new_alarm_row;
+  GtkWidget *new_alarm_row_icon;
 
-  GtkWidget          *event_start_button;
-  GtkWidget          *five_minutes_button;
-  GtkWidget          *ten_minutes_button;
-  GtkWidget          *fifteen_minutes_button;
-  GtkWidget          *thirty_minutes_button;
-  GtkWidget          *one_hour_button;
-  GtkWidget          *one_day_button;
-  GtkWidget          *two_days_button;
-  GtkWidget          *three_days_button;
-  GtkWidget          *one_week_button;
+  GtkWidget *event_start_button;
+  GtkWidget *five_minutes_button;
+  GtkWidget *ten_minutes_button;
+  GtkWidget *fifteen_minutes_button;
+  GtkWidget *thirty_minutes_button;
+  GtkWidget *one_hour_button;
+  GtkWidget *one_day_button;
+  GtkWidget *two_days_button;
+  GtkWidget *three_days_button;
+  GtkWidget *one_week_button;
 
-  GcalContext        *context;
-  GcalEvent          *event;
-  GPtrArray          *alarms;
+  GcalContext *context;
+  GcalEvent *event;
+  GPtrArray *alarms;
 };
 
+static void gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface);
 
-static void          gcal_event_editor_section_iface_init        (GcalEventEditorSectionInterface *iface);
+static void on_remove_alarm_cb (GcalAlarmRow *alarm_row,
+                                GcalRemindersSection *self);
 
-static void          on_remove_alarm_cb                          (GcalAlarmRow         *alarm_row,
-                                                                  GcalRemindersSection *self);
+static void on_update_alarm_cb (GcalAlarmRow *alarm_row,
+                                GcalRemindersSection *self);
 
-static void          on_update_alarm_cb                          (GcalAlarmRow         *alarm_row,
-                                                                  GcalRemindersSection *self);
-
-G_DEFINE_TYPE_WITH_CODE (GcalRemindersSection, gcal_reminders_section, GTK_TYPE_BOX,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalRemindersSection, gcal_reminders_section, GTK_TYPE_BOX, G_IMPLEMENT_INTERFACE (GCAL_TYPE_EVENT_EDITOR_SECTION, gcal_event_editor_section_iface_init))
 
 enum
 {
@@ -76,29 +74,29 @@ enum
  * Auxiliary methods
  */
 
-#define OFFSET(x)             (G_STRUCT_OFFSET (GcalRemindersSection, x))
-#define WIDGET_FROM_OFFSET(x) (G_STRUCT_MEMBER (GtkWidget*, self, x))
+#define OFFSET(x) (G_STRUCT_OFFSET (GcalRemindersSection, x))
+#define WIDGET_FROM_OFFSET(x) (G_STRUCT_MEMBER (GtkWidget *, self, x))
 
 struct
 {
   gint minutes;
   gint button_offset;
 } minutes_button[] = {
-    { 0,     OFFSET (event_start_button) },
-    { 5,     OFFSET (five_minutes_button) },
-    { 10,    OFFSET (ten_minutes_button) },
-    { 15,    OFFSET (fifteen_minutes_button) },
-    { 30,    OFFSET (thirty_minutes_button) },
-    { 60,    OFFSET (one_hour_button) },
-    { 1440,  OFFSET (one_day_button) },
-    { 2880,  OFFSET (two_days_button) },
-    { 4320,  OFFSET (three_days_button) },
-    { 10080, OFFSET (one_week_button) }
+  { 0, OFFSET (event_start_button) },
+  { 5, OFFSET (five_minutes_button) },
+  { 10, OFFSET (ten_minutes_button) },
+  { 15, OFFSET (fifteen_minutes_button) },
+  { 30, OFFSET (thirty_minutes_button) },
+  { 60, OFFSET (one_hour_button) },
+  { 1440, OFFSET (one_day_button) },
+  { 2880, OFFSET (two_days_button) },
+  { 4320, OFFSET (three_days_button) },
+  { 10080, OFFSET (one_week_button) }
 };
 
-static GtkWidget*
+static GtkWidget *
 get_row_for_alarm_trigger_minutes (GcalRemindersSection *self,
-                                   gint                  minutes)
+                                   gint minutes)
 {
   guint i;
 
@@ -111,7 +109,7 @@ get_row_for_alarm_trigger_minutes (GcalRemindersSection *self,
   return NULL;
 }
 
-static ECalComponentAlarm*
+static ECalComponentAlarm *
 create_alarm (guint minutes)
 {
 
@@ -173,7 +171,7 @@ clear_alarms (GcalRemindersSection *self)
 
 static GtkWidget *
 create_alarm_row (GcalRemindersSection *self,
-                  ECalComponentAlarm    *alarm)
+                  ECalComponentAlarm *alarm)
 {
   GtkWidget *row;
 
@@ -236,7 +234,6 @@ setup_alarms (GcalRemindersSection *self)
   GCAL_EXIT;
 }
 
-
 /*
  * Callbacks
  */
@@ -244,7 +241,7 @@ setup_alarms (GcalRemindersSection *self)
 static gint
 sort_alarms_func (GtkListBoxRow *a,
                   GtkListBoxRow *b,
-                  gpointer       user_data)
+                  gpointer user_data)
 {
   ECalComponentAlarm *alarm_a;
   ECalComponentAlarm *alarm_b;
@@ -269,7 +266,7 @@ sort_alarms_func (GtkListBoxRow *a,
 }
 
 static void
-on_update_alarm_cb (GcalAlarmRow         *alarm_row,
+on_update_alarm_cb (GcalAlarmRow *alarm_row,
                     GcalRemindersSection *self)
 {
   ECalComponentAlarm *alarm;
@@ -301,7 +298,7 @@ on_update_alarm_cb (GcalAlarmRow         *alarm_row,
 }
 
 static void
-on_remove_alarm_cb (GcalAlarmRow         *alarm_row,
+on_remove_alarm_cb (GcalAlarmRow *alarm_row,
                     GcalRemindersSection *self)
 {
   ECalComponentAlarm *alarm;
@@ -342,7 +339,7 @@ on_remove_alarm_cb (GcalAlarmRow         *alarm_row,
 }
 
 static void
-on_add_alarm_button_clicked_cb (GtkWidget            *button,
+on_add_alarm_button_clicked_cb (GtkWidget *button,
                                 GcalRemindersSection *self)
 {
   ECalComponentAlarm *alarm;
@@ -377,14 +374,13 @@ on_add_alarm_button_clicked_cb (GtkWidget            *button,
 }
 
 static void
-on_alarms_listbox_row_activated_cb (GtkListBox           *alarms_listbox,
-                                    GtkListBoxRow        *row,
+on_alarms_listbox_row_activated_cb (GtkListBox *alarms_listbox,
+                                    GtkListBoxRow *row,
                                     GcalRemindersSection *self)
 {
   if (row == self->new_alarm_row)
     gtk_popover_popup (GTK_POPOVER (self->alarms_popover));
 }
-
 
 /*
  * GcalEventEditorSection interface
@@ -392,8 +388,8 @@ on_alarms_listbox_row_activated_cb (GtkListBox           *alarms_listbox,
 
 static void
 gcal_reminders_section_set_event (GcalEventEditorSection *section,
-                                  GcalEvent              *event,
-                                  GcalEventEditorFlags    flags)
+                                  GcalEvent *event,
+                                  GcalEventEditorFlags flags)
 {
   GcalRemindersSection *self = GCAL_REMINDERS_SECTION (section);
 
@@ -477,7 +473,6 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
   iface->changed = gcal_reminders_section_changed;
 }
 
-
 /*
  * GObject overrides
  */
@@ -485,7 +480,7 @@ gcal_event_editor_section_iface_init (GcalEventEditorSectionInterface *iface)
 static void
 gcal_reminders_section_dispose (GObject *object)
 {
-  GcalRemindersSection *self = (GcalRemindersSection *)object;
+  GcalRemindersSection *self = (GcalRemindersSection *) object;
 
   g_clear_pointer (&self->alarms_popover, gtk_widget_unparent);
 
@@ -495,7 +490,7 @@ gcal_reminders_section_dispose (GObject *object)
 static void
 gcal_reminders_section_finalize (GObject *object)
 {
-  GcalRemindersSection *self = (GcalRemindersSection *)object;
+  GcalRemindersSection *self = (GcalRemindersSection *) object;
 
   g_clear_pointer (&self->alarms, g_ptr_array_unref);
   g_clear_object (&self->context);
@@ -505,9 +500,9 @@ gcal_reminders_section_finalize (GObject *object)
 }
 
 static void
-gcal_reminders_section_get_property (GObject    *object,
-                                     guint       prop_id,
-                                     GValue     *value,
+gcal_reminders_section_get_property (GObject *object,
+                                     guint prop_id,
+                                     GValue *value,
                                      GParamSpec *pspec)
 {
   GcalRemindersSection *self = GCAL_REMINDERS_SECTION (object);
@@ -524,10 +519,10 @@ gcal_reminders_section_get_property (GObject    *object,
 }
 
 static void
-gcal_reminders_section_set_property (GObject      *object,
-                                     guint         prop_id,
+gcal_reminders_section_set_property (GObject *object,
+                                     guint prop_id,
                                      const GValue *value,
-                                     GParamSpec   *pspec)
+                                     GParamSpec *pspec)
 {
   GcalRemindersSection *self = GCAL_REMINDERS_SECTION (object);
 

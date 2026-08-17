@@ -45,21 +45,20 @@
                            "DTSTART;VALUE=DATE:20231108\n" \
                            "END:VEVENT\n"
 
-#define EVENT_STRING_FOR_DATE(dtstart,dtend)    \
-                   "BEGIN:VEVENT\n"             \
-                   "SUMMARY:Stub event\n"       \
-                   "UID:example@uid\n"          \
-                   "DTSTAMP:19970114T170000Z\n" \
-                   "DTSTART"dtstart"\n"        \
-                   "DTEND"dtend"\n"            \
-                   "END:VEVENT\n"
+#define EVENT_STRING_FOR_DATE(dtstart, dtend) \
+  "BEGIN:VEVENT\n"                            \
+  "SUMMARY:Stub event\n"                      \
+  "UID:example@uid\n"                         \
+  "DTSTAMP:19970114T170000Z\n"                \
+  "DTSTART" dtstart "\n"                      \
+  "DTEND" dtend "\n"                          \
+  "END:VEVENT\n"
 
-#define EVENT_STRING_FOR_DATE_START(dtstart)    \
-                   EVENT_STRING_FOR_DATE(dtstart, ":20180715T035959Z")
+#define EVENT_STRING_FOR_DATE_START(dtstart) \
+  EVENT_STRING_FOR_DATE (dtstart, ":20180715T035959Z")
 
-#define EVENT_STRING_FOR_DATE_END(dtend)        \
-                   EVENT_STRING_FOR_DATE(":19970101T170000Z", dtend)
-
+#define EVENT_STRING_FOR_DATE_END(dtend) \
+  EVENT_STRING_FOR_DATE (":19970101T170000Z", dtend)
 
 #define STUB_EVENT_WITH_ATTENDEES "BEGIN:VEVENT\n"                                                                           \
                                   "UID:123456789@example.com\n"                                                              \
@@ -77,9 +76,9 @@
  * Auxiliary methods
  */
 
-static GcalEvent*
-create_event_for_string (const gchar  *string,
-                         GError      **error)
+static GcalEvent *
+create_event_for_string (const gchar *string,
+                         GError **error)
 {
   g_autoptr (ECalComponent) component = NULL;
   g_autoptr (GcalCalendar) calendar = NULL;
@@ -89,7 +88,6 @@ create_event_for_string (const gchar  *string,
 
   return component ? gcal_event_new (calendar, component, error) : NULL;
 }
-
 
 /*********************************************************************************************************************/
 
@@ -128,7 +126,6 @@ event_clone (void)
   clone2 = gcal_event_new_from_event (event);
   g_assert_nonnull (clone2);
 }
-
 
 /*********************************************************************************************************************/
 
@@ -191,11 +188,10 @@ static void
 event_date_start (void)
 {
   struct
-    {
-      const gchar *string;
-      GDateTime   *datetime;
-    }
-  start_dates[] = {
+  {
+    const gchar *string;
+    GDateTime *datetime;
+  } start_dates[] = {
     { EVENT_STRING_FOR_DATE_START (":20160229T000000Z"), g_date_time_new_utc (2016, 2, 29, 00, 00, 00.) },
     { EVENT_STRING_FOR_DATE_START (":20180228T170000Z"), g_date_time_new_utc (2018, 2, 28, 17, 00, 00.) },
     { EVENT_STRING_FOR_DATE_START (":20180714T170000Z"), g_date_time_new_utc (2018, 7, 14, 17, 00, 00.) },
@@ -223,11 +219,10 @@ static void
 event_date_end (void)
 {
   struct
-    {
-      const gchar *string;
-      GDateTime   *datetime;
-    }
-  end_dates[] = {
+  {
+    const gchar *string;
+    GDateTime *datetime;
+  } end_dates[] = {
     { EVENT_STRING_FOR_DATE_END (":20160229T000000Z"), g_date_time_new_utc (2016, 2, 29, 00, 00, 00.) },
     { EVENT_STRING_FOR_DATE_END (":20180228T170000Z"), g_date_time_new_utc (2018, 2, 28, 17, 00, 00.) },
     { EVENT_STRING_FOR_DATE_END (":20180714T170000Z"), g_date_time_new_utc (2018, 7, 14, 17, 00, 00.) },
@@ -254,7 +249,7 @@ event_date_end (void)
 static void
 event_date_singleday (void)
 {
-  const gchar * const events[] = {
+  const gchar *const events[] = {
     EVENT_STRING_FOR_DATE (":20160229T000000Z", ":20160229T030000Z"),
     EVENT_STRING_FOR_DATE (":20160229T000000Z", ":20160301T000000Z"),
     EVENT_STRING_FOR_DATE (":20160229T000000Z", ":20160229T235959Z"),
@@ -279,7 +274,7 @@ event_date_singleday (void)
 static void
 event_date_multiday (void)
 {
-  const gchar * const events[] = {
+  const gchar *const events[] = {
     EVENT_STRING_FOR_DATE (":20160229T000000Z", ":20160302T000001Z"),
     EVENT_STRING_FOR_DATE (":20160229T020000Z", ":20160310T004500Z"),
   };
@@ -353,30 +348,19 @@ static void
 event_date_check_tz (void)
 {
   struct
-    {
-      const gchar *string;
-      const gchar *tz;
-    }
-  timezones[] = {
-    {
-      STUB_EVENT_DTEND, "UTC"
-    },
-    {
-      EVENT_STRING_FOR_DATE (";TZID=America/New_York:20240709T170000", ";TZID=America/New_York:20240709T180000"),
-      "America/New_York"
-    },
-    {
-      EVENT_STRING_FOR_DATE (";TZID=Australia/Melbourne:20240709T170000", ";TZID=Australia/Melbourne:20240709T180000"),
-      "Australia/Melbourne"
-    },
-    {
-      EVENT_STRING_FOR_DATE (":20240709T170000", ":20240709T180000"), "Europe/London"
-    },
-    {
-      EVENT_STRING_FOR_DATE (":20240709T180000Z", ":20240709T190000Z"), "UTC"
-    },
+  {
+    const gchar *string;
+    const gchar *tz;
+  } timezones[] = {
+    { STUB_EVENT_DTEND, "UTC" },
+    { EVENT_STRING_FOR_DATE (";TZID=America/New_York:20240709T170000", ";TZID=America/New_York:20240709T180000"),
+      "America/New_York" },
+    { EVENT_STRING_FOR_DATE (";TZID=Australia/Melbourne:20240709T170000", ";TZID=Australia/Melbourne:20240709T180000"),
+      "Australia/Melbourne" },
+    { EVENT_STRING_FOR_DATE (":20240709T170000", ":20240709T180000"), "Europe/London" },
+    { EVENT_STRING_FOR_DATE (":20240709T180000Z", ":20240709T190000Z"), "UTC" },
   };
-  
+
   g_test_bug ("171");
 
   for (gsize i = 0; i < G_N_ELEMENTS (timezones); i++)
@@ -443,7 +427,7 @@ event_get_attendees (void)
 /*********************************************************************************************************************/
 
 gint
-main (gint   argc,
+main (gint argc,
       gchar *argv[])
 {
   g_setenv ("TZ", "UTC", TRUE);

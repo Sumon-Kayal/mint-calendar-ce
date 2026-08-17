@@ -25,6 +25,6 @@
 
 G_BEGIN_DECLS
 
-GThread *            gcal_get_main_thread                        (void);
+GThread *gcal_get_main_thread (void);
 
 G_END_DECLS

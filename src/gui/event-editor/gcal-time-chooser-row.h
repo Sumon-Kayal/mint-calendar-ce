@@ -28,12 +28,12 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (GcalTimeChooserRow, gcal_time_chooser_row, GCAL, TIME_CHOOSER_ROW, AdwEntryRow)
 
-GcalTimeFormat   gcal_time_chooser_row_get_time_format (GcalTimeChooserRow *self);
-void             gcal_time_chooser_row_set_time_format (GcalTimeChooserRow *self,
-                                                        GcalTimeFormat      time_format);
+GcalTimeFormat gcal_time_chooser_row_get_time_format (GcalTimeChooserRow *self);
+void gcal_time_chooser_row_set_time_format (GcalTimeChooserRow *self,
+                                            GcalTimeFormat time_format);
 
-GDateTime*       gcal_time_chooser_row_get_time        (GcalTimeChooserRow *self);
-void             gcal_time_chooser_row_set_time        (GcalTimeChooserRow *self,
-                                                        GDateTime          *date);
+GDateTime *gcal_time_chooser_row_get_time (GcalTimeChooserRow *self);
+void gcal_time_chooser_row_set_time (GcalTimeChooserRow *self,
+                                     GDateTime *date);
 
 G_END_DECLS

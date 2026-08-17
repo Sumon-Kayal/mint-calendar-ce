@@ -24,20 +24,20 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_SEARCH_MODEL (gcal_search_model_get_type())
+#define GCAL_TYPE_SEARCH_MODEL (gcal_search_model_get_type ())
 G_DECLARE_FINAL_TYPE (GcalSearchModel, gcal_search_model, GCAL, SEARCH_MODEL, GObject)
 
-GcalSearchModel*     gcal_search_model_new                       (GCancellable       *cancellable,
-                                                                  GDateTime          *range_start,
-                                                                  GDateTime          *range_end);
+GcalSearchModel *gcal_search_model_new (GCancellable *cancellable,
+                                        GDateTime *range_start,
+                                        GDateTime *range_end);
 
-void                 gcal_search_model_wait_for_hits             (GcalSearchModel    *self,
-                                                                  GCancellable       *cancellable,
-                                                                  GAsyncReadyCallback callback,
-                                                                  gpointer            user_data);
+void gcal_search_model_wait_for_hits (GcalSearchModel *self,
+                                      GCancellable *cancellable,
+                                      GAsyncReadyCallback callback,
+                                      gpointer user_data);
 
-gboolean             gcal_search_model_wait_for_hits_finish      (GcalSearchModel    *self,
-                                                                  GAsyncResult       *result,
-                                                                  GError            **error);
+gboolean gcal_search_model_wait_for_hits_finish (GcalSearchModel *self,
+                                                 GAsyncResult *result,
+                                                 GError **error);
 
 G_END_DECLS

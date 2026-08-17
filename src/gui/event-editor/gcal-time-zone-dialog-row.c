@@ -30,16 +30,13 @@ struct _GcalTimeZoneDialogRow
 
 G_DEFINE_TYPE (GcalTimeZoneDialogRow, gcal_time_zone_dialog_row, ADW_TYPE_ACTION_ROW)
 
-
 /*
  * Auxiliary methods
  */
 
-
 /*
  * Callbacks
  */
-
 
 /*
  * Gobject overrides
@@ -66,7 +63,7 @@ gcal_time_zone_dialog_row_init (GcalTimeZoneDialogRow *self)
  *
  * Returns: (transfer full): a #GcalTimeZoneDialogRow
  */
-GtkWidget*
+GtkWidget *
 gcal_time_zone_dialog_row_new (GWeatherLocation *location)
 {
   GtkWidget *widget = g_object_new (GCAL_TYPE_TIME_ZONE_DIALOG_ROW, NULL);
@@ -82,7 +79,7 @@ gcal_time_zone_dialog_row_new (GWeatherLocation *location)
  *
  * Returns: (transfer none): a #GWeatherLocation
  */
-GWeatherLocation*
+GWeatherLocation *
 gcal_time_zone_dialog_row_get_location (GcalTimeZoneDialogRow *self)
 {
   return self->location;

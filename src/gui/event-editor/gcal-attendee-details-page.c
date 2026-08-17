@@ -31,27 +31,27 @@ struct _GcalAttendeeDetailsPage
 {
   AdwNavigationPage parent_instance;
 
-  GListModel               *attendees;
+  GListModel *attendees;
 
-  GtkFilterListModel       *base_filtered_list;
-  GtkFilterListModel       *filter_list_accepted;
-  GtkFilterListModel       *filter_list_tentative;
-  GtkFilterListModel       *filter_list_declined;
-  GtkFilterListModel       *filter_list_delegated;
-  GtkFilterListModel       *filter_list_not_responded;
+  GtkFilterListModel *base_filtered_list;
+  GtkFilterListModel *filter_list_accepted;
+  GtkFilterListModel *filter_list_tentative;
+  GtkFilterListModel *filter_list_declined;
+  GtkFilterListModel *filter_list_delegated;
+  GtkFilterListModel *filter_list_not_responded;
 
-  GtkCustomFilter          *base_filter;
-  GtkCustomFilter          *accepted_filter;
-  GtkCustomFilter          *tentative_filter;
-  GtkCustomFilter          *declined_filter;
-  GtkCustomFilter          *delegated_filter;
-  GtkCustomFilter          *not_responded_filter;
+  GtkCustomFilter *base_filter;
+  GtkCustomFilter *accepted_filter;
+  GtkCustomFilter *tentative_filter;
+  GtkCustomFilter *declined_filter;
+  GtkCustomFilter *delegated_filter;
+  GtkCustomFilter *not_responded_filter;
 
-  GtkWidget                *list_accepted;
-  GtkWidget                *list_tentative;
-  GtkWidget                *list_declined;
-  GtkWidget                *list_delegated;
-  GtkWidget                *list_not_responded;
+  GtkWidget *list_accepted;
+  GtkWidget *list_tentative;
+  GtkWidget *list_declined;
+  GtkWidget *list_delegated;
+  GtkWidget *list_not_responded;
 
   GcalEventAttendeeTypeFilterFlags attendee_type_filter_flags;
 };
@@ -67,12 +67,14 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties[N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 G_DEFINE_FINAL_TYPE (GcalAttendeeDetailsPage, gcal_attendee_details_page, ADW_TYPE_NAVIGATION_PAGE)
 
 static void
-set_type_filter_flags (GcalAttendeeDetailsPage         *self,
+set_type_filter_flags (GcalAttendeeDetailsPage *self,
                        GcalEventAttendeeTypeFilterFlags flags)
 {
   self->attendee_type_filter_flags = flags;
@@ -109,7 +111,7 @@ gcal_attendee_details_page_finalize (GObject *object)
 
 static gboolean
 base_filter_cb (GcalEventAttendee *attendee,
-                gpointer           data)
+                gpointer data)
 {
   GcalAttendeeDetailsPage *self = GCAL_ATTENDEE_DETAILS_PAGE (data);
   GcalEventAttendeeType type = gcal_event_attendee_get_attendee_type (attendee);
@@ -128,35 +130,35 @@ base_filter_cb (GcalEventAttendee *attendee,
 
 static gboolean
 custom_accepted_filter_cb (GcalEventAttendee *attendee,
-                           gpointer           data)
+                           gpointer data)
 {
   return gcal_event_attendee_get_part_status (attendee) == GCAL_EVENT_ATTENDEE_PART_ACCEPTED;
 }
 
 static gboolean
 custom_tentative_filter_cb (GcalEventAttendee *attendee,
-                            gpointer           data)
+                            gpointer data)
 {
   return gcal_event_attendee_get_part_status (attendee) == GCAL_EVENT_ATTENDEE_PART_TENTATIVE;
 }
 
 static gboolean
 custom_declined_filter_cb (GcalEventAttendee *attendee,
-                           gpointer           data)
+                           gpointer data)
 {
   return gcal_event_attendee_get_part_status (attendee) == GCAL_EVENT_ATTENDEE_PART_DECLINED;
 }
 
 static gboolean
 custom_delegated_filter_cb (GcalEventAttendee *attendee,
-                            gpointer           data)
+                            gpointer data)
 {
   return gcal_event_attendee_get_part_status (attendee) == GCAL_EVENT_ATTENDEE_PART_DELEGATED;
 }
 
 static gboolean
 custom_not_responded_filter_cb (GcalEventAttendee *attendee,
-                                gpointer           data)
+                                gpointer data)
 {
   switch (gcal_event_attendee_get_part_status (attendee))
     {
@@ -183,34 +185,34 @@ static void
 gcal_attendee_details_page_init_filter_models (GcalAttendeeDetailsPage *self)
 {
   self->base_filtered_list =
-    gtk_filter_list_model_new (self->attendees,
-                               GTK_FILTER (self->base_filter));
+      gtk_filter_list_model_new (self->attendees,
+                                 GTK_FILTER (self->base_filter));
 
   self->filter_list_accepted =
-    gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
-                               GTK_FILTER (self->accepted_filter));
+      gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
+                                 GTK_FILTER (self->accepted_filter));
 
   self->filter_list_tentative =
-    gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
-                               GTK_FILTER (self->tentative_filter));
+      gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
+                                 GTK_FILTER (self->tentative_filter));
 
   self->filter_list_declined =
-    gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
-                               GTK_FILTER (self->declined_filter));
+      gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
+                                 GTK_FILTER (self->declined_filter));
 
   self->filter_list_delegated =
-    gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
-                               GTK_FILTER (self->delegated_filter));
+      gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
+                                 GTK_FILTER (self->delegated_filter));
 
   self->filter_list_not_responded =
-    gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
-                               GTK_FILTER (self->not_responded_filter));
+      gtk_filter_list_model_new (G_LIST_MODEL (self->base_filtered_list),
+                                 GTK_FILTER (self->not_responded_filter));
 }
 
 static void
-gcal_attendee_details_page_get_property (GObject    *object,
-                                         guint       property_id,
-                                         GValue     *value,
+gcal_attendee_details_page_get_property (GObject *object,
+                                         guint property_id,
+                                         GValue *value,
                                          GParamSpec *pspec)
 {
   GcalAttendeeDetailsPage *self = GCAL_ATTENDEE_DETAILS_PAGE (object);
@@ -241,10 +243,10 @@ gcal_attendee_details_page_get_property (GObject    *object,
 }
 
 static void
-gcal_attendee_details_page_set_property (GObject      *object,
-                                         guint         property_id,
+gcal_attendee_details_page_set_property (GObject *object,
+                                         guint property_id,
                                          const GValue *value,
-                                         GParamSpec   *pspec)
+                                         GParamSpec *pspec)
 {
   GcalAttendeeDetailsPage *self = GCAL_ATTENDEE_DETAILS_PAGE (object);
 
@@ -314,8 +316,8 @@ gcal_attendee_details_page_class_init (GcalAttendeeDetailsPageClass *klass)
    * Binding model for the list of attendees with "accepted" response.
    */
   properties[PROP_MODEL_ACCEPTED] =
-    g_param_spec_object ("model-accepted", NULL, NULL,
-                         GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("model-accepted", NULL, NULL,
+                           GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeDetailsPage:model-tentative:
@@ -323,8 +325,8 @@ gcal_attendee_details_page_class_init (GcalAttendeeDetailsPageClass *klass)
    * Binding model for the list of attendees with "tentative" (aka maybe) response.
    */
   properties[PROP_MODEL_TENTATIVE] =
-    g_param_spec_object ("model-tentative", NULL, NULL,
-                         GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("model-tentative", NULL, NULL,
+                           GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeDetailsPage:model-declined:
@@ -332,8 +334,8 @@ gcal_attendee_details_page_class_init (GcalAttendeeDetailsPageClass *klass)
    * Binding model for the list of attendees with "declined" response.
    */
   properties[PROP_MODEL_DECLINED] =
-    g_param_spec_object ("model-declined", NULL, NULL,
-                         GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("model-declined", NULL, NULL,
+                           GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeDetailsPage:model-delegated:
@@ -342,8 +344,8 @@ gcal_attendee_details_page_class_init (GcalAttendeeDetailsPageClass *klass)
    * Lists the attendees who delegated their attendance to someone else.
    */
   properties[PROP_MODEL_DELEGATED] =
-    g_param_spec_object ("model-delegated", NULL, NULL,
-                         GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("model-delegated", NULL, NULL,
+                           GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeDetailsPage:model-not-responded:
@@ -352,8 +354,8 @@ gcal_attendee_details_page_class_init (GcalAttendeeDetailsPageClass *klass)
    * or thei response type is unknown.
    */
   properties[PROP_MODEL_NOT_RESPONDED] =
-    g_param_spec_object ("model-not-responded", NULL, NULL,
-                         GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("model-not-responded", NULL, NULL,
+                           GTK_TYPE_FILTER_LIST_MODEL, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeDetailsPage:attendee-type:
@@ -363,10 +365,10 @@ gcal_attendee_details_page_class_init (GcalAttendeeDetailsPageClass *klass)
    * GCAL_EVENT_ATTENDEE_TYPE_NONE is used to clear the filter.
    */
   properties[PROP_ATTENDEE_TYPE] =
-    g_param_spec_flags ("attendee-type-filter-flags", NULL, NULL,
-                        GCAL_TYPE_EVENT_ATTENDEE_TYPE_FILTER_FLAGS,
-                        GCAL_EVENT_ATTENDEE_TYPE_FILTER_NONE,
-                        G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_flags ("attendee-type-filter-flags", NULL, NULL,
+                          GCAL_TYPE_EVENT_ATTENDEE_TYPE_FILTER_FLAGS,
+                          GCAL_EVENT_ATTENDEE_TYPE_FILTER_NONE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -391,7 +393,7 @@ gcal_attendee_details_page_class_init (GcalAttendeeDetailsPageClass *klass)
  */
 void
 gcal_attendee_details_page_set_attendees (GcalAttendeeDetailsPage *self,
-                                          GListModel              *attendees)
+                                          GListModel *attendees)
 {
   g_assert (GCAL_IS_ATTENDEE_DETAILS_PAGE (self));
 
@@ -412,7 +414,7 @@ gcal_attendee_details_page_set_attendees (GcalAttendeeDetailsPage *self,
  * are filtered before grouping by response is performed.
  */
 void
-gcal_attendee_details_page_set_type_filter (GcalAttendeeDetailsPage         *self,
+gcal_attendee_details_page_set_type_filter (GcalAttendeeDetailsPage *self,
                                             GcalEventAttendeeTypeFilterFlags flags)
 {
   g_assert (GCAL_IS_ATTENDEE_DETAILS_PAGE (self));

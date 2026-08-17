@@ -223,9 +223,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * The display name (common name) of the attendee.
    */
   properties[PROP_NAME] =
-    g_param_spec_string ("name", NULL, NULL,
-                         NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("name", NULL, NULL,
+                           NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:type:
@@ -236,10 +236,10 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * @see-also: ICalParameterCutype
    */
   properties[PROP_TYPE] =
-    g_param_spec_enum ("type", NULL, NULL,
-                       GCAL_TYPE_EVENT_ATTENDEE_TYPE,
-                       GCAL_EVENT_ATTENDEE_TYPE_NONE,
-                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_enum ("type", NULL, NULL,
+                         GCAL_TYPE_EVENT_ATTENDEE_TYPE,
+                         GCAL_EVENT_ATTENDEE_TYPE_NONE,
+                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:delegated-from:
@@ -248,9 +248,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * The mailto of the attendee that @self is delegated from.
    */
   properties[PROP_DELEGATED_FROM] =
-    g_param_spec_string ("delegated-from", NULL, NULL,
-                         NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("delegated-from", NULL, NULL,
+                           NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:delegated-to:
@@ -259,9 +259,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * The mailto of the attendee that @self is delegating to.
    */
   properties[PROP_DELEGATED_TO] =
-    g_param_spec_string ("delegated-to", NULL, NULL,
-                         NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("delegated-to", NULL, NULL,
+                           NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:language:
@@ -269,9 +269,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * The language (for text) of the attendee.
    */
   properties[PROP_LANGUAGE] =
-    g_param_spec_string ("language", NULL, NULL,
-                         NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("language", NULL, NULL,
+                           NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:member:
@@ -279,9 +279,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * Group or list membership.
    */
   properties[PROP_MEMBER] =
-    g_param_spec_string ("member", NULL, NULL,
-                         NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("member", NULL, NULL,
+                           NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:participation-status:
@@ -290,10 +290,10 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * Can be one of the values from the #GcalEventAttendeePartStat enum.
    */
   properties[PROP_PARTICIPATION_STATUS] =
-    g_param_spec_enum ("participation-status", NULL, NULL,
-                       GCAL_TYPE_EVENT_ATTENDEE_PART_STAT,
-                       GCAL_EVENT_ATTENDEE_PART_NONE,
-                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_enum ("participation-status", NULL, NULL,
+                         GCAL_TYPE_EVENT_ATTENDEE_PART_STAT,
+                         GCAL_EVENT_ATTENDEE_PART_NONE,
+                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:role:
@@ -302,10 +302,10 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * Can be one of the values from the #GcalEventAttendeeRole enum.
    */
   properties[PROP_ROLE] =
-    g_param_spec_enum ("role", NULL, NULL,
-                       GCAL_TYPE_EVENT_ATTENDEE_ROLE,
-                       GCAL_EVENT_ATTENDEE_ROLE_NONE,
-                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_enum ("role", NULL, NULL,
+                         GCAL_TYPE_EVENT_ATTENDEE_ROLE,
+                         GCAL_EVENT_ATTENDEE_ROLE_NONE,
+                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:requires-rsvp:
@@ -313,9 +313,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * Whether this attendee requires RSVP or not.
    */
   properties[PROP_RSVP] =
-    g_param_spec_boolean ("requires-rsvp", NULL, NULL,
-                          FALSE,
-                          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_boolean ("requires-rsvp", NULL, NULL,
+                            FALSE,
+                            G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:sent-by:
@@ -323,9 +323,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    * The mailto of the user that is acting on behalf of this attendee.
    */
   properties[PROP_SENT_BY] =
-    g_param_spec_string ("sent-by", NULL, NULL,
-                         NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("sent-by", NULL, NULL,
+                           NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEventAttendee:uri:
@@ -335,9 +335,9 @@ gcal_event_attendee_class_init (GcalEventAttendeeClass *klass)
    *  the URI of the attendee, which can also be a resource/room.
    */
   properties[PROP_URI] =
-    g_param_spec_string ("uri", NULL, NULL,
-                         NULL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_string ("uri", NULL, NULL,
+                           NULL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

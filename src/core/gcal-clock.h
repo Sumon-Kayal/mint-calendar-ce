@@ -23,13 +23,12 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_CLOCK (gcal_clock_get_type())
+#define GCAL_TYPE_CLOCK (gcal_clock_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalClock, gcal_clock, GCAL, CLOCK, GObject)
 
-GcalClock*           gcal_clock_new                              (void);
+GcalClock *gcal_clock_new (void);
 
 G_END_DECLS
 
 #endif /* GCAL_CLOCK_H */
-

@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_RECURRENCE (gcal_recurrence_get_type())
+#define GCAL_TYPE_RECURRENCE (gcal_recurrence_get_type ())
 
 typedef struct _GcalRecurrence GcalRecurrence;
 
@@ -48,44 +48,42 @@ typedef enum
 
 typedef enum
 {
-  GCAL_RECURRENCE_MOD_NONE            = 0,
-  GCAL_RECURRENCE_MOD_THIS_ONLY       = E_CAL_OBJ_MOD_THIS,
+  GCAL_RECURRENCE_MOD_NONE = 0,
+  GCAL_RECURRENCE_MOD_THIS_ONLY = E_CAL_OBJ_MOD_THIS,
   GCAL_RECURRENCE_MOD_THIS_AND_FUTURE = E_CAL_OBJ_MOD_THIS_AND_FUTURE,
-  GCAL_RECURRENCE_MOD_ALL             = E_CAL_OBJ_MOD_ALL,
+  GCAL_RECURRENCE_MOD_ALL = E_CAL_OBJ_MOD_ALL,
 } GcalRecurrenceModType;
 
 struct _GcalRecurrence
 {
-  gatomicrefcount          ref_count;
+  gatomicrefcount ref_count;
 
-  GcalRecurrenceFrequency  frequency;
-  GcalRecurrenceLimitType  limit_type;
+  GcalRecurrenceFrequency frequency;
+  GcalRecurrenceLimitType limit_type;
 
   struct
   {
     GDateTime *until;
     guint count;
   } limit;
-
 };
 
-GType                gcal_recurrence_get_type                    (void) G_GNUC_CONST;
+GType gcal_recurrence_get_type (void) G_GNUC_CONST;
 
-GcalRecurrence*      gcal_recurrence_new                         (void);
+GcalRecurrence *gcal_recurrence_new (void);
 
-GcalRecurrence*      gcal_recurrence_copy                        (GcalRecurrence     *recur);
+GcalRecurrence *gcal_recurrence_copy (GcalRecurrence *recur);
 
+GcalRecurrence *gcal_recurrence_ref (GcalRecurrence *self);
 
-GcalRecurrence*      gcal_recurrence_ref                         (GcalRecurrence     *self);
+void gcal_recurrence_unref (GcalRecurrence *self);
 
-void                 gcal_recurrence_unref                       (GcalRecurrence     *self);
+gboolean gcal_recurrence_is_equal (GcalRecurrence *recur1,
+                                   GcalRecurrence *recur2);
 
-gboolean             gcal_recurrence_is_equal                    (GcalRecurrence     *recur1,
-                                                                  GcalRecurrence     *recur2);
+GcalRecurrence *gcal_recurrence_parse_recurrence_rules (ECalComponent *comp);
 
-GcalRecurrence*      gcal_recurrence_parse_recurrence_rules      (ECalComponent      *comp);
-
-ICalRecurrence*      gcal_recurrence_to_rrule              (GcalRecurrence     *recur);
+ICalRecurrence *gcal_recurrence_to_rrule (GcalRecurrence *recur);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (GcalRecurrence, gcal_recurrence_unref)
 

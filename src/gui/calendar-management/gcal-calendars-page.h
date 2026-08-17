@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_CALENDARS_PAGE (gcal_calendars_page_get_type())
+#define GCAL_TYPE_CALENDARS_PAGE (gcal_calendars_page_get_type ())
 G_DECLARE_FINAL_TYPE (GcalCalendarsPage, gcal_calendars_page, GCAL, CALENDARS_PAGE, AdwNavigationPage)
 
 G_END_DECLS

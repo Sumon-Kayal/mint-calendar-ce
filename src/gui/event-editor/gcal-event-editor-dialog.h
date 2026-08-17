@@ -24,16 +24,15 @@
 #include "gcal-event.h"
 #include "gcal-manager.h"
 
-
 G_BEGIN_DECLS
 
 #define GCAL_TYPE_EVENT_EDITOR_DIALOG (gcal_event_editor_dialog_get_type ())
 G_DECLARE_FINAL_TYPE (GcalEventEditorDialog, gcal_event_editor_dialog, GCAL, EVENT_EDITOR_DIALOG, AdwDialog);
 
-GtkWidget*           gcal_event_editor_dialog_new                (void);
+GtkWidget *gcal_event_editor_dialog_new (void);
 
-void                 gcal_event_editor_dialog_set_event          (GcalEventEditorDialog *self,
-                                                                  GcalEvent             *event,
-                                                                  gboolean               new_event);
+void gcal_event_editor_dialog_set_event (GcalEventEditorDialog *self,
+                                         GcalEvent *event,
+                                         gboolean new_event);
 
 G_END_DECLS

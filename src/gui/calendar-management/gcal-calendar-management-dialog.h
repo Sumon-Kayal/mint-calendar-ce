@@ -16,27 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #pragma once
 
 #include "gcal-application.h"
 #include "gcal-manager.h"
 
-#include <libecal/libecal.h>
 #include <adwaita.h>
+#include <libecal/libecal.h>
 
 G_BEGIN_DECLS
 
-#define GCAL_RESPONSE_REMOVE_SOURCE   2
+#define GCAL_RESPONSE_REMOVE_SOURCE 2
 
-#define GCAL_TYPE_CALENDAR_MANAGEMENT_DIALOG (gcal_calendar_management_dialog_get_type())
+#define GCAL_TYPE_CALENDAR_MANAGEMENT_DIALOG (gcal_calendar_management_dialog_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalCalendarManagementDialog,
                       gcal_calendar_management_dialog,
-                      GCAL, CALENDAR_MANAGEMENT_DIALOG,
+                      GCAL,
+                      CALENDAR_MANAGEMENT_DIALOG,
                       AdwDialog)
 
-GcalCalendarManagementDialog* gcal_calendar_management_dialog_new (GcalContext       *context);
-
+GcalCalendarManagementDialog *gcal_calendar_management_dialog_new (GcalContext *context);
 
 G_END_DECLS

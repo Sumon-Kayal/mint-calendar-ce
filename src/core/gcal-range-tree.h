@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_RANGE_TREE (gcal_range_tree_get_type())
+#define GCAL_TYPE_RANGE_TREE (gcal_range_tree_get_type ())
 
 typedef struct _GcalRangeTree GcalRangeTree;
 
@@ -39,50 +39,50 @@ typedef struct _GcalRangeTree GcalRangeTree;
  *
  * Returns: %TRUE to stop traversing, %FALSE to continue traversing
  */
-typedef gboolean    (*GcalRangeTraverseFunc)                     (GcalRange          *range,
-                                                                  gpointer            data,
-                                                                  gpointer            user_data);
+typedef gboolean (*GcalRangeTraverseFunc) (GcalRange *range,
+                                           gpointer data,
+                                           gpointer user_data);
 
 #define GCAL_TRAVERSE_CONTINUE FALSE;
-#define GCAL_TRAVERSE_STOP     TRUE;
+#define GCAL_TRAVERSE_STOP TRUE;
 
-GType                gcal_range_tree_get_type                    (void) G_GNUC_CONST;
+GType gcal_range_tree_get_type (void) G_GNUC_CONST;
 
-GcalRangeTree*       gcal_range_tree_new                         (void);
+GcalRangeTree *gcal_range_tree_new (void);
 
-GcalRangeTree*       gcal_range_tree_new_with_free_func          (GDestroyNotify      destroy_func);
+GcalRangeTree *gcal_range_tree_new_with_free_func (GDestroyNotify destroy_func);
 
-GcalRangeTree*       gcal_range_tree_copy                        (GcalRangeTree      *self);
+GcalRangeTree *gcal_range_tree_copy (GcalRangeTree *self);
 
-GcalRangeTree*       gcal_range_tree_ref                         (GcalRangeTree      *self);
+GcalRangeTree *gcal_range_tree_ref (GcalRangeTree *self);
 
-void                 gcal_range_tree_unref                       (GcalRangeTree      *self);
+void gcal_range_tree_unref (GcalRangeTree *self);
 
-void                 gcal_range_tree_add_range                   (GcalRangeTree      *self,
-                                                                  GcalRange          *range,
-                                                                  gpointer            data);
+void gcal_range_tree_add_range (GcalRangeTree *self,
+                                GcalRange *range,
+                                gpointer data);
 
-void                 gcal_range_tree_remove_range                (GcalRangeTree      *self,
-                                                                  GcalRange          *range,
-                                                                  gpointer            data);
+void gcal_range_tree_remove_range (GcalRangeTree *self,
+                                   GcalRange *range,
+                                   gpointer data);
 
-void                 gcal_range_tree_remove_data                 (GcalRangeTree      *self,
-                                                                  gpointer            data);
+void gcal_range_tree_remove_data (GcalRangeTree *self,
+                                  gpointer data);
 
-void                 gcal_range_tree_traverse                    (GcalRangeTree      *self,
-                                                                  GTraverseType       type,
-                                                                  GcalRangeTraverseFunc func,
-                                                                  gpointer           user_data);
+void gcal_range_tree_traverse (GcalRangeTree *self,
+                               GTraverseType type,
+                               GcalRangeTraverseFunc func,
+                               gpointer user_data);
 
-GPtrArray*           gcal_range_tree_get_all_data                (GcalRangeTree      *self);
+GPtrArray *gcal_range_tree_get_all_data (GcalRangeTree *self);
 
-GPtrArray*           gcal_range_tree_get_data_at_range           (GcalRangeTree      *self,
-                                                                  GcalRange          *range);
+GPtrArray *gcal_range_tree_get_data_at_range (GcalRangeTree *self,
+                                              GcalRange *range);
 
-guint64              gcal_range_tree_count_entries_at_range      (GcalRangeTree      *self,
-                                                                  GcalRange          *range);
+guint64 gcal_range_tree_count_entries_at_range (GcalRangeTree *self,
+                                                GcalRange *range);
 
-void                 gcal_range_tree_print                       (GcalRangeTree      *self);
+void gcal_range_tree_print (GcalRangeTree *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (GcalRangeTree, gcal_range_tree_unref)
 

@@ -45,99 +45,99 @@ typedef enum
 
 #define GCAL_EVENT_ERROR gcal_event_error_quark ()
 
-#define GCAL_TYPE_EVENT (gcal_event_get_type())
+#define GCAL_TYPE_EVENT (gcal_event_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalEvent, gcal_event, GCAL, EVENT, GObject)
 
-GQuark               gcal_event_error_quark                      (void);
+GQuark gcal_event_error_quark (void);
 
-GcalEvent*           gcal_event_new                              (GcalCalendar       *calendar,
-                                                                  ECalComponent      *component,
-                                                                  GError            **error);
+GcalEvent *gcal_event_new (GcalCalendar *calendar,
+                           ECalComponent *component,
+                           GError **error);
 
-GcalEvent*           gcal_event_new_from_event                   (GcalEvent          *self);
+GcalEvent *gcal_event_new_from_event (GcalEvent *self);
 
-gboolean             gcal_event_get_all_day                      (GcalEvent          *self);
+gboolean gcal_event_get_all_day (GcalEvent *self);
 
-void                 gcal_event_set_all_day                      (GcalEvent          *self,
-                                                                  gboolean            all_day);
+void gcal_event_set_all_day (GcalEvent *self,
+                             gboolean all_day);
 
-GdkRGBA*             gcal_event_get_color                        (GcalEvent          *self);
+GdkRGBA *gcal_event_get_color (GcalEvent *self);
 
-void                 gcal_event_set_color                        (GcalEvent          *self,
-                                                                  GdkRGBA            *color);
+void gcal_event_set_color (GcalEvent *self,
+                           GdkRGBA *color);
 
-ECalComponent*       gcal_event_get_component                    (GcalEvent          *self);
+ECalComponent *gcal_event_get_component (GcalEvent *self);
 
-GDateTime*           gcal_event_get_date_end                     (GcalEvent          *self);
+GDateTime *gcal_event_get_date_end (GcalEvent *self);
 
-void                 gcal_event_set_date_end                     (GcalEvent          *self,
-                                                                  GDateTime          *dt);
+void gcal_event_set_date_end (GcalEvent *self,
+                              GDateTime *dt);
 
-GDateTime*           gcal_event_get_date_start                   (GcalEvent          *self);
+GDateTime *gcal_event_get_date_start (GcalEvent *self);
 
-void                 gcal_event_set_date_start                   (GcalEvent          *self,
-                                                                  GDateTime          *dt);
+void gcal_event_set_date_start (GcalEvent *self,
+                                GDateTime *dt);
 
-GcalRange*           gcal_event_get_range                        (GcalEvent          *self);
+GcalRange *gcal_event_get_range (GcalEvent *self);
 
-const gchar*         gcal_event_get_description                  (GcalEvent          *self);
+const gchar *gcal_event_get_description (GcalEvent *self);
 
-void                 gcal_event_set_description                  (GcalEvent          *self,
-                                                                  const gchar        *description);
+void gcal_event_set_description (GcalEvent *self,
+                                 const gchar *description);
 
-gboolean             gcal_event_has_recurrence                   (GcalEvent          *self);
+gboolean gcal_event_has_recurrence (GcalEvent *self);
 
-gboolean             gcal_event_has_alarms                       (GcalEvent          *self);
+gboolean gcal_event_has_alarms (GcalEvent *self);
 
-GList*               gcal_event_get_alarms                       (GcalEvent          *self);
+GList *gcal_event_get_alarms (GcalEvent *self);
 
-void                 gcal_event_remove_all_alarms                (GcalEvent          *self);
+void gcal_event_remove_all_alarms (GcalEvent *self);
 
-void                 gcal_event_add_alarm                        (GcalEvent          *self,
-                                                                  ECalComponentAlarm *alarm);
+void gcal_event_add_alarm (GcalEvent *self,
+                           ECalComponentAlarm *alarm);
 
-const gchar*         gcal_event_get_location                     (GcalEvent          *self);
+const gchar *gcal_event_get_location (GcalEvent *self);
 
-void                 gcal_event_set_location                     (GcalEvent          *self,
-                                                                  const gchar        *location);
+void gcal_event_set_location (GcalEvent *self,
+                              const gchar *location);
 
-GcalCalendar*        gcal_event_get_calendar                     (GcalEvent          *self);
+GcalCalendar *gcal_event_get_calendar (GcalEvent *self);
 
-void                 gcal_event_set_calendar                     (GcalEvent          *self,
-                                                                  GcalCalendar       *calendar);
+void gcal_event_set_calendar (GcalEvent *self,
+                              GcalCalendar *calendar);
 
-const gchar*         gcal_event_get_summary                      (GcalEvent          *self);
+const gchar *gcal_event_get_summary (GcalEvent *self);
 
-void                 gcal_event_set_summary                      (GcalEvent          *self,
-                                                                  const gchar        *summary);
+void gcal_event_set_summary (GcalEvent *self,
+                             const gchar *summary);
 
-const gchar*         gcal_event_get_uid                          (GcalEvent          *self);
+const gchar *gcal_event_get_uid (GcalEvent *self);
 
 /* Utilities */
 
-gboolean             gcal_event_is_multiday                      (GcalEvent          *self);
+gboolean gcal_event_is_multiday (GcalEvent *self);
 
-gint                 gcal_event_compare                          (GcalEvent          *event1,
-                                                                  GcalEvent          *event2);
+gint gcal_event_compare (GcalEvent *event1,
+                         GcalEvent *event2);
 
-gint                 gcal_event_compare_with_current             (GcalEvent          *event1,
-                                                                  GcalEvent          *event2,
-                                                                  time_t              current_time);
+gint gcal_event_compare_with_current (GcalEvent *event1,
+                                      GcalEvent *event2,
+                                      time_t current_time);
 
-void                 gcal_event_set_recurrence                   (GcalEvent          *event,
-                                                                  GcalRecurrence     *recur);
+void gcal_event_set_recurrence (GcalEvent *event,
+                                GcalRecurrence *recur);
 
-GcalRecurrence*      gcal_event_get_recurrence                   (GcalEvent          *self);
+GcalRecurrence *gcal_event_get_recurrence (GcalEvent *self);
 
-gchar*               gcal_event_format_date                      (GcalEvent          *self);
+gchar *gcal_event_format_date (GcalEvent *self);
 
-gboolean             gcal_event_overlaps                         (GcalEvent          *self,
-                                                                  GcalRange          *range);
+gboolean gcal_event_overlaps (GcalEvent *self,
+                              GcalRange *range);
 
-GListModel *         gcal_event_get_attendees                    (GcalEvent          *self);
+GListModel *gcal_event_get_attendees (GcalEvent *self);
 
-GcalEventOrganizer * gcal_event_get_organizer                    (GcalEvent          *self);
+GcalEventOrganizer *gcal_event_get_organizer (GcalEvent *self);
 
 G_END_DECLS
 

@@ -28,11 +28,11 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_ATTENDEE_DETAILS_PAGE (gcal_attendee_details_page_get_type ())
 G_DECLARE_FINAL_TYPE (GcalAttendeeDetailsPage, gcal_attendee_details_page, GCAL, ATTENDEE_DETAILS_PAGE, AdwNavigationPage)
 
-void                 gcal_attendee_details_page_set_attendees          (GcalAttendeeDetailsPage *self,
-                                                                        GListModel              *attendees);
+void gcal_attendee_details_page_set_attendees (GcalAttendeeDetailsPage *self,
+                                               GListModel *attendees);
 
-void                 gcal_attendee_details_page_set_type_filter        (GcalAttendeeDetailsPage         *self,
-                                                                        GcalEventAttendeeTypeFilterFlags flags);
+void gcal_attendee_details_page_set_type_filter (GcalAttendeeDetailsPage *self,
+                                                 GcalEventAttendeeTypeFilterFlags flags);
 
 G_END_DECLS
 

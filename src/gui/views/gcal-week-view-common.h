@@ -24,10 +24,10 @@
 
 G_BEGIN_DECLS
 
-void                 gcal_week_view_common_snapshot_hour_lines   (GtkWidget          *widget,
-                                                                  GtkSnapshot        *snapshot,
-                                                                  GtkOrientation      orientation,
-                                                                  gint                width,
-                                                                  gint                height);
+void gcal_week_view_common_snapshot_hour_lines (GtkWidget *widget,
+                                                GtkSnapshot *snapshot,
+                                                GtkOrientation orientation,
+                                                gint width,
+                                                gint height);
 
 G_END_DECLS

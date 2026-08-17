@@ -28,6 +28,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (GcalOverflowBinLayout, gcal_overflow_bin_layout, GCAL, OVERFLOW_BIN_LAYOUT, GtkLayoutManager)
 
 void gcal_overflow_bin_layout_set_request_mode (GcalOverflowBinLayout *self,
-                                                GtkSizeRequestMode     request_mode);
+                                                GtkSizeRequestMode request_mode);
 
 G_END_DECLS

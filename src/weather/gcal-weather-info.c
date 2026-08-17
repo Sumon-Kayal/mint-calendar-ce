@@ -18,9 +18,8 @@
 
 #define G_LOG_DOMAIN "Weather"
 
-#include <string.h>
 #include "gcal-weather-info.h"
-
+#include <string.h>
 
 /* _GcalWeatherInfo:
  * @date:        (not nullable): The day this information belongs to.
@@ -32,36 +31,35 @@
  * Geometric information and @image should only be set
  * inside widgets.
  */
-struct _GcalWeatherInfo {
-  GObject           parent_instance;
+struct _GcalWeatherInfo
+{
+  GObject parent_instance;
 
   /* <private> */
-  GDate             date;        /* owned, non-null */
-  gchar            *icon_name;   /* owned, non-null */
-  gchar            *temperature; /* owned, non-null */
+  GDate date;         /* owned, non-null */
+  gchar *icon_name;   /* owned, non-null */
+  gchar *temperature; /* owned, non-null */
 };
 
+static void gcal_weather_info_set_date (GcalWeatherInfo *self,
+                                        GDate *date);
 
-static void          gcal_weather_info_set_date                  (GcalWeatherInfo    *self,
-                                                                  GDate              *date);
+static void gcal_weather_info_set_temperature (GcalWeatherInfo *self,
+                                               const gchar *temperature);
 
-static void          gcal_weather_info_set_temperature           (GcalWeatherInfo    *self,
-                                                                  const gchar        *temperature);
-
-static void          gcal_weather_info_set_icon_name             (GcalWeatherInfo    *self,
-                                                                  const gchar        *icon_name);
+static void gcal_weather_info_set_icon_name (GcalWeatherInfo *self,
+                                             const gchar *icon_name);
 
 G_DEFINE_TYPE (GcalWeatherInfo, gcal_weather_info, G_TYPE_OBJECT)
 
-enum {
+enum
+{
   PROP_0,
   PROP_DATE,
   PROP_ICON_NAME,
   PROP_TEMPERATURE,
   PROP_NUM,
 };
-
-
 
 /* < gobject setup > */
 
@@ -80,9 +78,9 @@ gcal_weather_info_finalize (GObject *object)
 }
 
 static void
-gcal_weather_info_get_property (GObject    *object,
-                                guint       property_id,
-                                GValue     *value,
+gcal_weather_info_get_property (GObject *object,
+                                guint property_id,
+                                GValue *value,
                                 GParamSpec *pspec)
 {
   GcalWeatherInfo *self; /* unowned */
@@ -106,10 +104,10 @@ gcal_weather_info_get_property (GObject    *object,
 }
 
 static void
-gcal_weather_info_set_property (GObject      *object,
-                                guint         property_id,
+gcal_weather_info_set_property (GObject *object,
+                                guint property_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalWeatherInfo *self; /* unowned */
 
@@ -144,39 +142,35 @@ gcal_weather_info_class_init (GcalWeatherInfoClass *klass)
   object_class->get_property = gcal_weather_info_get_property;
   object_class->set_property = gcal_weather_info_set_property;
 
-
   /**
    * GcalWeatherInfo:date:
    *
    * The non-nullable date weather information belongs to.
    */
-  g_object_class_install_property
-      (object_class,
-       PROP_DATE,
-       g_param_spec_boxed ("date", "date", "date", G_TYPE_DATE,
-                           G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+  g_object_class_install_property (object_class,
+                                   PROP_DATE,
+                                   g_param_spec_boxed ("date", "date", "date", G_TYPE_DATE,
+                                                       G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
   /**
    * GcalWeatherInfo:icon-name:
    *
    * Non-nullable Icon name representing the weather.
    */
-  g_object_class_install_property
-      (object_class,
-       PROP_ICON_NAME,
-       g_param_spec_string ("icon-name", "icon-name", "icon-name", NULL,
-                            G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+  g_object_class_install_property (object_class,
+                                   PROP_ICON_NAME,
+                                   g_param_spec_string ("icon-name", "icon-name", "icon-name", NULL,
+                                                        G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
   /**
    * GcalWeatherInfo:temperature:
    *
    * The temperature as string or %NULL.
    */
-  g_object_class_install_property
-      (object_class,
-       PROP_TEMPERATURE,
-       g_param_spec_string ("temperature", "temperature", "temperature", NULL,
-                            G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+  g_object_class_install_property (object_class,
+                                   PROP_TEMPERATURE,
+                                   g_param_spec_string ("temperature", "temperature", "temperature", NULL,
+                                                        G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
@@ -186,8 +180,6 @@ gcal_weather_info_init (GcalWeatherInfo *self)
   self->icon_name = NULL;
   self->temperature = NULL;
 }
-
-
 
 /* < private > */
 
@@ -199,7 +191,7 @@ gcal_weather_info_init (GcalWeatherInfo *self)
  */
 static void
 gcal_weather_info_set_date (GcalWeatherInfo *self,
-                            GDate           *date)
+                            GDate *date)
 {
   g_return_if_fail (GCAL_IS_WEATHER_INFO (self));
   g_return_if_fail (date != NULL);
@@ -215,7 +207,7 @@ gcal_weather_info_set_date (GcalWeatherInfo *self,
  */
 static void
 gcal_weather_info_set_temperature (GcalWeatherInfo *self,
-                                   const gchar     *temperature)
+                                   const gchar *temperature)
 {
   g_return_if_fail (GCAL_IS_WEATHER_INFO (self));
   g_return_if_fail (temperature != NULL);
@@ -224,7 +216,7 @@ gcal_weather_info_set_temperature (GcalWeatherInfo *self,
     {
       g_free (self->temperature);
       self->temperature = g_strdup (temperature);
-      g_object_notify ((GObject*) self, "temperature");
+      g_object_notify ((GObject *) self, "temperature");
     }
 }
 
@@ -236,7 +228,7 @@ gcal_weather_info_set_temperature (GcalWeatherInfo *self,
  */
 static void
 gcal_weather_info_set_icon_name (GcalWeatherInfo *self,
-                                 const gchar     *icon_name)
+                                 const gchar *icon_name)
 {
   g_return_if_fail (GCAL_IS_WEATHER_INFO (self));
   g_return_if_fail (icon_name != NULL);
@@ -245,11 +237,9 @@ gcal_weather_info_set_icon_name (GcalWeatherInfo *self,
     {
       g_free (self->icon_name);
       self->icon_name = g_strdup (icon_name);
-      g_object_notify ((GObject*) self, "icon-name");
+      g_object_notify ((GObject *) self, "icon-name");
     }
 }
-
-
 
 /* < public > */
 
@@ -263,8 +253,8 @@ gcal_weather_info_set_icon_name (GcalWeatherInfo *self,
  *
  * @Returns: (transfer full): A newly allocated #GcalWeatherInfo.
  */
-GcalWeatherInfo*
-gcal_weather_info_new (GDate       *date,
+GcalWeatherInfo *
+gcal_weather_info_new (GDate *date,
                        const gchar *icon_name,
                        const gchar *temperature)
 {
@@ -274,7 +264,7 @@ gcal_weather_info_new (GDate       *date,
   g_return_val_if_fail (icon_name != NULL, NULL);
   g_return_val_if_fail (temperature != NULL, NULL);
 
-  info  = (GcalWeatherInfo*) g_object_new (GCAL_TYPE_WEATHER_INFO,
+  info = (GcalWeatherInfo *) g_object_new (GCAL_TYPE_WEATHER_INFO,
                                            "date", date,
                                            "icon-name", icon_name,
                                            "temperature", temperature,
@@ -291,7 +281,7 @@ gcal_weather_info_new (GDate       *date,
  */
 void
 gcal_weather_info_get_date (GcalWeatherInfo *self,
-                            GDate           *date)
+                            GDate *date)
 {
   g_return_if_fail (GCAL_IS_WEATHER_INFO (self));
 
@@ -304,7 +294,7 @@ gcal_weather_info_get_date (GcalWeatherInfo *self,
  *
  * Getter for #GcalWeatherInfo:icon_name.
  */
-const gchar*
+const gchar *
 gcal_weather_info_get_icon_name (GcalWeatherInfo *self)
 {
   g_return_val_if_fail (GCAL_IS_WEATHER_INFO (self), NULL);
@@ -318,7 +308,7 @@ gcal_weather_info_get_icon_name (GcalWeatherInfo *self)
  *
  * Getter for #GcalWeatherInfo:temperature.
  */
-const gchar*
+const gchar *
 gcal_weather_info_get_temperature (GcalWeatherInfo *self)
 {
   g_return_val_if_fail (GCAL_IS_WEATHER_INFO (self), NULL);

@@ -24,13 +24,13 @@
 
 static GThread *main_thread;
 
-#if defined (G_HAS_CONSTRUCTORS)
-# ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
-#  pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(gcal_init_ctor)
-# endif
-G_DEFINE_CONSTRUCTOR(gcal_init_ctor)
+#if defined(G_HAS_CONSTRUCTORS)
+#ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
+#pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(gcal_init_ctor)
+#endif
+G_DEFINE_CONSTRUCTOR (gcal_init_ctor)
 #else
-# error Your platform/compiler is missing constructor support
+#error Your platform/compiler is missing constructor support
 #endif
 
 static void
@@ -44,4 +44,3 @@ gcal_get_main_thread (void)
 {
   return main_thread;
 }
-
