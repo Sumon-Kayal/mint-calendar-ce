@@ -73,50 +73,50 @@
 
 struct _GcalEvent
 {
-  GObject             parent;
+  GObject parent;
 
-  gchar              *uid;
-  gboolean            has_recurrence;
+  gchar *uid;
+  gboolean has_recurrence;
 
   /* These are cached, because ECalComponent returns newly allocated data for them */
-  gchar              *summary;
-  gchar              *location;
+  gchar *summary;
+  gchar *location;
 
   /*
    * The description is cached in the class because it
    * may come as a GSList of descriptions, in which
    * case we merge them and cache it here.
    */
-  gchar              *description;
+  gchar *description;
 
-  GDateTime          *dt_start;
-  GDateTime          *dt_end;
-  GcalRange          *range;
+  GDateTime *dt_start;
+  GDateTime *dt_end;
+  GcalRange *range;
 
-  GdkRGBA            *color;
-  GBinding           *color_binding;
+  GdkRGBA *color;
+  GBinding *color_binding;
 
-  gboolean            all_day;
+  gboolean all_day;
 
   /* A map of GcalAlarmType */
-  GHashTable         *alarms;
-  GListStore         *attendees;
+  GHashTable *alarms;
+  GListStore *attendees;
   GcalEventOrganizer *organizer;
 
-  ECalComponent      *component;
-  GcalCalendar       *calendar;
+  ECalComponent *component;
+  GcalCalendar *calendar;
 
-  GcalRecurrence     *recurrence;
+  GcalRecurrence *recurrence;
 };
 
-static void          gcal_event_initable_iface_init              (GInitableIface *iface);
+static void gcal_event_initable_iface_init (GInitableIface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalEvent, gcal_event, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, gcal_event_initable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalEvent, gcal_event, G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, gcal_event_initable_iface_init))
 
 G_DEFINE_QUARK (GcalEvent, gcal_event_error);
 
-enum {
+enum
+{
   PROP_0,
   PROP_ALL_DAY,
   PROP_CALENDAR,
@@ -135,7 +135,9 @@ enum {
   N_PROPS
 };
 
-static GParamSpec* properties[N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
@@ -148,8 +150,8 @@ clear_range (GcalEvent *self)
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_RANGE]);
 }
 
-static GTimeZone*
-get_timezone_from_ical (GcalEvent             *self,
+static GTimeZone *
+get_timezone_from_ical (GcalEvent *self,
                         ECalComponentDateTime *comp)
 {
   g_autoptr (GTimeZone) tz = NULL;
@@ -216,7 +218,7 @@ get_timezone_from_ical (GcalEvent             *self,
   return g_steal_pointer (&tz);
 }
 
-static ECalComponentDateTime*
+static ECalComponentDateTime *
 build_component_from_datetime (GcalEvent *self,
                                GDateTime *dt)
 {
@@ -325,8 +327,8 @@ load_attendees (GcalEvent *self)
 }
 
 static gboolean
-setup_component (GcalEvent  *self,
-                 GError    **error)
+setup_component (GcalEvent *self,
+                 GError **error)
 {
   g_autoptr (GTimeZone) zone_start = NULL;
   g_autoptr (GDateTime) date_start = NULL;
@@ -462,7 +464,7 @@ setup_component (GcalEvent  *self,
 }
 
 static void
-gcal_event_set_component_internal (GcalEvent     *self,
+gcal_event_set_component_internal (GcalEvent *self,
                                    ECalComponent *component)
 {
   g_assert (self->component == NULL);
@@ -475,9 +477,9 @@ gcal_event_set_component_internal (GcalEvent     *self,
  */
 
 static gboolean
-gcal_event_initable_init (GInitable     *initable,
-                          GCancellable  *cancellable,
-                          GError       **error)
+gcal_event_initable_init (GInitable *initable,
+                          GCancellable *cancellable,
+                          GError **error)
 {
   GcalEvent *self = GCAL_EVENT (initable);
 
@@ -493,7 +495,7 @@ gcal_event_initable_iface_init (GInitableIface *iface)
 static void
 gcal_event_finalize (GObject *object)
 {
-  GcalEvent *self = (GcalEvent *)object;
+  GcalEvent *self = (GcalEvent *) object;
 
   g_clear_pointer (&self->dt_start, g_date_time_unref);
   g_clear_pointer (&self->dt_end, g_date_time_unref);
@@ -514,9 +516,9 @@ gcal_event_finalize (GObject *object)
 }
 
 static void
-gcal_event_get_property (GObject    *object,
-                         guint       prop_id,
-                         GValue     *value,
+gcal_event_get_property (GObject *object,
+                         guint prop_id,
+                         GValue *value,
                          GParamSpec *pspec)
 {
   GcalEvent *self = GCAL_EVENT (object);
@@ -581,10 +583,10 @@ gcal_event_get_property (GObject    *object,
 }
 
 static void
-gcal_event_set_property (GObject      *object,
-                         guint         prop_id,
+gcal_event_set_property (GObject *object,
+                         guint prop_id,
                          const GValue *value,
-                         GParamSpec   *pspec)
+                         GParamSpec *pspec)
 {
   GcalEvent *self = GCAL_EVENT (object);
 
@@ -673,10 +675,10 @@ gcal_event_class_init (GcalEventClass *klass)
    * The #ECalComponent of this event.
    */
   properties[PROP_COMPONENT] = g_param_spec_object ("component",
-                                                     "Component",
-                                                     "The ECalComponent of the event",
-                                                     E_TYPE_CAL_COMPONENT,
-                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+                                                    "Component",
+                                                    "The ECalComponent of the event",
+                                                    E_TYPE_CAL_COMPONENT,
+                                                    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEvent::date-end:
@@ -712,10 +714,10 @@ gcal_event_class_init (GcalEventClass *klass)
                                                       G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-  * GcalEvent::has-recurrence:
-  *
-  * The recurrence property of the event.
-  */
+   * GcalEvent::has-recurrence:
+   *
+   * The recurrence property of the event.
+   */
   properties[PROP_HAS_RECURRENCE] = g_param_spec_boolean ("has-recurrence",
                                                           "If event has recurrence",
                                                           "Whether the event has recurrence or not",
@@ -734,10 +736,10 @@ gcal_event_class_init (GcalEventClass *klass)
                                                    G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-  * GcalEvent::range:
-  *
-  * The range of the event, as a combination of the start and end dates.
-  */
+   * GcalEvent::range:
+   *
+   * The range of the event, as a combination of the start and end dates.
+   */
   properties[PROP_RANGE] = g_param_spec_boxed ("range",
                                                "Range of the event",
                                                "The time range of the event",
@@ -745,10 +747,10 @@ gcal_event_class_init (GcalEventClass *klass)
                                                G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
-  * GcalEvent::recurrence:
-  *
-  * The recurrence-rules property of the event.
-  */
+   * GcalEvent::recurrence:
+   *
+   * The recurrence-rules property of the event.
+   */
   properties[PROP_RECURRENCE] = g_param_spec_boxed ("recurrence",
                                                     "Recurrence property of the event",
                                                     "The recurrence property of the event",
@@ -772,10 +774,10 @@ gcal_event_class_init (GcalEventClass *klass)
    * The summary of the event.
    */
   properties[PROP_SUMMARY] = g_param_spec_string ("summary",
-                                                        "Summary of the event",
-                                                        "The summary of the event",
-                                                        "",
-                                                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+                                                  "Summary of the event",
+                                                  "The summary of the event",
+                                                  "",
+                                                  G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalEvent::timezone:
@@ -830,10 +832,10 @@ gcal_event_init (GcalEvent *self)
  *
  * Returns: (transfer full)(nullable): a #GcalEvent
  */
-GcalEvent*
-gcal_event_new (GcalCalendar   *calendar,
-                ECalComponent  *component,
-                GError        **error)
+GcalEvent *
+gcal_event_new (GcalCalendar *calendar,
+                ECalComponent *component,
+                GError **error)
 {
   return g_initable_new (GCAL_TYPE_EVENT,
                          NULL,
@@ -852,7 +854,7 @@ gcal_event_new (GcalCalendar   *calendar,
  *
  * Returns: (transfer full)(nullable): a #GcalEvent
  */
-GcalEvent*
+GcalEvent *
 gcal_event_new_from_event (GcalEvent *self)
 {
   g_autoptr (ECalComponent) component = NULL;
@@ -889,7 +891,7 @@ gcal_event_get_all_day (GcalEvent *self)
  *
  * Returns: (transfer none): a #GdkRGBA
  */
-GdkRGBA*
+GdkRGBA *
 gcal_event_get_color (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -907,7 +909,7 @@ gcal_event_get_color (GcalEvent *self)
  */
 void
 gcal_event_set_color (GcalEvent *self,
-                      GdkRGBA   *color)
+                      GdkRGBA *color)
 {
   g_return_if_fail (GCAL_IS_EVENT (self));
 
@@ -928,7 +930,7 @@ gcal_event_set_color (GcalEvent *self,
  *
  * Returns: (transfer none): an #ECalComponent.
  */
-ECalComponent*
+ECalComponent *
 gcal_event_get_component (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -945,7 +947,7 @@ gcal_event_get_component (GcalEvent *self)
  */
 void
 gcal_event_set_all_day (GcalEvent *self,
-                        gboolean   all_day)
+                        gboolean all_day)
 {
   g_return_if_fail (GCAL_IS_EVENT (self));
 
@@ -969,7 +971,7 @@ gcal_event_set_all_day (GcalEvent *self,
  *
  * Returns: (transfer none): a #GDateTime.
  */
-GDateTime*
+GDateTime *
 gcal_event_get_date_end (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1016,7 +1018,7 @@ gcal_event_set_date_end (GcalEvent *self,
  *
  * Returns: (transfer none): a #GDateTime.
  */
-GDateTime*
+GDateTime *
 gcal_event_get_date_start (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1063,7 +1065,7 @@ gcal_event_set_date_start (GcalEvent *self,
  *
  * Returns: (transfer none): a #GcalRange
  */
-GcalRange*
+GcalRange *
 gcal_event_get_range (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1086,7 +1088,7 @@ gcal_event_get_range (GcalEvent *self)
  *
  * Returns: (transfer none): the description of the event.
  */
-const gchar*
+const gchar *
 gcal_event_get_description (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1102,7 +1104,7 @@ gcal_event_get_description (GcalEvent *self)
  * Sets the description of the event.
  */
 void
-gcal_event_set_description (GcalEvent   *self,
+gcal_event_set_description (GcalEvent *self,
                             const gchar *description)
 {
   g_return_if_fail (GCAL_IS_EVENT (self));
@@ -1117,7 +1119,7 @@ gcal_event_set_description (GcalEvent   *self,
 
       if (description)
         {
-          ECalComponentText* text_component;
+          ECalComponentText *text_component;
           GSList list;
 
           text_component = e_cal_component_text_new (description, NULL);
@@ -1179,7 +1181,7 @@ gcal_event_has_alarms (GcalEvent *self)
  *
  * Returns: (transfer full): a #GList of #ECalComponentAlarm.
  */
-GList*
+GList *
 gcal_event_get_alarms (GcalEvent *self)
 {
   GHashTable *tmp;
@@ -1237,7 +1239,7 @@ gcal_event_remove_all_alarms (GcalEvent *self)
   g_return_if_fail (GCAL_IS_EVENT (self));
 
   g_hash_table_iter_init (&iter, self->alarms);
-  while (g_hash_table_iter_next (&iter, (gpointer*) &minutes, (gpointer*) &alarm_uid))
+  while (g_hash_table_iter_next (&iter, (gpointer *) &minutes, (gpointer *) &alarm_uid))
     {
       GCAL_TRACE_MSG ("Removing alarm %s from event %s", alarm_uid, gcal_event_get_uid (self));
 
@@ -1259,7 +1261,7 @@ gcal_event_remove_all_alarms (GcalEvent *self)
  * same time, it'll be replaced.
  */
 void
-gcal_event_add_alarm (GcalEvent          *self,
+gcal_event_add_alarm (GcalEvent *self,
                       ECalComponentAlarm *alarm)
 {
   ECalComponentAlarm *new_alarm;
@@ -1308,7 +1310,7 @@ gcal_event_add_alarm (GcalEvent          *self,
  */
 void
 gcal_event_remove_alarm (GcalEvent *self,
-                         guint      type)
+                         guint type)
 {
   const gchar *alarm_uid;
 
@@ -1327,7 +1329,6 @@ gcal_event_remove_alarm (GcalEvent *self,
     }
 }
 
-
 /**
  * gcal_event_get_location:
  * @self: a #GcalEvent
@@ -1336,7 +1337,7 @@ gcal_event_remove_alarm (GcalEvent *self,
  *
  * Returns: (transfer none): the location of the event
  */
-const gchar*
+const gchar *
 gcal_event_get_location (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1352,7 +1353,7 @@ gcal_event_get_location (GcalEvent *self)
  * Sets the location of the event.
  */
 void
-gcal_event_set_location (GcalEvent   *self,
+gcal_event_set_location (GcalEvent *self,
                          const gchar *location)
 {
   const gchar *current_location;
@@ -1381,7 +1382,7 @@ gcal_event_set_location (GcalEvent   *self,
  *
  * Returns: (nullable): a #GcalCalendar.
  */
-GcalCalendar*
+GcalCalendar *
 gcal_event_get_calendar (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1401,7 +1402,7 @@ gcal_event_get_calendar (GcalEvent *self)
  * The source should only be set once.
  */
 void
-gcal_event_set_calendar (GcalEvent    *self,
+gcal_event_set_calendar (GcalEvent *self,
                          GcalCalendar *calendar)
 {
   g_return_if_fail (GCAL_IS_EVENT (self));
@@ -1435,7 +1436,7 @@ gcal_event_set_calendar (GcalEvent    *self,
  *
  * Returns: (transfer none): the summary of the event.
  */
-const gchar*
+const gchar *
 gcal_event_get_summary (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1451,7 +1452,7 @@ gcal_event_get_summary (GcalEvent *self)
  * Sets the summary of @event.
  */
 void
-gcal_event_set_summary (GcalEvent   *self,
+gcal_event_set_summary (GcalEvent *self,
                         const gchar *summary)
 {
   const gchar *current_summary;
@@ -1489,7 +1490,7 @@ gcal_event_set_summary (GcalEvent   *self,
  *
  * Returns: (transfer none): the unique identifier of the event
  */
-const gchar*
+const gchar *
 gcal_event_get_uid (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1631,7 +1632,7 @@ gcal_event_compare (GcalEvent *event1,
 gint
 gcal_event_compare_with_current (GcalEvent *event1,
                                  GcalEvent *event2,
-                                 time_t     current_time)
+                                 time_t current_time)
 {
   time_t time1, time2;
   time_t diff1, diff2;
@@ -1677,7 +1678,7 @@ gcal_event_compare_with_current (GcalEvent *event1,
  * and adds the corresponding rrule to the event.
  */
 void
-gcal_event_set_recurrence (GcalEvent      *self,
+gcal_event_set_recurrence (GcalEvent *self,
                            GcalRecurrence *recur)
 {
   ECalComponent *comp;
@@ -1721,7 +1722,7 @@ gcal_event_set_recurrence (GcalEvent      *self,
  *
  * Returns: (transfer none): a #GcalRecurrence
  */
-GcalRecurrence*
+GcalRecurrence *
 gcal_event_get_recurrence (GcalEvent *self)
 {
   g_return_val_if_fail (GCAL_IS_EVENT (self), NULL);
@@ -1739,7 +1740,7 @@ gcal_event_get_recurrence (GcalEvent *self)
  *
  * Returns: (transfer full): a string
  */
-gchar*
+gchar *
 gcal_event_format_date (GcalEvent *self)
 {
   g_autofree gchar *formatted_string = NULL;
@@ -1783,7 +1784,7 @@ gcal_event_format_date (GcalEvent *self)
       if (is_all_day)
         {
           /* Translators: %1$s is the start date and %2$s is the end date. */
-          formatted_string = g_strdup_printf (_("%1$s — %2$s"), start_date, end_date);
+          formatted_string = g_strdup_printf (_ ("%1$s — %2$s"), start_date, end_date);
         }
       else
         {
@@ -1791,7 +1792,7 @@ gcal_event_format_date (GcalEvent *self)
            * Translators: %1$s is the start date, %2$s is the start time,
            * %3$s is the end date, and %4$s is the end time.
            */
-          formatted_string = g_strdup_printf (_("%1$s %2$s — %3$s %4$s"),
+          formatted_string = g_strdup_printf (_ ("%1$s %2$s — %3$s %4$s"),
                                               start_date,
                                               start_time,
                                               end_date,
@@ -1807,7 +1808,7 @@ gcal_event_format_date (GcalEvent *self)
       else
         {
           /* Translators: %1$s is a date, %2$s is the start hour, and %3$s is the end hour */
-          formatted_string = g_strdup_printf (_("%1$s, %2$s – %3$s"), start_date, start_time, end_time);
+          formatted_string = g_strdup_printf (_ ("%1$s, %2$s – %3$s"), start_date, start_time, end_time);
         }
     }
 

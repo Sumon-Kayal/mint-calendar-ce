@@ -25,18 +25,18 @@
 
 struct _GcalContext
 {
-  GObject             parent;
+  GObject parent;
 
-  GDBusProxy         *settings_portal;
+  GDBusProxy *settings_portal;
 
-  GcalClock          *clock;
-  GcalManager        *manager;
-  GcalSearchEngine   *search_engine;
-  GSettings          *settings;
-  GcalTimeFormat      time_format;
+  GcalClock *clock;
+  GcalManager *manager;
+  GcalSearchEngine *search_engine;
+  GSettings *settings;
+  GcalTimeFormat time_format;
   GcalWeatherService *weather_service;
 
-  GcalTimeZoneMonitor   *timezone_monitor;
+  GcalTimeZoneMonitor *timezone_monitor;
 };
 
 G_DEFINE_TYPE (GcalContext, gcal_context, G_TYPE_OBJECT)
@@ -54,8 +54,7 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS];
-
+static GParamSpec *properties[N_PROPS];
 
 /*
  * Auxiliary methods
@@ -63,10 +62,10 @@ static GParamSpec *properties [N_PROPS];
 
 static void
 set_time_format_from_variant (GcalContext *self,
-                              GVariant    *variant)
+                              GVariant *variant)
 {
   g_autofree gchar *enum_format = NULL;
-  GcalTimeFormat  time_format;
+  GcalTimeFormat time_format;
 
   g_assert (g_variant_type_equal (g_variant_get_type (variant), "s"));
 
@@ -115,16 +114,15 @@ read_time_format (GcalContext *self)
   return TRUE;
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_portal_proxy_signal_cb (GDBusProxy  *proxy,
+on_portal_proxy_signal_cb (GDBusProxy *proxy,
                            const gchar *sender_name,
                            const gchar *signal_name,
-                           GVariant    *parameters,
+                           GVariant *parameters,
                            GcalContext *self)
 {
   g_autoptr (GVariant) value = NULL;
@@ -145,12 +143,11 @@ on_portal_proxy_signal_cb (GDBusProxy  *proxy,
 
 static void
 on_timezone_changed_cb (GcalTimeZoneMonitor *timezone_monitor,
-                        GParamSpec          *pspec,
-                        GcalContext         *self)
+                        GParamSpec *pspec,
+                        GcalContext *self)
 {
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TIMEZONE]);
 }
-
 
 /*
  * GObject overrides
@@ -159,7 +156,7 @@ on_timezone_changed_cb (GcalTimeZoneMonitor *timezone_monitor,
 static void
 gcal_context_constructed (GObject *object)
 {
-  GcalContext *self = (GcalContext *)object;
+  GcalContext *self = (GcalContext *) object;
 
   G_OBJECT_CLASS (gcal_context_parent_class)->constructed (object);
 
@@ -170,7 +167,7 @@ gcal_context_constructed (GObject *object)
 static void
 gcal_context_finalize (GObject *object)
 {
-  GcalContext *self = (GcalContext *)object;
+  GcalContext *self = (GcalContext *) object;
 
   gcal_weather_service_stop (self->weather_service);
 
@@ -184,9 +181,9 @@ gcal_context_finalize (GObject *object)
 }
 
 static void
-gcal_context_get_property (GObject    *object,
-                           guint       prop_id,
-                           GValue     *value,
+gcal_context_get_property (GObject *object,
+                           guint prop_id,
+                           GValue *value,
                            GParamSpec *pspec)
 {
   GcalContext *self = GCAL_CONTEXT (object);
@@ -227,10 +224,10 @@ gcal_context_get_property (GObject    *object,
 }
 
 static void
-gcal_context_set_property (GObject      *object,
-                           guint         prop_id,
+gcal_context_set_property (GObject *object,
+                           guint prop_id,
                            const GValue *value,
-                           GParamSpec   *pspec)
+                           GParamSpec *pspec)
 {
   switch (prop_id)
     {
@@ -341,7 +338,7 @@ gcal_context_init (GcalContext *self)
  *
  * Returns: (transfer full): a #GcalContext
  */
-GcalContext*
+GcalContext *
 gcal_context_new (void)
 {
   return g_object_new (GCAL_TYPE_CONTEXT, NULL);
@@ -354,7 +351,7 @@ gcal_context_new (void)
  *
  * Returns: (transfer none): a #GcalClock
  */
-GcalClock*
+GcalClock *
 gcal_context_get_clock (GcalContext *self)
 {
   g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);
@@ -369,7 +366,7 @@ gcal_context_get_clock (GcalContext *self)
  *
  * Returns: (transfer none): a #GcalManager
  */
-GcalManager*
+GcalManager *
 gcal_context_get_manager (GcalContext *self)
 {
   g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);
@@ -384,7 +381,7 @@ gcal_context_get_manager (GcalContext *self)
  *
  * Returns: (transfer none): a #GcalSearchEngine
  */
-GcalSearchEngine*
+GcalSearchEngine *
 gcal_context_get_search_engine (GcalContext *self)
 {
   g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);
@@ -399,7 +396,7 @@ gcal_context_get_search_engine (GcalContext *self)
  *
  * Returns: (transfer none): a #GSettings
  */
-GSettings*
+GSettings *
 gcal_context_get_settings (GcalContext *self)
 {
   g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);
@@ -429,7 +426,7 @@ gcal_context_get_time_format (GcalContext *self)
  *
  * Returns: (transfer none): a #GTimeZone
  */
-GTimeZone*
+GTimeZone *
 gcal_context_get_timezone (GcalContext *self)
 {
   g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);
@@ -444,7 +441,7 @@ gcal_context_get_timezone (GcalContext *self)
  *
  * Returns: (transfer none): a #GcalWeatherService
  */
-GcalWeatherService*
+GcalWeatherService *
 gcal_context_get_weather_service (GcalContext *self)
 {
   g_return_val_if_fail (GCAL_IS_CONTEXT (self), NULL);

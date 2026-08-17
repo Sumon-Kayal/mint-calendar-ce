@@ -18,12 +18,12 @@
 
 #define G_LOG_DOMAIN "GcalManager"
 
+#include "gcal-manager.h"
 #include "gcal-application.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
-#include "gcal-manager.h"
-#include "gcal-timeline.h"
 #include "gcal-timeline-subscriber.h"
+#include "gcal-timeline.h"
 #include "gcal-utils.h"
 
 #include <libedataserverui4/libedataserverui4.h>
@@ -41,41 +41,41 @@
 
 typedef struct
 {
-  GcalEvent          *event;
-  GcalManager        *manager;
+  GcalEvent *event;
+  GcalManager *manager;
 } AsyncOpsData;
 
 typedef struct
 {
-  gchar              *event_uid;
-  GcalCalendar       *calendar;
-  GcalCalendar       *new_calendar;
-  ECalComponent      *new_component;
-  GcalManager        *manager;
+  gchar *event_uid;
+  GcalCalendar *calendar;
+  GcalCalendar *new_calendar;
+  ECalComponent *new_component;
+  GcalManager *manager;
 } MoveEventData;
 
 struct _GcalManager
 {
-  GObject             parent;
+  GObject parent;
 
   /**
    * The list of clients we are managing.
    * Each value is of type GCalStoreUnit
    * And each key is the source uid
    */
-  GHashTable         *clients;
-  GListStore         *calendars_model;
+  GHashTable *clients;
+  GListStore *calendars_model;
 
-  ESourceRegistry    *source_registry;
+  ESourceRegistry *source_registry;
   ECredentialsPrompter *credentials_prompter;
 
-  GCancellable       *async_ops;
+  GCancellable *async_ops;
 
-  gint                clients_synchronizing;
+  gint clients_synchronizing;
 
-  GcalTimeline       *timeline;
+  GcalTimeline *timeline;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 G_DEFINE_TYPE (GcalManager, gcal_manager, G_TYPE_OBJECT)
@@ -97,8 +97,12 @@ enum
   NUM_SIGNALS
 };
 
-static guint       signals[NUM_SIGNALS] = { 0, };
-static GParamSpec *properties[NUM_PROPS] = { NULL, };
+static guint signals[NUM_SIGNALS] = {
+  0,
+};
+static GParamSpec *properties[NUM_PROPS] = {
+  NULL,
+};
 
 static void
 free_async_ops_data (AsyncOpsData *data)
@@ -108,8 +112,8 @@ free_async_ops_data (AsyncOpsData *data)
 }
 
 static void
-remove_source (GcalManager  *self,
-               ESource      *source)
+remove_source (GcalManager *self,
+               ESource *source)
 {
   g_autoptr (GcalCalendar) calendar = NULL;
   guint position;
@@ -143,7 +147,7 @@ remove_source (GcalManager  *self,
 
 static void
 source_changed (GcalManager *self,
-                ESource     *source)
+                ESource *source)
 {
   GcalCalendar *calendar;
 
@@ -160,9 +164,9 @@ source_changed (GcalManager *self,
 }
 
 static void
-on_collection_source_refreshed (GObject      *source_object,
+on_collection_source_refreshed (GObject *source_object,
                                 GAsyncResult *result,
-                                gpointer      user_data)
+                                gpointer user_data)
 {
   GcalManager *self = GCAL_MANAGER (user_data);
   GError *error = NULL;
@@ -185,9 +189,9 @@ on_collection_source_refreshed (GObject      *source_object,
 }
 
 static void
-on_client_refreshed (GObject      *source_object,
+on_client_refreshed (GObject *source_object,
                      GAsyncResult *result,
-                     gpointer      user_data)
+                     gpointer user_data)
 {
   GcalManager *self = GCAL_MANAGER (user_data);
   GError *error = NULL;
@@ -216,7 +220,7 @@ on_client_refreshed (GObject      *source_object,
 static gint
 sort_calendar_by_name_cb (gconstpointer a,
                           gconstpointer b,
-                          gpointer      user_data)
+                          gpointer user_data)
 {
   GcalCalendar *calendar_a = GCAL_CALENDAR ((gpointer) a);
   GcalCalendar *calendar_b = GCAL_CALENDAR ((gpointer) b);
@@ -236,16 +240,16 @@ sort_calendar_by_name_cb (gconstpointer a,
 
 static void
 on_calendar_name_changed_cb (GcalCalendar *calendar,
-                             GParamSpec   *pspec,
-                             GcalManager  *self)
+                             GParamSpec *pspec,
+                             GcalManager *self)
 {
   g_list_store_sort (self->calendars_model, sort_calendar_by_name_cb, NULL);
 }
 
 static void
-on_calendar_created_cb (GObject      *source_object,
+on_calendar_created_cb (GObject *source_object,
                         GAsyncResult *result,
-                        gpointer      user_data)
+                        gpointer user_data)
 {
   g_autoptr (ESource) default_source = NULL;
   g_autoptr (GError) error = NULL;
@@ -317,7 +321,7 @@ on_calendar_created_cb (GObject      *source_object,
 
 static void
 load_source (GcalManager *self,
-             ESource     *source)
+             ESource *source)
 {
   g_autoptr (ESource) parent = NULL;
 
@@ -339,10 +343,10 @@ load_source (GcalManager *self,
 }
 
 static gboolean
-transform_e_source_to_gcal_calendar_cb (GBinding     *binding,
+transform_e_source_to_gcal_calendar_cb (GBinding *binding,
                                         const GValue *from_value,
-                                        GValue       *to_value,
-                                        gpointer      user_data)
+                                        GValue *to_value,
+                                        gpointer user_data)
 {
   GcalCalendar *calendar;
   GcalManager *self;
@@ -358,9 +362,9 @@ transform_e_source_to_gcal_calendar_cb (GBinding     *binding,
 }
 
 static void
-on_event_created (GObject      *source_object,
+on_event_created (GObject *source_object,
                   GAsyncResult *result,
-                  gpointer      user_data)
+                  gpointer user_data)
 {
   AsyncOpsData *data;
   ECalClient *client;
@@ -369,7 +373,7 @@ on_event_created (GObject      *source_object,
 
   GCAL_ENTRY;
 
-  data = (AsyncOpsData*) user_data;
+  data = (AsyncOpsData *) user_data;
   client = E_CAL_CLIENT (source_object);
   new_uid = NULL;
   error = NULL;
@@ -404,17 +408,17 @@ on_event_created (GObject      *source_object,
  *
  **/
 static void
-on_event_updated (GObject      *source_object,
+on_event_updated (GObject *source_object,
                   GAsyncResult *result,
-                  gpointer      user_data)
+                  gpointer user_data)
 {
   GError *error = NULL;
 
   GCAL_ENTRY;
 
-  if (! e_cal_client_modify_object_finish (E_CAL_CLIENT (source_object),
-                                           result,
-                                           &error))
+  if (!e_cal_client_modify_object_finish (E_CAL_CLIENT (source_object),
+                                          result,
+                                          &error))
     {
       g_warning ("Error updating component: %s", error->message);
       g_error_free (error);
@@ -435,9 +439,9 @@ on_event_updated (GObject      *source_object,
  *
  **/
 static void
-on_event_removed (GObject      *source_object,
+on_event_removed (GObject *source_object,
                   GAsyncResult *result,
-                  gpointer      user_data)
+                  gpointer user_data)
 {
   ECalClient *client;
   GcalEvent *event;
@@ -465,9 +469,9 @@ on_event_removed (GObject      *source_object,
 }
 
 static void
-show_source_error (const gchar  *where,
-                   const gchar  *what,
-                   ESource      *source,
+show_source_error (const gchar *where,
+                   const gchar *what,
+                   ESource *source,
                    const GError *error)
 {
   if (!error || g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
@@ -478,9 +482,9 @@ show_source_error (const gchar  *where,
 }
 
 static void
-source_invoke_authenticate_cb (GObject      *source_object,
+source_invoke_authenticate_cb (GObject *source_object,
                                GAsyncResult *result,
-                               gpointer      user_data)
+                               gpointer user_data)
 {
   ESource *source = E_SOURCE (source_object);
   GError *error = NULL;
@@ -499,9 +503,9 @@ source_invoke_authenticate_cb (GObject      *source_object,
 }
 
 static void
-source_trust_prompt_done_cb (GObject      *source_object,
+source_trust_prompt_done_cb (GObject *source_object,
                              GAsyncResult *result,
-                             gpointer      user_data)
+                             gpointer user_data)
 {
   ETrustPromptResponse response = E_TRUST_PROMPT_RESPONSE_UNKNOWN;
   ESource *source = E_SOURCE (source_object);
@@ -526,13 +530,13 @@ source_trust_prompt_done_cb (GObject      *source_object,
 }
 
 static void
-source_credentials_required_cb (ESourceRegistry         *registry,
-                                ESource                 *source,
+source_credentials_required_cb (ESourceRegistry *registry,
+                                ESource *source,
                                 ESourceCredentialsReason reason,
-                                const gchar             *certificate_pem,
-                                GTlsCertificateFlags     certificate_errors,
-                                const GError            *op_error,
-                                GcalManager             *self)
+                                const gchar *certificate_pem,
+                                GTlsCertificateFlags certificate_errors,
+                                const GError *op_error,
+                                GcalManager *self)
 {
   ECredentialsPrompter *credentials_prompter;
 
@@ -566,9 +570,9 @@ source_credentials_required_cb (ESourceRegistry         *registry,
 }
 
 static void
-source_get_last_credentials_required_arguments_cb (GObject      *source_object,
+source_get_last_credentials_required_arguments_cb (GObject *source_object,
                                                    GAsyncResult *result,
-                                                   gpointer      user_data)
+                                                   gpointer user_data)
 {
   GcalManager *self = user_data;
   ESource *source;
@@ -585,7 +589,7 @@ source_get_last_credentials_required_arguments_cb (GObject      *source_object,
   source = E_SOURCE (source_object);
 
   if (!e_source_get_last_credentials_required_arguments_finish (source, result, &reason,
-          &certificate_pem, &certificate_errors, &op_error, &error))
+                                                                &certificate_pem, &certificate_errors, &op_error, &error))
     {
       /* Can be cancelled only if the manager is disposing/disposed */
       if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
@@ -609,7 +613,7 @@ source_get_last_credentials_required_arguments_cb (GObject      *source_object,
 static void
 gcal_manager_finalize (GObject *object)
 {
-  GcalManager *self =GCAL_MANAGER (object);
+  GcalManager *self = GCAL_MANAGER (object);
 
   GCAL_ENTRY;
 
@@ -617,7 +621,7 @@ gcal_manager_finalize (GObject *object)
 
   if (self->context)
     {
-      g_object_remove_weak_pointer (G_OBJECT (self->context), (gpointer *)&self->context);
+      g_object_remove_weak_pointer (G_OBJECT (self->context), (gpointer *) &self->context);
       self->context = NULL;
     }
 
@@ -630,10 +634,10 @@ gcal_manager_finalize (GObject *object)
 }
 
 static void
-gcal_manager_set_property (GObject      *object,
-                           guint         property_id,
+gcal_manager_set_property (GObject *object,
+                           guint property_id,
                            const GValue *value,
-                           GParamSpec   *pspec)
+                           GParamSpec *pspec)
 {
   GcalManager *self = GCAL_MANAGER (object);
 
@@ -644,7 +648,7 @@ gcal_manager_set_property (GObject      *object,
     case PROP_CONTEXT:
       g_assert (self->context == NULL);
       self->context = g_value_get_object (value);
-      g_object_add_weak_pointer (G_OBJECT (self->context), (gpointer *)&self->context);
+      g_object_add_weak_pointer (G_OBJECT (self->context), (gpointer *) &self->context);
       break;
 
     case PROP_DEFAULT_CALENDAR:
@@ -663,9 +667,9 @@ gcal_manager_set_property (GObject      *object,
 }
 
 static void
-gcal_manager_get_property (GObject    *object,
-                           guint       property_id,
-                           GValue     *value,
+gcal_manager_get_property (GObject *object,
+                           guint property_id,
+                           GValue *value,
                            GParamSpec *pspec)
 {
   GcalManager *self = GCAL_MANAGER (object);
@@ -778,7 +782,7 @@ gcal_manager_init (GcalManager *self)
  *
  * Returns: (transfer full): a newly created #GcalManager
  */
-GcalManager*
+GcalManager *
 gcal_manager_new (GcalContext *context)
 {
   return g_object_new (GCAL_TYPE_MANAGER,
@@ -797,7 +801,7 @@ gcal_manager_new (GcalContext *context)
  *
  * Returns: (nullable)(transfer full): an #ESource, or %NULL.
  */
-ESource*
+ESource *
 gcal_manager_get_source (GcalManager *self,
                          const gchar *uid)
 {
@@ -806,7 +810,7 @@ gcal_manager_get_source (GcalManager *self,
   return e_source_registry_ref_source (self->source_registry, uid);
 }
 
-GList*
+GList *
 gcal_manager_get_calendars (GcalManager *self)
 {
   g_return_val_if_fail (GCAL_IS_MANAGER (self), NULL);
@@ -823,7 +827,7 @@ gcal_manager_get_calendars (GcalManager *self)
  *
  * Returns: (transfer none): a #GListModel with all available #GcalCalendar
  */
-GListModel*
+GListModel *
 gcal_manager_get_calendars_model (GcalManager *self)
 {
   g_return_val_if_fail (GCAL_IS_MANAGER (self), NULL);
@@ -837,7 +841,7 @@ gcal_manager_get_calendars_model (GcalManager *self)
  *
  * Returns: (transfer none): a #GcalCalendar.
  */
-GcalCalendar*
+GcalCalendar *
 gcal_manager_get_default_calendar (GcalManager *self)
 {
   g_autoptr (ESource) default_source = NULL;
@@ -856,7 +860,7 @@ gcal_manager_get_default_calendar (GcalManager *self)
  * Sets the default calendar.
  */
 void
-gcal_manager_set_default_calendar (GcalManager  *self,
+gcal_manager_set_default_calendar (GcalManager *self,
                                    GcalCalendar *calendar)
 {
   g_return_if_fail (GCAL_IS_MANAGER (self));
@@ -876,7 +880,7 @@ gcal_manager_set_default_calendar (GcalManager  *self,
  *
  * Returns: (transfer none): a #GcalTimeline
  */
-GcalTimeline*
+GcalTimeline *
 gcal_manager_get_timeline (GcalManager *self)
 {
   g_return_val_if_fail (GCAL_IS_MANAGER (self), NULL);
@@ -897,7 +901,7 @@ gcal_manager_get_timeline (GcalManager *self)
  * Returns: (nullable)(transfer full): unique identifier of calendar's source, or
  * %NULL.
  */
-gchar*
+gchar *
 gcal_manager_add_source (GcalManager *self,
                          const gchar *name,
                          const gchar *backend,
@@ -949,7 +953,7 @@ gcal_manager_add_source (GcalManager *self,
  */
 void
 gcal_manager_save_source (GcalManager *self,
-                          ESource     *source)
+                          ESource *source)
 {
   GError *error = NULL;
 
@@ -980,8 +984,8 @@ gcal_manager_save_source (GcalManager *self,
 void
 gcal_manager_refresh (GcalManager *self)
 {
-  g_autolist(ESource) collections = NULL;
-  g_autoptr(GList) clients = NULL;
+  g_autolist (ESource) collections = NULL;
+  g_autoptr (GList) clients = NULL;
 
   GCAL_ENTRY;
 
@@ -1040,7 +1044,7 @@ gcal_manager_refresh (GcalManager *self)
  */
 void
 gcal_manager_create_event (GcalManager *self,
-                           GcalEvent   *event)
+                           GcalEvent *event)
 {
   ICalComponent *new_event_icalcomp;
   ECalComponent *component;
@@ -1080,9 +1084,9 @@ gcal_manager_create_event (GcalManager *self,
  * Saves all changes made to @event persistently.
  */
 void
-gcal_manager_update_event (GcalManager           *self,
-                           GcalEvent             *event,
-                           GcalRecurrenceModType  mod)
+gcal_manager_update_event (GcalManager *self,
+                           GcalEvent *event,
+                           GcalRecurrenceModType mod)
 {
   ECalComponent *component;
   GcalCalendar *calendar;
@@ -1115,9 +1119,9 @@ gcal_manager_update_event (GcalManager           *self,
  * Deletes @event.
  */
 void
-gcal_manager_remove_event (GcalManager           *self,
-                           GcalEvent             *event,
-                           GcalRecurrenceModType  mod)
+gcal_manager_remove_event (GcalManager *self,
+                           GcalEvent *event,
+                           GcalRecurrenceModType mod)
 {
   ECalComponent *component;
   GcalCalendar *calendar;
@@ -1164,8 +1168,8 @@ gcal_manager_remove_event (GcalManager           *self,
  */
 void
 gcal_manager_move_event_to_source (GcalManager *self,
-                                   GcalEvent   *event,
-                                   ESource     *dest)
+                                   GcalEvent *event,
+                                   ESource *dest)
 {
   ECalComponent *ecomponent;
   ECalComponent *clone;
@@ -1248,10 +1252,10 @@ gcal_manager_move_event_to_source (GcalManager *self,
  *
  * Returns: (nullable)(transfer full)(content-type GcalEvent):a #GList
  */
-GPtrArray*
+GPtrArray *
 gcal_manager_get_events (GcalManager *self,
-                         GDateTime   *start_date,
-                         GDateTime   *end_date)
+                         GDateTime *start_date,
+                         GDateTime *end_date)
 {
   g_autoptr (GPtrArray) events_at_range = NULL;
 
@@ -1355,7 +1359,7 @@ gcal_manager_startup (GcalManager *self)
       cred_source = e_source_credentials_provider_ref_credentials_source (credentials_provider, source);
 
       if (cred_source && !e_source_equal (source, cred_source))
-	{
+        {
           e_credentials_prompter_set_auto_prompt_disabled_for (self->credentials_prompter, cred_source, FALSE);
 
           /* Only consider SSL errors */

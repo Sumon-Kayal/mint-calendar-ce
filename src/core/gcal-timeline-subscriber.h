@@ -38,21 +38,21 @@ struct _GcalTimelineSubscriberInterface
 {
   GTypeInterface parent;
 
-  GcalRange*         (*get_range)                                (GcalTimelineSubscriber *self);
+  GcalRange *(*get_range) (GcalTimelineSubscriber *self);
 
-  void               (*add_event)                                (GcalTimelineSubscriber *self,
-                                                                  GcalEvent              *event);
+  void (*add_event) (GcalTimelineSubscriber *self,
+                     GcalEvent *event);
 
-  void               (*update_event)                             (GcalTimelineSubscriber *self,
-                                                                  GcalEvent              *old_event,
-                                                                  GcalEvent              *event);
+  void (*update_event) (GcalTimelineSubscriber *self,
+                        GcalEvent *old_event,
+                        GcalEvent *event);
 
-  void               (*remove_event)                             (GcalTimelineSubscriber *self,
-                                                                  GcalEvent              *event);
+  void (*remove_event) (GcalTimelineSubscriber *self,
+                        GcalEvent *event);
 };
 
-GcalRange*           gcal_timeline_subscriber_get_range            (GcalTimelineSubscriber  *self);
+GcalRange *gcal_timeline_subscriber_get_range (GcalTimelineSubscriber *self);
 
-void                 gcal_timeline_subscriber_range_changed        (GcalTimelineSubscriber *self);
+void gcal_timeline_subscriber_range_changed (GcalTimelineSubscriber *self);
 
 G_END_DECLS

@@ -24,15 +24,15 @@
 
 G_BEGIN_DECLS
 
-void                 gcal_view_create_event                      (GcalView              *self,
-                                                                  GcalRange             *range,
-                                                                  gdouble                x,
-                                                                  gdouble                y);
+void gcal_view_create_event (GcalView *self,
+                             GcalRange *range,
+                             gdouble x,
+                             gdouble y);
 
-void                 gcal_view_create_event_detailed             (GcalView              *self,
-                                                                  GcalRange             *range);
+void gcal_view_create_event_detailed (GcalView *self,
+                                      GcalRange *range);
 
-void                 gcal_view_event_activated                   (GcalView              *self,
-                                                                  GcalEventWidget       *event_widget);
+void gcal_view_event_activated (GcalView *self,
+                                GcalEventWidget *event_widget);
 
 G_END_DECLS

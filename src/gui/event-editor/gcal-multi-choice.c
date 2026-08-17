@@ -26,34 +26,34 @@
 
 struct _GcalMultiChoice
 {
-  GtkBox                          parent;
+  GtkBox parent;
 
-  GtkWidget                      *down_button;
-  GtkWidget                      *button;
-  GtkStack                       *stack;
-  GtkWidget                      *up_button;
-  GtkWidget                      *label1;
-  GtkWidget                      *label2;
+  GtkWidget *down_button;
+  GtkWidget *button;
+  GtkStack *stack;
+  GtkWidget *up_button;
+  GtkWidget *label1;
+  GtkWidget *label2;
 
-  gint                            value;
-  gint                            min_value;
-  gint                            max_value;
-  gboolean                        wrap;
-  gboolean                        animate;
-  gchar                          *category;
-  gchar                          *prev_button_tooltip_text;
-  gchar                          *next_button_tooltip_text;
+  gint value;
+  gint min_value;
+  gint max_value;
+  gboolean wrap;
+  gboolean animate;
+  gchar *category;
+  gchar *prev_button_tooltip_text;
+  gchar *next_button_tooltip_text;
 
-  GtkWidget                     **choices;
-  gint                            n_choices;
-  GtkWidget                      *active;
-  GtkWidget                      *popover;
+  GtkWidget **choices;
+  gint n_choices;
+  GtkWidget *active;
+  GtkWidget *popover;
 
-  GcalMultiChoiceFormatCallback   format_cb;
-  gpointer                        format_data;
-  GDestroyNotify                  format_destroy;
-  GcalMultiChoiceValueCallback    prev_cb;
-  GcalMultiChoiceValueCallback    next_cb;
+  GcalMultiChoiceFormatCallback format_cb;
+  gpointer format_data;
+  GDestroyNotify format_destroy;
+  GcalMultiChoiceValueCallback prev_cb;
+  GcalMultiChoiceValueCallback next_cb;
 };
 
 enum
@@ -78,16 +78,18 @@ enum
   LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
-static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
+static guint signals[LAST_SIGNAL] = {
+  0,
+};
+static GParamSpec *properties[NUM_PROPERTIES] = {
+  NULL,
+};
 
 static void gcal_multi_choice_accessible_init (GtkAccessibleInterface *iface);
 
 static void gcal_multi_choice_accessible_range_init (GtkAccessibleRangeInterface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalMultiChoice, gcal_multi_choice, GTK_TYPE_BOX,
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_ACCESSIBLE, gcal_multi_choice_accessible_init)
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_ACCESSIBLE_RANGE, gcal_multi_choice_accessible_range_init))
+G_DEFINE_TYPE_WITH_CODE (GcalMultiChoice, gcal_multi_choice, GTK_TYPE_BOX, G_IMPLEMENT_INTERFACE (GTK_TYPE_ACCESSIBLE, gcal_multi_choice_accessible_init) G_IMPLEMENT_INTERFACE (GTK_TYPE_ACCESSIBLE_RANGE, gcal_multi_choice_accessible_range_init))
 
 /*
  * Auxiliary methods
@@ -95,7 +97,7 @@ G_DEFINE_TYPE_WITH_CODE (GcalMultiChoice, gcal_multi_choice, GTK_TYPE_BOX,
 
 static gchar *
 get_value_string (GcalMultiChoice *self,
-                  gint             value)
+                  gint value)
 {
   if (self->format_cb)
     return self->format_cb (self, value, self->format_data);
@@ -106,8 +108,8 @@ get_value_string (GcalMultiChoice *self,
 }
 
 static void
-apply_value (GcalMultiChoice        *self,
-             GtkStackTransitionType  transition)
+apply_value (GcalMultiChoice *self,
+             GtkStackTransitionType transition)
 {
   GtkWidget *label;
   const gchar *name;
@@ -143,9 +145,9 @@ apply_value (GcalMultiChoice        *self,
 }
 
 static void
-set_value (GcalMultiChoice         *self,
-           gint                     value,
-           GtkStackTransitionType   transition)
+set_value (GcalMultiChoice *self,
+           gint value,
+           GtkStackTransitionType transition)
 {
   value = CLAMP (value, self->min_value, self->max_value);
 
@@ -172,7 +174,7 @@ go_up (GcalMultiChoice *self)
   gint value;
 
   value = self->next_cb ? self->next_cb (self->value) : self->value + 1;
-  g_assert_cmpint (value, > ,self->value);
+  g_assert_cmpint (value, >, self->value);
 
   if (value > self->max_value)
     {
@@ -196,7 +198,7 @@ go_down (GcalMultiChoice *self)
   gboolean wrapped = FALSE;
 
   value = self->prev_cb ? self->prev_cb (self->value) : self->value - 1;
-  g_assert_cmpint (value, < , self->value);
+  g_assert_cmpint (value, <, self->value);
 
   if (value < self->min_value)
     {
@@ -243,7 +245,7 @@ set_accessibility_label (GcalMultiChoice *self)
 }
 
 static void
-button_clicked_cb (GtkWidget       *button,
+button_clicked_cb (GtkWidget *button,
                    GcalMultiChoice *self)
 {
   GtkStateFlags state_flags;
@@ -264,10 +266,10 @@ button_clicked_cb (GtkWidget       *button,
 }
 
 static gboolean
-key_pressed_cb (GcalMultiChoice       *self,
-                guint                  keyval,
-                guint                  keycode,
-                GdkModifierType        state,
+key_pressed_cb (GcalMultiChoice *self,
+                guint keyval,
+                guint keycode,
+                GdkModifierType state,
                 GtkEventControllerKey *event_controller)
 {
   gboolean is_active;
@@ -347,7 +349,7 @@ popover_destroy_cb (GcalMultiChoice *menu_button)
 
 static void
 button_state_flags_changed_cb (GcalMultiChoice *self,
-                               GtkStateFlags    previous_state_flags)
+                               GtkStateFlags previous_state_flags)
 {
   GtkStateFlags state_flags;
 
@@ -390,9 +392,9 @@ gcal_multi_choice_dispose (GObject *object)
 }
 
 static void
-gcal_multi_choice_get_property (GObject    *object,
-                                guint       property_id,
-                                GValue     *value,
+gcal_multi_choice_get_property (GObject *object,
+                                guint property_id,
+                                GValue *value,
                                 GParamSpec *pspec)
 {
   GcalMultiChoice *self = GCAL_MULTI_CHOICE (object);
@@ -442,10 +444,10 @@ gcal_multi_choice_get_property (GObject    *object,
 }
 
 static void
-gcal_multi_choice_set_property (GObject      *object,
-                                guint         property_id,
+gcal_multi_choice_set_property (GObject *object,
+                                guint property_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalMultiChoice *self = GCAL_MULTI_CHOICE (object);
 
@@ -478,7 +480,7 @@ gcal_multi_choice_set_property (GObject      *object,
       break;
 
     case PROP_CHOICES:
-      gcal_multi_choice_set_choices (self, (const gchar **)g_value_get_boxed (value));
+      gcal_multi_choice_set_choices (self, (const gchar **) g_value_get_boxed (value));
       break;
 
     case PROP_POPOVER:
@@ -506,7 +508,7 @@ gcal_multi_choice_set_property (GObject      *object,
 }
 
 static void
-gcal_multi_choice_notify (GObject    *object,
+gcal_multi_choice_notify (GObject *object,
                           GParamSpec *pspec)
 {
   if (strcmp (pspec->name, "focus-on-click") == 0)
@@ -526,7 +528,7 @@ gcal_multi_choice_notify (GObject    *object,
  */
 
 static void
-gcal_multi_choice_state_flags_changed (GtkWidget    *widget,
+gcal_multi_choice_state_flags_changed (GtkWidget *widget,
                                        GtkStateFlags previous_state_flags)
 {
   GcalMultiChoice *self = GCAL_MULTI_CHOICE (widget);
@@ -544,13 +546,13 @@ gcal_multi_choice_state_flags_changed (GtkWidget    *widget,
 }
 
 static void
-gcal_multi_choice_measure (GtkWidget      *widget,
-                           GtkOrientation  orientation,
-                           int             for_size,
-                           int            *minimum,
-                           int            *natural,
-                           int            *minimum_baseline,
-                           int            *natural_baseline)
+gcal_multi_choice_measure (GtkWidget *widget,
+                           GtkOrientation orientation,
+                           int for_size,
+                           int *minimum,
+                           int *natural,
+                           int *minimum_baseline,
+                           int *natural_baseline)
 {
   GcalMultiChoice *self = GCAL_MULTI_CHOICE (widget);
 
@@ -559,27 +561,26 @@ gcal_multi_choice_measure (GtkWidget      *widget,
                       for_size,
                       minimum, natural,
                       minimum_baseline, natural_baseline);
-
 }
 
 static void
 gcal_multi_choice_size_allocate (GtkWidget *widget,
-                                 int        width,
-                                 int        height,
-                                 int        baseline)
+                                 int width,
+                                 int height,
+                                 int baseline)
 {
-  GcalMultiChoice *self= GCAL_MULTI_CHOICE (widget);
+  GcalMultiChoice *self = GCAL_MULTI_CHOICE (widget);
 
   gtk_widget_size_allocate (self->button,
-                            &(GtkAllocation) { 0, 0, width, height },
+                            &(GtkAllocation){ 0, 0, width, height },
                             baseline);
   if (self->popover)
     gtk_popover_present (GTK_POPOVER (self->popover));
 }
 
 static gboolean
-gcal_multi_choice_focus (GtkWidget        *widget,
-                         GtkDirectionType  direction)
+gcal_multi_choice_focus (GtkWidget *widget,
+                         GtkDirectionType direction)
 {
   GcalMultiChoice *self = GCAL_MULTI_CHOICE (widget);
 
@@ -602,8 +603,8 @@ gcal_multi_choice_grab_focus (GtkWidget *widget)
  */
 
 static gboolean
-gcal_multi_choice_accessible_get_platform_state (GtkAccessible              *accessible,
-                                                 GtkAccessiblePlatformState  state)
+gcal_multi_choice_accessible_get_platform_state (GtkAccessible *accessible,
+                                                 GtkAccessiblePlatformState state)
 {
   GcalMultiChoice *self = GCAL_MULTI_CHOICE (accessible);
 
@@ -616,7 +617,7 @@ gcal_multi_choice_accessible_get_platform_state (GtkAccessible              *acc
 
 static gboolean
 gcal_multi_choice_accessible_range_set_current_value (GtkAccessibleRange *accessible_range,
-                                                      gdouble             value)
+                                                      gdouble value)
 {
   gcal_multi_choice_set_value (GCAL_MULTI_CHOICE (accessible_range), value);
   return TRUE;
@@ -646,27 +647,27 @@ gcal_multi_choice_class_init (GcalMultiChoiceClass *class)
   properties[PROP_VALUE] =
       g_param_spec_int ("value", "Value", "Value",
                         G_MININT, G_MAXINT, 0,
-                        G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_MIN_VALUE] =
       g_param_spec_int ("min-value", "Minimum Value", "Minimum Value",
                         G_MININT, G_MAXINT, 0,
-                        G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_MAX_VALUE] =
       g_param_spec_int ("max-value", "Maximum Value", "Maximum Value",
                         G_MININT, G_MAXINT, 0,
-                        G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                        G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_WRAP] =
       g_param_spec_boolean ("wrap", "Wrap", "Wrap",
                             FALSE,
-                            G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_ANIMATE] =
       g_param_spec_boolean ("animate", "Animate", "Animate",
                             FALSE,
-                            G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                            G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_CHOICES] =
       g_param_spec_boxed ("choices", "Choices", "Choices",
                           G_TYPE_STRV,
-                          G_PARAM_WRITABLE|G_PARAM_EXPLICIT_NOTIFY);
+                          G_PARAM_WRITABLE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_POPOVER] =
       g_param_spec_object ("popover", "Popover", "Popover",
                            GTK_TYPE_POPOVER,
@@ -674,26 +675,26 @@ gcal_multi_choice_class_init (GcalMultiChoiceClass *class)
   properties[PROP_CATEGORY] =
       g_param_spec_string ("category", "Category", "Category",
                            "",
-                           G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_PREVIOUS_BUTTON_TOOLTIP] =
       g_param_spec_string ("previous-button-tooltip", NULL, NULL,
                            NULL,
-                           G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
   properties[PROP_NEXT_BUTTON_TOOLTIP] =
       g_param_spec_string ("next-button-tooltip", NULL, NULL,
                            NULL,
-                           G_PARAM_READWRITE|G_PARAM_EXPLICIT_NOTIFY);
+                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY);
 
   g_object_class_install_properties (object_class, NUM_PROPERTIES, properties);
 
   signals[WRAPPED] =
-    g_signal_new ("wrapped",
-                  G_TYPE_FROM_CLASS (object_class),
-                  G_SIGNAL_RUN_LAST,
-                  0,
-                  NULL, NULL,
-                  NULL,
-                  G_TYPE_NONE, 0);
+      g_signal_new ("wrapped",
+                    G_TYPE_FROM_CLASS (object_class),
+                    G_SIGNAL_RUN_LAST,
+                    0,
+                    NULL, NULL,
+                    NULL,
+                    G_TYPE_NONE, 0);
   signals[ACTIVATE] =
       g_signal_new ("activate",
                     G_TYPE_FROM_CLASS (object_class),
@@ -769,7 +770,7 @@ gcal_multi_choice_new (void)
  */
 void
 gcal_multi_choice_set_value (GcalMultiChoice *self,
-                             gint             value)
+                             gint value)
 {
   g_assert (GCAL_IS_MULTI_CHOICE (self));
 
@@ -800,8 +801,8 @@ gcal_multi_choice_get_value (GcalMultiChoice *self)
  * Sets the available choices for @self.
  */
 void
-gcal_multi_choice_set_choices (GcalMultiChoice  *self,
-                               const gchar     **choices)
+gcal_multi_choice_set_choices (GcalMultiChoice *self,
+                               const gchar **choices)
 {
   gint i;
 
@@ -811,7 +812,7 @@ gcal_multi_choice_set_choices (GcalMultiChoice  *self,
     gtk_stack_remove (self->stack, self->choices[i]);
   g_free (self->choices);
 
-  self->n_choices = g_strv_length ((gchar **)choices);
+  self->n_choices = g_strv_length ((gchar **) choices);
   self->choices = g_new (GtkWidget *, self->n_choices);
   for (i = 0; i < self->n_choices; i++)
     {
@@ -835,10 +836,10 @@ gcal_multi_choice_set_choices (GcalMultiChoice  *self,
  * Sets the format callback.
  */
 void
-gcal_multi_choice_set_format_callback (GcalMultiChoice               *self,
-                                       GcalMultiChoiceFormatCallback  callback,
-                                       gpointer                       user_data,
-                                       GDestroyNotify                 destroy)
+gcal_multi_choice_set_format_callback (GcalMultiChoice *self,
+                                       GcalMultiChoiceFormatCallback callback,
+                                       gpointer user_data,
+                                       GDestroyNotify destroy)
 {
   g_assert (GCAL_IS_MULTI_CHOICE (self));
 
@@ -860,9 +861,9 @@ gcal_multi_choice_set_format_callback (GcalMultiChoice               *self,
  * Sets the popover for @self.
  */
 void
-gcal_multi_choice_set_value_callbacks (GcalMultiChoice              *self,
-                                       GcalMultiChoiceValueCallback  prev_cb,
-                                       GcalMultiChoiceValueCallback  next_cb)
+gcal_multi_choice_set_value_callbacks (GcalMultiChoice *self,
+                                       GcalMultiChoiceValueCallback prev_cb,
+                                       GcalMultiChoiceValueCallback next_cb)
 {
   self->prev_cb = prev_cb;
   self->next_cb = next_cb;
@@ -870,7 +871,7 @@ gcal_multi_choice_set_value_callbacks (GcalMultiChoice              *self,
 
 void
 gcal_multi_choice_set_popover (GcalMultiChoice *self,
-                               GtkWidget       *popover)
+                               GtkWidget *popover)
 {
   g_assert (GCAL_IS_MULTI_CHOICE (self));
   g_assert (popover == NULL || GTK_IS_POPOVER (popover));
@@ -935,7 +936,7 @@ gcal_multi_choice_get_popover (GcalMultiChoice *self)
  */
 void
 gcal_multi_choice_set_category (GcalMultiChoice *self,
-                                const gchar     *category)
+                                const gchar *category)
 {
   g_assert (GCAL_IS_MULTI_CHOICE (self));
 
@@ -955,7 +956,7 @@ gcal_multi_choice_set_category (GcalMultiChoice *self,
  *
  * Returns: (transfer none): the category for the multi-choice.
  */
-const gchar*
+const gchar *
 gcal_multi_choice_get_category (GcalMultiChoice *self)
 {
   g_assert (GCAL_IS_MULTI_CHOICE (self));

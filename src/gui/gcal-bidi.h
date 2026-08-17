@@ -14,6 +14,6 @@
 G_BEGIN_DECLS
 
 PangoDirection gcal_find_base_dir (const gchar *text,
-                                   gint         length);
+                                   gint length);
 
 G_END_DECLS

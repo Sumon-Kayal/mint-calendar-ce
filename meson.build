@@ -1,5 +1,5 @@
 project(
-  'gnome-calendar',
+  'mint-calendar-ce',
                'c',
            version: '1.0',
            license: 'GPL3+',
@@ -25,7 +25,7 @@ calendar_prefix = get_option('prefix')
 calendar_bindir = calendar_prefix / get_option('bindir')
 calendar_localedir = calendar_prefix / get_option('localedir')
 calendar_datadir = calendar_prefix / get_option('datadir')
-calendar_pkgdatadir = calendar_datadir / meson.project_name()
+calendar_pkgdatadir = calendar_datadir / 'mint-calendar-ce'
 calendar_schemadir = calendar_datadir / 'glib-2.0' / 'schemas'
 
 
@@ -37,10 +37,12 @@ if get_option('profile') == 'development'
   find_program('git')
   rev_txt = run_command('git','rev-parse','--short','HEAD', check: true).stdout().strip()
   profile = 'Devel'
+  profile_path = '/Devel'
   name_suffix = ' (Development)'
   rev = '-@0@'.format(rev_txt)
 else
   profile = ''
+  profile_path = ''
   name_suffix = ''
   rev = ''
 endif

@@ -24,10 +24,10 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_STUB_CALENDAR (gcal_stub_calendar_get_type())
+#define GCAL_TYPE_STUB_CALENDAR (gcal_stub_calendar_get_type ())
 G_DECLARE_FINAL_TYPE (GcalStubCalendar, gcal_stub_calendar, GCAL, STUB_CALENDAR, GcalCalendar)
 
-GcalCalendar*        gcal_stub_calendar_new                      (GCancellable       *cancellable,
-                                                                  GError            **error);
+GcalCalendar *gcal_stub_calendar_new (GCancellable *cancellable,
+                                      GError **error);
 
 G_END_DECLS

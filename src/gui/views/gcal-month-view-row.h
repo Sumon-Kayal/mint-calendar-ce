@@ -29,37 +29,37 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_MONTH_VIEW_ROW (gcal_month_view_row_get_type())
+#define GCAL_TYPE_MONTH_VIEW_ROW (gcal_month_view_row_get_type ())
 G_DECLARE_FINAL_TYPE (GcalMonthViewRow, gcal_month_view_row, GCAL, MONTH_VIEW_ROW, GtkWidget)
 
-GtkWidget *          gcal_month_view_row_new                     (void);
+GtkWidget *gcal_month_view_row_new (void);
 
-GcalContext *        gcal_month_view_row_get_context             (GcalMonthViewRow   *self);
+GcalContext *gcal_month_view_row_get_context (GcalMonthViewRow *self);
 
-void                 gcal_month_view_row_set_context             (GcalMonthViewRow   *self,
-                                                                  GcalContext        *context);
+void gcal_month_view_row_set_context (GcalMonthViewRow *self,
+                                      GcalContext *context);
 
-GcalRange *          gcal_month_view_row_get_range               (GcalMonthViewRow   *self);
+GcalRange *gcal_month_view_row_get_range (GcalMonthViewRow *self);
 
-void                 gcal_month_view_row_set_range               (GcalMonthViewRow   *self,
-                                                                  GcalRange          *range);
+void gcal_month_view_row_set_range (GcalMonthViewRow *self,
+                                    GcalRange *range);
 
-void                 gcal_month_view_row_add_event               (GcalMonthViewRow   *self,
-                                                                  GcalEvent          *event);
+void gcal_month_view_row_add_event (GcalMonthViewRow *self,
+                                    GcalEvent *event);
 
-void                 gcal_month_view_row_remove_event            (GcalMonthViewRow   *self,
-                                                                  GcalEvent          *event);
+void gcal_month_view_row_remove_event (GcalMonthViewRow *self,
+                                       GcalEvent *event);
 
-GList*               gcal_month_view_row_get_children_by_uuid    (GcalMonthViewRow      *self,
-                                                                  GcalRecurrenceModType  mod,
-                                                                  const gchar           *uuid);
+GList *gcal_month_view_row_get_children_by_uuid (GcalMonthViewRow *self,
+                                                 GcalRecurrenceModType mod,
+                                                 const gchar *uuid);
 
-GtkWidget*           gcal_month_view_row_get_cell_at_x           (GcalMonthViewRow   *self,
-                                                                  gdouble             x);
+GtkWidget *gcal_month_view_row_get_cell_at_x (GcalMonthViewRow *self,
+                                              gdouble x);
 
-void                 gcal_month_view_row_update_selection       (GcalMonthViewRow    *self,
-                                                                 GcalRange           *selection_range);
+void gcal_month_view_row_update_selection (GcalMonthViewRow *self,
+                                           GcalRange *selection_range);
 
-gboolean             gcal_month_view_row_focus_adjacent_cell    (GcalMonthViewRow    *self,
-                                                                 GtkWidget           *widget);
+gboolean gcal_month_view_row_focus_adjacent_cell (GcalMonthViewRow *self,
+                                                  GtkWidget *widget);
 G_END_DECLS

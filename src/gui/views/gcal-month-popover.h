@@ -24,22 +24,21 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_MONTH_POPOVER (gcal_month_popover_get_type())
+#define GCAL_TYPE_MONTH_POPOVER (gcal_month_popover_get_type ())
 G_DECLARE_FINAL_TYPE (GcalMonthPopover, gcal_month_popover, GCAL, MONTH_POPOVER, GtkWidget)
 
-GtkWidget*           gcal_month_popover_new                      (void);
+GtkWidget *gcal_month_popover_new (void);
 
+void gcal_month_popover_set_relative_to (GcalMonthPopover *self,
+                                         GtkWidget *relative_to);
 
-void                 gcal_month_popover_set_relative_to          (GcalMonthPopover   *self,
-                                                                  GtkWidget          *relative_to);
+void gcal_month_popover_popup (GcalMonthPopover *self);
 
-void                 gcal_month_popover_popup                    (GcalMonthPopover   *self);
+void gcal_month_popover_popdown (GcalMonthPopover *self);
 
-void                 gcal_month_popover_popdown                  (GcalMonthPopover   *self);
+GDateTime *gcal_month_popover_get_date (GcalMonthPopover *self);
 
-GDateTime*           gcal_month_popover_get_date                 (GcalMonthPopover   *self);
-
-void                 gcal_month_popover_set_date                 (GcalMonthPopover   *self,
-                                                                  GDateTime          *date);
+void gcal_month_popover_set_date (GcalMonthPopover *self,
+                                  GDateTime *date);
 
 G_END_DECLS

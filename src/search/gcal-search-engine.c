@@ -20,22 +20,22 @@
 
 #define G_LOG_DOMAIN "GcalSearchEngine"
 
+#include "gcal-search-engine.h"
 #include "gcal-context.h"
 #include "gcal-date-time-utils.h"
 #include "gcal-debug.h"
-#include "gcal-search-engine.h"
 #include "gcal-search-model.h"
-#include "gcal-timeline.h"
 #include "gcal-timeline-subscriber.h"
+#include "gcal-timeline.h"
 #include "gcal-utils.h"
 
 struct _GcalSearchEngine
 {
-  GObject             parent;
+  GObject parent;
 
-  GcalTimeline       *timeline;
+  GcalTimeline *timeline;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 G_DEFINE_TYPE (GcalSearchEngine, gcal_search_engine, G_TYPE_OBJECT)
@@ -47,16 +47,15 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS];
-
+static GParamSpec *properties[N_PROPS];
 
 /*
  * Callbacks
  */
 
 static void
-on_manager_calendar_added_cb (GcalManager      *manager,
-                              GcalCalendar     *calendar,
+on_manager_calendar_added_cb (GcalManager *manager,
+                              GcalCalendar *calendar,
                               GcalSearchEngine *self)
 {
   g_debug ("Adding calendar %s to search results", gcal_calendar_get_id (calendar));
@@ -65,8 +64,8 @@ on_manager_calendar_added_cb (GcalManager      *manager,
 }
 
 static void
-on_manager_calendar_removed_cb (GcalManager      *manager,
-                                GcalCalendar     *calendar,
+on_manager_calendar_removed_cb (GcalManager *manager,
+                                GcalCalendar *calendar,
                                 GcalSearchEngine *self)
 {
   g_debug ("Removing calendar %s from search results", gcal_calendar_get_id (calendar));
@@ -75,9 +74,9 @@ on_manager_calendar_removed_cb (GcalManager      *manager,
 }
 
 static void
-search_model_hits_cb (GObject      *source,
+search_model_hits_cb (GObject *source,
                       GAsyncResult *result,
-                      gpointer      data)
+                      gpointer data)
 {
   g_autoptr (GError) error = NULL;
   g_autoptr (GTask) task = data;
@@ -99,7 +98,6 @@ search_model_hits_cb (GObject      *source,
   GCAL_EXIT;
 }
 
-
 /*
  * GObject overrides
  */
@@ -107,7 +105,7 @@ search_model_hits_cb (GObject      *source,
 static void
 gcal_search_engine_finalize (GObject *object)
 {
-  GcalSearchEngine *self = (GcalSearchEngine *)object;
+  GcalSearchEngine *self = (GcalSearchEngine *) object;
 
   g_clear_object (&self->context);
   g_clear_object (&self->timeline);
@@ -118,7 +116,7 @@ gcal_search_engine_finalize (GObject *object)
 static void
 gcal_search_engine_constructed (GObject *object)
 {
-  GcalSearchEngine *self = (GcalSearchEngine *)object;
+  GcalSearchEngine *self = (GcalSearchEngine *) object;
   GcalManager *manager;
 
   G_OBJECT_CLASS (gcal_search_engine_parent_class)->constructed (object);
@@ -132,9 +130,9 @@ gcal_search_engine_constructed (GObject *object)
 }
 
 static void
-gcal_search_engine_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
+gcal_search_engine_get_property (GObject *object,
+                                 guint prop_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
   GcalSearchEngine *self = GCAL_SEARCH_ENGINE (object);
@@ -151,10 +149,10 @@ gcal_search_engine_get_property (GObject    *object,
 }
 
 static void
-gcal_search_engine_set_property (GObject      *object,
-                                 guint         prop_id,
+gcal_search_engine_set_property (GObject *object,
+                                 guint prop_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
   GcalSearchEngine *self = GCAL_SEARCH_ENGINE (object);
 
@@ -208,11 +206,11 @@ gcal_search_engine_new (GcalContext *context)
 }
 
 void
-gcal_search_engine_search (GcalSearchEngine    *self,
-                           const gchar         *search_query,
-                           GCancellable        *cancellable,
-                           GAsyncReadyCallback  callback,
-                           gpointer             user_data)
+gcal_search_engine_search (GcalSearchEngine *self,
+                           const gchar *search_query,
+                           GCancellable *cancellable,
+                           GAsyncReadyCallback callback,
+                           gpointer user_data)
 {
   g_autoptr (GcalSearchModel) model = NULL;
   g_autoptr (GDateTime) range_start = NULL;
@@ -240,10 +238,10 @@ gcal_search_engine_search (GcalSearchEngine    *self,
   gcal_search_model_wait_for_hits (model, cancellable, search_model_hits_cb, g_object_ref (task));
 }
 
-GListModel*
-gcal_search_engine_search_finish (GcalSearchEngine  *self,
-                                  GAsyncResult      *result,
-                                  GError           **error)
+GListModel *
+gcal_search_engine_search_finish (GcalSearchEngine *self,
+                                  GAsyncResult *result,
+                                  GError **error)
 {
   g_return_val_if_fail (GCAL_IS_SEARCH_ENGINE (self), NULL);
   g_return_val_if_fail (G_IS_TASK (result), NULL);

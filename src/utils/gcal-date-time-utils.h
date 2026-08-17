@@ -33,31 +33,29 @@ G_BEGIN_DECLS
  */
 #define gcal_clear_date_time(dt) g_clear_pointer (dt, g_date_time_unref)
 
-gboolean             gcal_set_date_time                          (GDateTime         **dest,
-                                                                  GDateTime          *src);
+gboolean gcal_set_date_time (GDateTime **dest,
+                             GDateTime *src);
 
-guint8               gcal_date_time_get_days_in_month            (GDateTime          *date);
+guint8 gcal_date_time_get_days_in_month (GDateTime *date);
 
-GDateTime*           gcal_date_time_get_start_of_week            (GDateTime          *date);
+GDateTime *gcal_date_time_get_start_of_week (GDateTime *date);
 
-GDateTime*           gcal_date_time_get_end_of_week              (GDateTime          *date);
+GDateTime *gcal_date_time_get_end_of_week (GDateTime *date);
 
-gint                 gcal_date_time_compare_date                 (GDateTime          *dt1,
-                                                                  GDateTime          *dt2);
+gint gcal_date_time_compare_date (GDateTime *dt1,
+                                  GDateTime *dt2);
 
-ICalTime*            gcal_date_time_to_icaltime                  (GDateTime          *dt);
+ICalTime *gcal_date_time_to_icaltime (GDateTime *dt);
 
-gboolean             gcal_date_time_is_date                      (GDateTime          *dt);
+gboolean gcal_date_time_is_date (GDateTime *dt);
 
-GDateTime*           gcal_date_time_from_icaltime                (const ICalTime     *date);
+GDateTime *gcal_date_time_from_icaltime (const ICalTime *date);
 
-ICalTimezone*        gcal_timezone_to_icaltimezone               (GTimeZone          *tz);
+ICalTimezone *gcal_timezone_to_icaltimezone (GTimeZone *tz);
 
+GDateTime *gcal_date_time_add_floating_minutes (GDateTime *initial,
+                                                gint minutes);
 
-GDateTime*           gcal_date_time_add_floating_minutes         (GDateTime          *initial,
-                                                                  gint                minutes);
-
-gchar*               gcal_date_time_format_utc_offset            (GDateTime          *date_time);
+gchar *gcal_date_time_format_utc_offset (GDateTime *date_time);
 
 G_END_DECLS
-

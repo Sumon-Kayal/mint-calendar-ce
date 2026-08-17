@@ -29,7 +29,7 @@
 
 struct _GcalAlarmRow
 {
-  AdwActionRow        parent;
+  AdwActionRow parent;
 
   ECalComponentAlarm *alarm;
 };
@@ -50,14 +50,18 @@ enum
   N_SIGNALS,
 };
 
-static guint signals [N_SIGNALS] = { 0, };
-static GParamSpec *properties [N_PROPS] = { NULL, };
+static guint signals[N_SIGNALS] = {
+  0,
+};
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
  */
 
-static gchar*
+static gchar *
 format_alarm_duration (ICalDuration *duration)
 {
   guint minutes;
@@ -99,7 +103,7 @@ format_alarm_duration (ICalDuration *duration)
                                                                            "%1$u days, %2$u hours, and %3$u minutes before",
                                                                            minutes),
                                                               hours),
-                                                  days);
+                                                 days);
               return g_strdup_printf (format, days, hours, minutes);
             }
           else
@@ -110,14 +114,14 @@ format_alarm_duration (ICalDuration *duration)
                */
               const gchar *format = g_dngettext (GETTEXT_PACKAGE,
                                                  g_dngettext (GETTEXT_PACKAGE,
-                                                             "%1$u day and %2$u hour before",
-                                                             "%1$u day and %2$u hours before",
+                                                              "%1$u day and %2$u hour before",
+                                                              "%1$u day and %2$u hours before",
                                                               hours),
                                                  g_dngettext (GETTEXT_PACKAGE,
-                                                             "%1$u days and %2$u hour before",
-                                                             "%1$u days and %2$u hours before",
+                                                              "%1$u days and %2$u hour before",
+                                                              "%1$u days and %2$u hours before",
                                                               hours),
-                                                  days);
+                                                 days);
               return g_strdup_printf (format, days, hours);
             }
         }
@@ -130,14 +134,14 @@ format_alarm_duration (ICalDuration *duration)
                */
               const gchar *format = g_dngettext (GETTEXT_PACKAGE,
                                                  g_dngettext (GETTEXT_PACKAGE,
-                                                             "%1$u day and %2$u minute before",
-                                                             "%1$u day and %2$u minutes before",
+                                                              "%1$u day and %2$u minute before",
+                                                              "%1$u day and %2$u minutes before",
                                                               minutes),
                                                  g_dngettext (GETTEXT_PACKAGE,
-                                                             "%1$u days and %2$u minute before",
-                                                             "%1$u days and %2$u minutes before",
+                                                              "%1$u days and %2$u minute before",
+                                                              "%1$u days and %2$u minutes before",
                                                               minutes),
-                                                  days);
+                                                 days);
               return g_strdup_printf (format, days, minutes);
             }
           else
@@ -146,7 +150,7 @@ format_alarm_duration (ICalDuration *duration)
               const gchar *format = g_dngettext (GETTEXT_PACKAGE,
                                                  "%1$u day before",
                                                  "%1$u days before",
-                                                  days);
+                                                 days);
               return g_strdup_printf (format, days);
             }
         }
@@ -178,7 +182,7 @@ format_alarm_duration (ICalDuration *duration)
               const gchar *format = g_dngettext (GETTEXT_PACKAGE,
                                                  "%1$u hour before",
                                                  "%1$u hours before",
-                                                  hours);
+                                                 hours);
               return g_strdup_printf (format, hours);
             }
         }
@@ -190,12 +194,12 @@ format_alarm_duration (ICalDuration *duration)
               const gchar *format = g_dngettext (GETTEXT_PACKAGE,
                                                  "%1$u minute before",
                                                  "%1$u minutes before",
-                                                  minutes);
+                                                 minutes);
               return g_strdup_printf (format, minutes);
             }
           else
             {
-              return g_strdup (_("Event start time"));
+              return g_strdup (_ ("Event start time"));
             }
         }
     }
@@ -215,18 +219,16 @@ setup_alarm (GcalAlarmRow *self)
   adw_preferences_row_set_title (ADW_PREFERENCES_ROW (self), formatted_duration);
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_remove_button_clicked_cb (GtkButton    *button,
+on_remove_button_clicked_cb (GtkButton *button,
                              GcalAlarmRow *self)
 {
   g_signal_emit (self, signals[REMOVE_ALARM], 0);
 }
-
 
 /*
  * GObject overrides
@@ -235,7 +237,7 @@ on_remove_button_clicked_cb (GtkButton    *button,
 static void
 gcal_alarm_row_finalize (GObject *object)
 {
-  GcalAlarmRow *self = (GcalAlarmRow *)object;
+  GcalAlarmRow *self = (GcalAlarmRow *) object;
 
   g_clear_pointer (&self->alarm, e_cal_component_alarm_free);
 
@@ -243,9 +245,9 @@ gcal_alarm_row_finalize (GObject *object)
 }
 
 static void
-gcal_alarm_row_get_property (GObject    *object,
-                             guint       prop_id,
-                             GValue     *value,
+gcal_alarm_row_get_property (GObject *object,
+                             guint prop_id,
+                             GValue *value,
                              GParamSpec *pspec)
 {
   GcalAlarmRow *self = GCAL_ALARM_ROW (object);
@@ -262,10 +264,10 @@ gcal_alarm_row_get_property (GObject    *object,
 }
 
 static void
-gcal_alarm_row_set_property (GObject      *object,
-                             guint         prop_id,
+gcal_alarm_row_set_property (GObject *object,
+                             guint prop_id,
                              const GValue *value,
-                             GParamSpec   *pspec)
+                             GParamSpec *pspec)
 {
   GcalAlarmRow *self = GCAL_ALARM_ROW (object);
 
@@ -327,7 +329,7 @@ gcal_alarm_row_init (GcalAlarmRow *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-GtkWidget*
+GtkWidget *
 gcal_alarm_row_new (ECalComponentAlarm *alarm)
 {
   return g_object_new (GCAL_TYPE_ALARM_ROW,
@@ -335,7 +337,7 @@ gcal_alarm_row_new (ECalComponentAlarm *alarm)
                        NULL);
 }
 
-ECalComponentAlarm*
+ECalComponentAlarm *
 gcal_alarm_row_get_alarm (GcalAlarmRow *self)
 {
   g_return_val_if_fail (GCAL_IS_ALARM_ROW (self), NULL);

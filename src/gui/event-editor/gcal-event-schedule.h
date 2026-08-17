@@ -53,37 +53,36 @@ typedef struct
   GcalTimeFormat time_format;
 } GcalEventSchedule;
 
-GcalScheduleValues  gcal_schedule_values_copy                   (const GcalScheduleValues *values);
+GcalScheduleValues gcal_schedule_values_copy (const GcalScheduleValues *values);
 
+GcalEventSchedule *gcal_event_schedule_from_event (GcalEvent *event,
+                                                   GcalTimeFormat time_format);
+void gcal_event_schedule_free (GcalEventSchedule *values);
 
-GcalEventSchedule  *gcal_event_schedule_from_event              (GcalEvent               *event,
-                                                                 GcalTimeFormat           time_format);
-void                gcal_event_schedule_free                    (GcalEventSchedule       *values);
+GcalEventSchedule *gcal_event_schedule_set_all_day (const GcalEventSchedule *values,
+                                                    gboolean all_day);
+GcalEventSchedule *gcal_event_schedule_set_time_format (const GcalEventSchedule *values,
+                                                        GcalTimeFormat time_format);
+GcalEventSchedule *gcal_event_schedule_set_start_date (const GcalEventSchedule *values,
+                                                       GDateTime *start);
+GcalEventSchedule *gcal_event_schedule_set_end_date (const GcalEventSchedule *values,
+                                                     GDateTime *end);
+GcalEventSchedule *gcal_event_schedule_set_start_date_time (const GcalEventSchedule *values,
+                                                            GDateTime *start);
+GcalEventSchedule *gcal_event_schedule_set_end_date_time (const GcalEventSchedule *values,
+                                                          GDateTime *end);
+GcalEventSchedule *gcal_event_schedule_set_recur_frequency (const GcalEventSchedule *values,
+                                                            GcalRecurrenceFrequency frequency);
+GcalEventSchedule *gcal_event_schedule_set_recur_limit_type (const GcalEventSchedule *values,
+                                                             GcalRecurrenceLimitType limit_type);
+GcalEventSchedule *gcal_event_schedule_set_recurrence_count (const GcalEventSchedule *values,
+                                                             guint count);
+GcalEventSchedule *gcal_event_schedule_set_recurrence_until (const GcalEventSchedule *values,
+                                                             GDateTime *until);
 
-GcalEventSchedule  *gcal_event_schedule_set_all_day             (const GcalEventSchedule *values,
-                                                                 gboolean                 all_day);
-GcalEventSchedule  *gcal_event_schedule_set_time_format         (const GcalEventSchedule *values,
-                                                                 GcalTimeFormat           time_format);
-GcalEventSchedule  *gcal_event_schedule_set_start_date          (const GcalEventSchedule *values,
-                                                                 GDateTime               *start);
-GcalEventSchedule  *gcal_event_schedule_set_end_date            (const GcalEventSchedule *values,
-                                                                 GDateTime               *end);
-GcalEventSchedule  *gcal_event_schedule_set_start_date_time     (const GcalEventSchedule *values,
-                                                                 GDateTime               *start);
-GcalEventSchedule  *gcal_event_schedule_set_end_date_time       (const GcalEventSchedule *values,
-                                                                 GDateTime               *end);
-GcalEventSchedule  *gcal_event_schedule_set_recur_frequency     (const GcalEventSchedule *values,
-                                                                 GcalRecurrenceFrequency  frequency);
-GcalEventSchedule  *gcal_event_schedule_set_recur_limit_type    (const GcalEventSchedule *values,
-                                                                 GcalRecurrenceLimitType  limit_type);
-GcalEventSchedule  *gcal_event_schedule_set_recurrence_count    (const GcalEventSchedule *values,
-                                                                 guint                    count);
-GcalEventSchedule  *gcal_event_schedule_set_recurrence_until    (const GcalEventSchedule *values,
-                                                                 GDateTime               *until);
-
-GcalEventSchedule *gcal_event_schedule_with_date_times          (const char              *start,
-                                                                 const char              *end,
-                                                                 gboolean                 all_day);
+GcalEventSchedule *gcal_event_schedule_with_date_times (const char *start,
+                                                        const char *end,
+                                                        gboolean all_day);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (GcalEventSchedule, gcal_event_schedule_free);
 

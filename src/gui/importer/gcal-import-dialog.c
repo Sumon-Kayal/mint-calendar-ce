@@ -33,37 +33,36 @@
 
 typedef struct
 {
-  ECalClient         *client;
-  GSList             *components;
-  GSList             *zones;
+  ECalClient *client;
+  GSList *components;
+  GSList *zones;
 } ImportData;
 
 struct _GcalImportDialog
 {
-  AdwDialog             parent;
+  AdwDialog parent;
 
   GcalCalendarComboRow *calendar_combo_row;
-  GtkBox               *calendars_box;
-  GtkWidget            *cancel_button;
-  AdwPreferencesGroup  *files_group;
-  AdwHeaderBar         *headerbar;
-  GtkWidget            *import_button;
-  GtkWidget            *placeholder_spinner;
-  GtkSizeGroup         *title_sizegroup;
-  AdwToastOverlay      *toast_overlay;
+  GtkBox *calendars_box;
+  GtkWidget *cancel_button;
+  AdwPreferencesGroup *files_group;
+  AdwHeaderBar *headerbar;
+  GtkWidget *import_button;
+  GtkWidget *placeholder_spinner;
+  GtkSizeGroup *title_sizegroup;
+  AdwToastOverlay *toast_overlay;
 
-  GList                *rows;
+  GList *rows;
 
-  GCancellable         *cancellable;
-  GcalContext          *context;
-  gint                  n_events;
-  gint                  n_files;
+  GCancellable *cancellable;
+  GcalContext *context;
+  gint n_events;
+  gint n_files;
 };
 
-
-static void          on_import_row_file_loaded_cb                 (GcalImportFileRow *row,
-                                                                   GPtrArray         *events,
-                                                                   GcalImportDialog  *self);
+static void on_import_row_file_loaded_cb (GcalImportFileRow *row,
+                                          GPtrArray *events,
+                                          GcalImportDialog *self);
 
 G_DEFINE_TYPE (GcalImportDialog, gcal_import_dialog, ADW_TYPE_DIALOG)
 
@@ -74,8 +73,7 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS];
-
+static GParamSpec *properties[N_PROPS];
 
 /*
  * Auxiliary methods
@@ -129,8 +127,8 @@ setup_calendars (GcalImportDialog *self)
 
 static void
 add_file (GcalImportDialog *self,
-          GFile            *file,
-          gboolean          multiple_files)
+          GFile *file,
+          gboolean multiple_files)
 {
   AdwPreferencesGroup *group;
   GtkWidget *row;
@@ -159,9 +157,9 @@ add_file (GcalImportDialog *self,
 }
 
 static void
-setup_files (GcalImportDialog  *self,
-             GFile            **files,
-             gint               n_files)
+setup_files (GcalImportDialog *self,
+             GFile **files,
+             gint n_files)
 {
   gint i;
 
@@ -176,7 +174,7 @@ setup_files (GcalImportDialog  *self,
 
 static void
 setup_files_list (GcalImportDialog *self,
-                  GList            *list)
+                  GList *list)
 {
   gint n_files = 0;
   gboolean has_multiple = list->next != NULL;
@@ -194,15 +192,14 @@ setup_files_list (GcalImportDialog *self,
   GCAL_EXIT;
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_events_created_cb (GObject      *source_object,
+on_events_created_cb (GObject *source_object,
                       GAsyncResult *result,
-                      gpointer      user_data)
+                      gpointer user_data)
 {
   g_autoptr (GError) error = NULL;
   GcalImportDialog *self;
@@ -221,9 +218,9 @@ on_events_created_cb (GObject      *source_object,
 }
 
 static void
-import_data_thread (GTask        *task,
-                    gpointer      source_object,
-                    gpointer      task_data,
+import_data_thread (GTask *task,
+                    gpointer source_object,
+                    gpointer task_data,
                     GCancellable *cancellable)
 {
   ImportData *id = task_data;
@@ -258,7 +255,7 @@ import_data_thread (GTask        *task,
 }
 
 static void
-on_import_button_clicked_cb (GtkButton        *button,
+on_import_button_clicked_cb (GtkButton *button,
                              GcalImportDialog *self)
 {
   g_autoptr (GTask) task = NULL;
@@ -325,8 +322,8 @@ on_import_button_clicked_cb (GtkButton        *button,
 
 static void
 on_import_row_file_loaded_cb (GcalImportFileRow *row,
-                              GPtrArray         *events,
-                              GcalImportDialog  *self)
+                              GPtrArray *events,
+                              GcalImportDialog *self)
 {
   g_autofree gchar *title = NULL;
 
@@ -346,7 +343,6 @@ on_import_row_file_loaded_cb (GcalImportFileRow *row,
   GCAL_EXIT;
 }
 
-
 /*
  * GObject overrides
  */
@@ -354,7 +350,7 @@ on_import_row_file_loaded_cb (GcalImportFileRow *row,
 static void
 gcal_import_dialog_constructed (GObject *object)
 {
-  GcalImportDialog *self = (GcalImportDialog *)object;
+  GcalImportDialog *self = (GcalImportDialog *) object;
 
   G_OBJECT_CLASS (gcal_import_dialog_parent_class)->constructed (object);
 
@@ -364,7 +360,7 @@ gcal_import_dialog_constructed (GObject *object)
 static void
 gcal_import_dialog_finalize (GObject *object)
 {
-  GcalImportDialog *self = (GcalImportDialog *)object;
+  GcalImportDialog *self = (GcalImportDialog *) object;
 
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
@@ -376,9 +372,9 @@ gcal_import_dialog_finalize (GObject *object)
 }
 
 static void
-gcal_import_dialog_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
+gcal_import_dialog_get_property (GObject *object,
+                                 guint prop_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
   GcalImportDialog *self = GCAL_IMPORT_DIALOG (object);
@@ -395,10 +391,10 @@ gcal_import_dialog_get_property (GObject    *object,
 }
 
 static void
-gcal_import_dialog_set_property (GObject      *object,
-                                 guint         prop_id,
+gcal_import_dialog_set_property (GObject *object,
+                                 guint prop_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
   GcalImportDialog *self = GCAL_IMPORT_DIALOG (object);
 
@@ -461,31 +457,31 @@ gcal_import_dialog_init (GcalImportDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-GtkWidget*
-gcal_import_dialog_new_for_files (GcalContext  *context,
-                                  GFile       **files,
-                                  gint          n_files)
+GtkWidget *
+gcal_import_dialog_new_for_files (GcalContext *context,
+                                  GFile **files,
+                                  gint n_files)
 {
   GcalImportDialog *self;
 
-  self =  g_object_new (GCAL_TYPE_IMPORT_DIALOG,
-                        "context", context,
-                        NULL);
+  self = g_object_new (GCAL_TYPE_IMPORT_DIALOG,
+                       "context", context,
+                       NULL);
 
   setup_files (self, files, n_files);
 
   return GTK_WIDGET (self);
 }
 
-GtkWidget*
+GtkWidget *
 gcal_import_dialog_new_for_file_list (GcalContext *context,
-                                      GList       *file_list)
+                                      GList *file_list)
 {
   GcalImportDialog *self;
 
-  self =  g_object_new (GCAL_TYPE_IMPORT_DIALOG,
-                        "context", context,
-                        NULL);
+  self = g_object_new (GCAL_TYPE_IMPORT_DIALOG,
+                       "context", context,
+                       NULL);
 
   setup_files_list (self, file_list);
 
@@ -494,7 +490,7 @@ gcal_import_dialog_new_for_file_list (GcalContext *context,
 
 void
 gcal_import_dialog_add_toast (GcalImportDialog *self,
-                              AdwToast         *toast)
+                              AdwToast *toast)
 {
   g_return_if_fail (GCAL_IS_IMPORT_DIALOG (self));
   g_return_if_fail (ADW_IS_TOAST (toast));

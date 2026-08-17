@@ -27,8 +27,8 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_TIME_ZONE_DIALOG_ROW (gcal_time_zone_dialog_row_get_type ())
 G_DECLARE_FINAL_TYPE (GcalTimeZoneDialogRow, gcal_time_zone_dialog_row, GCAL, TIME_ZONE_DIALOG_ROW, AdwActionRow);
 
-GtkWidget*           gcal_time_zone_dialog_row_new               (GWeatherLocation   *location);
+GtkWidget *gcal_time_zone_dialog_row_new (GWeatherLocation *location);
 
-GWeatherLocation*    gcal_time_zone_dialog_row_get_location      (GcalTimeZoneDialogRow *self);
+GWeatherLocation *gcal_time_zone_dialog_row_get_location (GcalTimeZoneDialogRow *self);
 
 G_END_DECLS

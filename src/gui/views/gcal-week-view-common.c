@@ -22,11 +22,11 @@
 #include "gcal-utils.h"
 
 void
-gcal_week_view_common_snapshot_hour_lines (GtkWidget      *widget,
-                                           GtkSnapshot    *snapshot,
-                                           GtkOrientation  orientation,
-                                           gint            width,
-                                           gint            height)
+gcal_week_view_common_snapshot_hour_lines (GtkWidget *widget,
+                                           GtkSnapshot *snapshot,
+                                           GtkOrientation orientation,
+                                           gint width,
+                                           gint height)
 {
   GdkRGBA color;
   gboolean ltr;
@@ -59,7 +59,6 @@ gcal_week_view_common_snapshot_hour_lines (GtkWidget      *widget,
                                      &GRAPHENE_RECT_INIT (x, 0.f, 1.0, height));
         }
       break;
-
 
     case GTK_ORIENTATION_VERTICAL:
       /* Main lines */

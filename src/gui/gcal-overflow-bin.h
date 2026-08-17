@@ -35,10 +35,10 @@ struct _GcalOverflowBinClass
 GtkWidget *gcal_overflow_bin_new (void) G_GNUC_WARN_UNUSED_RESULT;
 
 GtkWidget *gcal_overflow_bin_get_child (GcalOverflowBin *self);
-void       gcal_overflow_bin_set_child (GcalOverflowBin *self,
-                                        GtkWidget       *child);
+void gcal_overflow_bin_set_child (GcalOverflowBin *self,
+                                  GtkWidget *child);
 
-void gcal_overflow_bin_set_request_mode (GcalOverflowBin    *self,
-                                         GtkSizeRequestMode  request_mode);
+void gcal_overflow_bin_set_request_mode (GcalOverflowBin *self,
+                                         GtkSizeRequestMode request_mode);
 
 G_END_DECLS

@@ -18,24 +18,24 @@
 
 #define G_LOG_DOMAIN "GcalDateSelector"
 
-#include "gcal-date-chooser.h"
 #include "gcal-date-selector.h"
+#include "gcal-date-chooser.h"
 #include "gcal-view.h"
 
-#include <locale.h>
-#include <langinfo.h>
-#include <stdlib.h>
 #include <glib/gi18n.h>
+#include <langinfo.h>
+#include <locale.h>
+#include <stdlib.h>
 
 struct _GcalDateSelector
 {
-  GtkEntry     parent;
+  GtkEntry parent;
 
   /* widgets */
-  GtkWidget   *date_chooser;
-  GtkWidget   *date_selector_popover;
+  GtkWidget *date_chooser;
+  GtkWidget *date_selector_popover;
 
-  GDBusProxy  *settings_portal;
+  GDBusProxy *settings_portal;
 };
 
 G_DEFINE_TYPE (GcalDateSelector, gcal_date_selector, GTK_TYPE_ENTRY);
@@ -47,12 +47,13 @@ enum
   N_PROPS
 };
 
-static GParamSpec* properties[N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 static void
 set_show_weekdate_from_variant (GcalDateSelector *self,
-                                GVariant         *variant)
+                                GVariant *variant)
 {
   g_assert (g_variant_type_equal (g_variant_get_type (variant), "b"));
 
@@ -138,10 +139,10 @@ parse_date (GcalDateSelector *self)
 }
 
 static void
-on_portal_proxy_signal_cb (GDBusProxy       *proxy,
-                           const gchar      *sender_name,
-                           const gchar      *signal_name,
-                           GVariant         *parameters,
+on_portal_proxy_signal_cb (GDBusProxy *proxy,
+                           const gchar *sender_name,
+                           const gchar *signal_name,
+                           GVariant *parameters,
                            GcalDateSelector *self)
 {
   g_autoptr (GVariant) value = NULL;
@@ -161,9 +162,9 @@ on_portal_proxy_signal_cb (GDBusProxy       *proxy,
 }
 
 static void
-icon_pressed_cb (GcalDateSelector     *self,
-                 GtkEntryIconPosition  position,
-                 GdkEvent             *event)
+icon_pressed_cb (GcalDateSelector *self,
+                 GtkEntryIconPosition position,
+                 GdkEvent *event)
 {
   GdkRectangle icon_bounds;
 
@@ -176,8 +177,8 @@ icon_pressed_cb (GcalDateSelector     *self,
 
 static void
 on_contains_focus_changed_cb (GtkEventControllerFocus *focus_controller,
-                              GParamSpec              *pspec,
-                              GcalDateSelector        *self)
+                              GParamSpec *pspec,
+                              GcalDateSelector *self)
 {
   parse_date (self);
 }
@@ -187,10 +188,10 @@ on_contains_focus_changed_cb (GtkEventControllerFocus *focus_controller,
  */
 
 static gboolean
-gcal_date_selector_focus (GtkWidget        *widget,
-                          GtkDirectionType  direction)
+gcal_date_selector_focus (GtkWidget *widget,
+                          GtkDirectionType direction)
 {
-  GcalDateSelector *self= GCAL_DATE_SELECTOR (widget);
+  GcalDateSelector *self = GCAL_DATE_SELECTOR (widget);
 
   if (gtk_widget_get_visible (self->date_selector_popover))
     return gtk_widget_child_focus (self->date_selector_popover, direction);
@@ -200,16 +201,13 @@ gcal_date_selector_focus (GtkWidget        *widget,
 
 static void
 gcal_date_selector_size_allocate (GtkWidget *widget,
-                                  gint       width,
-                                  gint       height,
-                                  gint       baseline)
+                                  gint width,
+                                  gint height,
+                                  gint baseline)
 {
-  GcalDateSelector *self= GCAL_DATE_SELECTOR (widget);
+  GcalDateSelector *self = GCAL_DATE_SELECTOR (widget);
 
-  GTK_WIDGET_CLASS (gcal_date_selector_parent_class)->size_allocate (widget,
-                                                                     width,
-                                                                     height,
-                                                                     baseline);
+  GTK_WIDGET_CLASS (gcal_date_selector_parent_class)->size_allocate (widget, width, height, baseline);
 
   gtk_popover_present (GTK_POPOVER (self->date_selector_popover));
 }
@@ -230,12 +228,12 @@ gcal_date_selector_dispose (GObject *object)
 }
 
 static void
-gcal_date_selector_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
+gcal_date_selector_get_property (GObject *object,
+                                 guint prop_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
-  GcalDateSelector *self = (GcalDateSelector*) object;
+  GcalDateSelector *self = (GcalDateSelector *) object;
 
   switch (prop_id)
     {
@@ -249,12 +247,12 @@ gcal_date_selector_get_property (GObject    *object,
 }
 
 static void
-gcal_date_selector_set_property (GObject      *object,
-                                 guint         prop_id,
+gcal_date_selector_set_property (GObject *object,
+                                 guint prop_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
-  GcalDateSelector *self = (GcalDateSelector*) object;
+  GcalDateSelector *self = (GcalDateSelector *) object;
 
   switch (prop_id)
     {
@@ -343,7 +341,7 @@ gcal_date_selector_init (GcalDateSelector *self)
 }
 
 /* Public API */
-GtkWidget*
+GtkWidget *
 gcal_date_selector_new (void)
 {
   return g_object_new (GCAL_TYPE_DATE_SELECTOR, NULL);
@@ -358,7 +356,7 @@ gcal_date_selector_new (void)
  */
 void
 gcal_date_selector_set_date (GcalDateSelector *selector,
-                             GDateTime        *date)
+                             GDateTime *date)
 {
   g_return_if_fail (GCAL_IS_DATE_SELECTOR (selector));
 
@@ -378,7 +376,7 @@ gcal_date_selector_set_date (GcalDateSelector *selector,
  *
  * Returns: (transfer none): the date of the selector.
  */
-GDateTime*
+GDateTime *
 gcal_date_selector_get_date (GcalDateSelector *selector)
 {
   g_return_val_if_fail (GCAL_IS_DATE_SELECTOR (selector), NULL);

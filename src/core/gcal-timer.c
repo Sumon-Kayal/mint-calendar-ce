@@ -20,7 +20,6 @@
 
 #include "gcal-timer.h"
 
-
 /**
  * The #GcalTimer object structure.
  *
@@ -30,11 +29,10 @@
  */
 typedef struct _GcalTimer
 {
-  GSource            parent;
-  gint64             last_event;
-  gint64             default_duration;
+  GSource parent;
+  gint64 last_event;
+  gint64 default_duration;
 } GcalTimer;
-
 
 /* CbWrapperData:
  * @timer: The timer the callback applies to.
@@ -47,26 +45,23 @@ typedef struct _GcalTimer
  */
 typedef struct
 {
-  GcalTimer          *timer; /* unowned */
-  GCalTimerFunc       callback;
-  GDestroyNotify      destroy_notify;
-  gpointer            data;
+  GcalTimer *timer; /* unowned */
+  GCalTimerFunc callback;
+  GDestroyNotify destroy_notify;
+  gpointer data;
 } CbWrapperData;
 
+static void timer_func_destroy_notify_wrapper (CbWrapperData *wrapper);
 
-static void          timer_func_destroy_notify_wrapper           (CbWrapperData      *wrapper);
+static gboolean timer_func_wrapper (CbWrapperData *wrapper);
 
-static gboolean      timer_func_wrapper                          (CbWrapperData      *wrapper);
+static gboolean timer_source_dispatch (GcalTimer *self,
+                                       GSourceFunc callback,
+                                       CbWrapperData *user_data);
 
-static gboolean      timer_source_dispatch                       (GcalTimer          *self,
-                                                                  GSourceFunc         callback,
-                                                                  CbWrapperData      *user_data);
+static void schedule_next (GcalTimer *self);
 
-static void          schedule_next                               (GcalTimer          *self);
-
-static void          timer_source_finalize                       (GcalTimer          *self);
-
-
+static void timer_source_finalize (GcalTimer *self);
 
 /*< private >*/
 static void
@@ -92,9 +87,9 @@ timer_func_wrapper (CbWrapperData *wrapper)
 }
 
 static gboolean
-timer_source_dispatch (GcalTimer       *self,
-                       GSourceFunc      user_callback,
-                       CbWrapperData   *user_data)
+timer_source_dispatch (GcalTimer *self,
+                       GSourceFunc user_callback,
+                       CbWrapperData *user_data)
 {
   gboolean result = G_SOURCE_CONTINUE;
 
@@ -103,7 +98,7 @@ timer_source_dispatch (GcalTimer       *self,
   if (user_callback != NULL)
     result = user_callback (user_data);
 
-  self->last_event = g_source_get_time ((GSource*) self);
+  self->last_event = g_source_get_time ((GSource *) self);
   schedule_next (self);
 
   return result;
@@ -118,21 +113,19 @@ schedule_next (GcalTimer *self)
   g_return_if_fail (self != NULL);
   g_return_if_fail (self->last_event >= 0);
 
-  now = g_source_get_time ((GSource*) self);
-  next = self->last_event + self->default_duration*G_GUINT64_CONSTANT(1000000);
+  now = g_source_get_time ((GSource *) self);
+  next = self->last_event + self->default_duration * G_GUINT64_CONSTANT (1000000);
 
   if (next > now)
-    g_source_set_ready_time ((GSource*) self, next);
+    g_source_set_ready_time ((GSource *) self, next);
   else
-    g_source_set_ready_time ((GSource*) self, 0);
+    g_source_set_ready_time ((GSource *) self, 0);
 }
 
 static void
 timer_source_finalize (GcalTimer *self)
 {
 }
-
-
 
 /*< public >*/
 /**
@@ -146,28 +139,26 @@ timer_source_finalize (GcalTimer *self)
  *
  * Returns: (transfer full): A new timer object.
  */
-GcalTimer*
+GcalTimer *
 gcal_timer_new (gint64 default_duration)
 {
   GMainContext *cntxt; /* unowned */
-  GcalTimer    *self;  /* owned */
+  GcalTimer *self;     /* owned */
 
   g_return_val_if_fail (default_duration > 0, NULL);
 
-  static GSourceFuncs source_funcs =
-      { NULL, /* prepare */
-        NULL, /* check */
-        (gboolean (*) (GSource*, GSourceFunc, gpointer)) timer_source_dispatch,
-        (void (*) (GSource*)) timer_source_finalize
-      };
+  static GSourceFuncs source_funcs = { NULL, /* prepare */
+                                       NULL, /* check */
+                                       (gboolean (*) (GSource *, GSourceFunc, gpointer)) timer_source_dispatch,
+                                       (void (*) (GSource *)) timer_source_finalize };
 
-  self = (GcalTimer*) g_source_new (&source_funcs, sizeof (GcalTimer));
+  self = (GcalTimer *) g_source_new (&source_funcs, sizeof (GcalTimer));
   self->default_duration = default_duration;
   self->last_event = -1;
 
   cntxt = g_main_context_default ();
-  g_source_set_ready_time ((GSource*) self, -1);
-  g_source_attach ((GSource*) self, cntxt);
+  g_source_set_ready_time ((GSource *) self, -1);
+  g_source_attach ((GSource *) self, cntxt);
 
   return g_steal_pointer (&self);
 }
@@ -184,7 +175,7 @@ gcal_timer_start (GcalTimer *self)
   g_return_if_fail (self != NULL);
   g_return_if_fail (!gcal_timer_is_running (self));
 
-  self->last_event = g_source_get_time ((GSource*) self);
+  self->last_event = g_source_get_time ((GSource *) self);
   schedule_next (self);
 }
 
@@ -200,7 +191,7 @@ gcal_timer_reset (GcalTimer *self)
   g_return_if_fail (self != NULL);
   g_return_if_fail (gcal_timer_is_running (self));
 
-  self->last_event = g_source_get_time ((GSource*) self);
+  self->last_event = g_source_get_time ((GSource *) self);
   schedule_next (self);
 }
 
@@ -216,7 +207,7 @@ gcal_timer_stop (GcalTimer *self)
   g_return_if_fail (self != NULL);
   g_return_if_fail (gcal_timer_is_running (self));
 
-  g_source_set_ready_time ((GSource*) self, -1);
+  g_source_set_ready_time ((GSource *) self, -1);
 }
 
 /**
@@ -230,7 +221,7 @@ gcal_timer_is_running (GcalTimer *self)
 {
   g_return_val_if_fail (self != NULL, FALSE);
 
-  return g_source_get_ready_time ((GSource*) self) >= 0;
+  return g_source_get_ready_time ((GSource *) self) >= 0;
 }
 
 /**
@@ -242,20 +233,20 @@ gcal_timer_is_running (GcalTimer *self)
  */
 void
 gcal_timer_set_default_duration (GcalTimer *self,
-                                 gint64     duration)
+                                 gint64 duration)
 {
   gint64 now;
 
   g_return_if_fail (self != NULL);
   g_return_if_fail (duration > 0);
 
-  now = g_source_get_time ((GSource*) self);
+  now = g_source_get_time ((GSource *) self);
 
   self->default_duration = duration;
   if (!gcal_timer_is_running (self))
     /* nothing to do (not running) */;
   else if (self->last_event + duration < now)
-    g_source_set_ready_time ((GSource*) self, 0);
+    g_source_set_ready_time ((GSource *) self, 0);
   else
     schedule_next (self);
 }
@@ -285,10 +276,10 @@ gcal_timer_get_default_duration (GcalTimer *self)
  * or given day-times.
  */
 void
-gcal_timer_set_callback (GcalTimer      *self,
-                         GCalTimerFunc   func,
-                         gpointer        data,
-                         GDestroyNotify  notify)
+gcal_timer_set_callback (GcalTimer *self,
+                         GCalTimerFunc func,
+                         gpointer data,
+                         GDestroyNotify notify)
 {
   CbWrapperData *wrapper; /* owned */
 
@@ -301,7 +292,7 @@ gcal_timer_set_callback (GcalTimer      *self,
   wrapper->destroy_notify = notify;
   wrapper->data = data;
 
-  g_source_set_callback ((GSource*) self,
+  g_source_set_callback ((GSource *) self,
                          (GSourceFunc) timer_func_wrapper,
                          g_steal_pointer (&wrapper),
                          (GDestroyNotify) timer_func_destroy_notify_wrapper);

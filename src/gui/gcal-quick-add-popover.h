@@ -22,22 +22,22 @@
 #include "gcal-context.h"
 #include "gcal-event.h"
 
+#include <adwaita.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <adwaita.h>
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_QUICK_ADD_POPOVER (gcal_quick_add_popover_get_type())
+#define GCAL_TYPE_QUICK_ADD_POPOVER (gcal_quick_add_popover_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalQuickAddPopover, gcal_quick_add_popover, GCAL, QUICK_ADD_POPOVER, GtkPopover)
 
-GtkWidget*           gcal_quick_add_popover_new                  (void);
+GtkWidget *gcal_quick_add_popover_new (void);
 
-GcalRange*           gcal_quick_add_popover_get_range            (GcalQuickAddPopover *self);
+GcalRange *gcal_quick_add_popover_get_range (GcalQuickAddPopover *self);
 
-void                 gcal_quick_add_popover_set_range            (GcalQuickAddPopover *self,
-                                                                  GcalRange           *range);
+void gcal_quick_add_popover_set_range (GcalQuickAddPopover *self,
+                                       GcalRange *range);
 
 G_END_DECLS
 

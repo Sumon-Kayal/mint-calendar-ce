@@ -16,26 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
 #include "gcal-attendee-summary-row.h"
+#include "config.h"
 #include "gcal-enum-types.h"
 #include "gcal-enums.h"
 #include "gcal-event-attendee.h"
 
 #include <adwaita.h>
 #include <gio/gio.h>
+#include <glib-object.h>
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <glib-object.h>
 #include <gtk/gtk.h>
 
 struct _GcalAttendeeSummaryRow
 {
   AdwActionRow parent_instance;
 
-  GListStore         *attendees;
+  GListStore *attendees;
   GtkFilterListModel *filtered_attendees;
-  GtkCustomFilter    *attendee_filter;
+  GtkCustomFilter *attendee_filter;
 
   /* participation summary */
   guint num_accepted;
@@ -62,7 +62,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties[N_PROPS] = { NULL, };
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /* Auxiliary methods */
 
@@ -74,13 +76,13 @@ notify_summary_changed (GcalAttendeeSummaryRow *self)
 }
 
 static gboolean
-custom_filter_func (GcalEventAttendee      *attendee,
+custom_filter_func (GcalEventAttendee *attendee,
                     GcalAttendeeSummaryRow *self)
 {
   GcalEventAttendeeType attendee_type = gcal_event_attendee_get_attendee_type (attendee);
 
   switch (self->filter_flags)
-  {
+    {
     case GCAL_EVENT_ATTENDEE_TYPE_FILTER_PERSON:
       return attendee_type == GCAL_EVENT_ATTENDEE_TYPE_INDIVIDUAL || attendee_type == GCAL_EVENT_ATTENDEE_TYPE_GROUP;
 
@@ -89,13 +91,13 @@ custom_filter_func (GcalEventAttendee      *attendee,
 
     default:
       return TRUE;
-  }
+    }
 }
 
 static inline void
 concat_subtitle_part (GStrvBuilder *builder,
-                      guint         value,
-                      const gchar  *format)
+                      guint value,
+                      const gchar *format)
 {
   if (value <= 0)
     return;
@@ -103,7 +105,7 @@ concat_subtitle_part (GStrvBuilder *builder,
   g_strv_builder_take (builder, g_strdup_printf (format, value));
 }
 
-static const gchar*
+static const gchar *
 build_summary_subtitle (GcalAttendeeSummaryRow *self)
 {
   g_autoptr (GStrvBuilder) builder = g_strv_builder_new ();
@@ -122,7 +124,7 @@ build_summary_subtitle (GcalAttendeeSummaryRow *self)
 
 static void
 setup_filtered_attendees (GcalAttendeeSummaryRow *self,
-                          GListModel             *attendees)
+                          GListModel *attendees)
 {
   g_return_if_fail (GCAL_IS_ATTENDEE_SUMMARY_ROW (self));
 
@@ -172,8 +174,8 @@ setup_filtered_attendees (GcalAttendeeSummaryRow *self,
 }
 
 static void
-change_attendee_filter_type (GcalAttendeeSummaryRow           *self,
-                             GcalEventAttendeeTypeFilterFlags  value)
+change_attendee_filter_type (GcalAttendeeSummaryRow *self,
+                             GcalEventAttendeeTypeFilterFlags value)
 {
   self->filter_flags = value;
   gtk_filter_changed (GTK_FILTER (self->attendee_filter), GTK_FILTER_CHANGE_DIFFERENT);
@@ -181,10 +183,10 @@ change_attendee_filter_type (GcalAttendeeSummaryRow           *self,
 }
 
 static void
-gcal_attendee_summary_row_set_property (GObject      *object,
-                                        guint         property_id,
+gcal_attendee_summary_row_set_property (GObject *object,
+                                        guint property_id,
                                         const GValue *value,
-                                        GParamSpec   *pspec)
+                                        GParamSpec *pspec)
 {
   GcalAttendeeSummaryRow *self = GCAL_ATTENDEE_SUMMARY_ROW (object);
 
@@ -202,9 +204,9 @@ gcal_attendee_summary_row_set_property (GObject      *object,
 }
 
 static void
-gcal_attendee_summary_row_get_property (GObject    *object,
-                                        guint       property_id,
-                                        GValue     *value,
+gcal_attendee_summary_row_get_property (GObject *object,
+                                        guint property_id,
+                                        GValue *value,
                                         GParamSpec *pspec)
 {
   GcalAttendeeSummaryRow *self = GCAL_ATTENDEE_SUMMARY_ROW (object);
@@ -266,9 +268,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * The unfiltered list of attendees.
    */
   properties[PROP_ATTENDEES] =
-    g_param_spec_object ("attendees", NULL, NULL,
-                         G_TYPE_LIST_MODEL,
-                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("attendees", NULL, NULL,
+                           G_TYPE_LIST_MODEL,
+                           G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeSummaryRow:filter-flags:
@@ -276,9 +278,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * The GCAL_TYPE_EVENT_ATTENDEE_TYPE_FILTER_FLAGS used to filter the attendees.
    */
   properties[PROP_FILTER_FLAGS] =
-    g_param_spec_flags ("filter-flags", NULL, NULL,
-                       GCAL_TYPE_EVENT_ATTENDEE_TYPE_FILTER_FLAGS, GCAL_EVENT_ATTENDEE_TYPE_FILTER_NONE,
-                       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_flags ("filter-flags", NULL, NULL,
+                          GCAL_TYPE_EVENT_ATTENDEE_TYPE_FILTER_FLAGS, GCAL_EVENT_ATTENDEE_TYPE_FILTER_NONE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeSummaryRow:filtered-list:
@@ -287,9 +289,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * Filtered by #GcalAttendeeSummaryRow:filter-type
    */
   properties[PROP_FILTERED_LIST] =
-    g_param_spec_object ("filtered-list", NULL, NULL,
-                         GTK_TYPE_FILTER_LIST_MODEL,
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("filtered-list", NULL, NULL,
+                           GTK_TYPE_FILTER_LIST_MODEL,
+                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeSummaryRow:num-accepted:
@@ -297,9 +299,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * Gets the number of attendees who accepted.
    */
   properties[PROP_NUM_ACCEPTED] =
-    g_param_spec_uint ("num-accepted", NULL, NULL,
-                       0, G_MAXUINT, 0,
-                       G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+      g_param_spec_uint ("num-accepted", NULL, NULL,
+                         0, G_MAXUINT, 0,
+                         G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeSummaryRow:num-declined:
@@ -307,9 +309,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * Gets the number of attendees who declined.
    */
   properties[PROP_NUM_DECLINED] =
-    g_param_spec_uint ("num-declined", NULL, NULL,
-                       0, G_MAXUINT, 0,
-                       G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+      g_param_spec_uint ("num-declined", NULL, NULL,
+                         0, G_MAXUINT, 0,
+                         G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeSummaryRow:num-tentative:
@@ -317,9 +319,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * Gets the number of attendees who "maybe" will attend.
    */
   properties[PROP_NUM_TENTATIVE] =
-    g_param_spec_uint ("num-tentative", NULL, NULL,
-                       0, G_MAXUINT, 0,
-                       G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY  | G_PARAM_STATIC_STRINGS);
+      g_param_spec_uint ("num-tentative", NULL, NULL,
+                         0, G_MAXUINT, 0,
+                         G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeSummaryRow:num-unknown:
@@ -327,9 +329,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * Gets the number of attendees with an unknown response.
    */
   properties[PROP_NUM_UNKNOWN] =
-    g_param_spec_uint ("num-unknown", NULL, NULL,
-                       0, G_MAXUINT, 0,
-                       G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY  | G_PARAM_STATIC_STRINGS);
+      g_param_spec_uint ("num-unknown", NULL, NULL,
+                         0, G_MAXUINT, 0,
+                         G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   /**
    * GcalAttendeeSummaryRow:num-delegated:
@@ -337,9 +339,9 @@ gcal_attendee_summary_row_class_init (GcalAttendeeSummaryRowClass *klass)
    * Gets the number of attendees who delegated their attendance to someone else.
    */
   properties[PROP_NUM_DELEGATED] =
-    g_param_spec_uint ("num-delegated", NULL, NULL,
-                       0, G_MAXUINT, 0,
-                       G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY  | G_PARAM_STATIC_STRINGS);
+      g_param_spec_uint ("num-delegated", NULL, NULL,
+                         0, G_MAXUINT, 0,
+                         G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -353,8 +355,7 @@ gcal_attendee_summary_row_init (GcalAttendeeSummaryRow *instance)
   instance->attendee_filter = gtk_custom_filter_new ((GtkCustomFilterFunc) custom_filter_func, instance, NULL);
   instance->filtered_attendees = gtk_filter_list_model_new (G_LIST_MODEL (instance->attendees), GTK_FILTER (instance->attendee_filter));
 
-  gtk_widget_init_template(GTK_WIDGET(instance));
+  gtk_widget_init_template (GTK_WIDGET (instance));
 
   gtk_actionable_set_action_name (GTK_ACTIONABLE (instance), "event-editor.show-attendees-detail-page");
 }
-

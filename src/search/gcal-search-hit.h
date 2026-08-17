@@ -31,43 +31,43 @@ struct _GcalSearchHitClass
 {
   GObjectClass parent_class;
 
-  void               (*activate)                                 (GcalSearchHit      *self,
-                                                                  GtkWidget          *for_widget);
+  void (*activate) (GcalSearchHit *self,
+                    GtkWidget *for_widget);
 
-  gint               (*get_priority)                             (GcalSearchHit      *self);
+  gint (*get_priority) (GcalSearchHit *self);
 
-  gint               (*compare)                                  (GcalSearchHit      *a,
-                                                                  GcalSearchHit      *b);
+  gint (*compare) (GcalSearchHit *a,
+                   GcalSearchHit *b);
 };
 
-GcalSearchHit *      gcal_search_hit_new                         (void);
+GcalSearchHit *gcal_search_hit_new (void);
 
-const gchar *        gcal_search_hit_get_id                      (GcalSearchHit      *self);
+const gchar *gcal_search_hit_get_id (GcalSearchHit *self);
 
-void                 gcal_search_hit_set_id                      (GcalSearchHit      *self,
-                                                                  const gchar        *id);
+void gcal_search_hit_set_id (GcalSearchHit *self,
+                             const gchar *id);
 
-const gchar *        gcal_search_hit_get_title                   (GcalSearchHit      *self);
+const gchar *gcal_search_hit_get_title (GcalSearchHit *self);
 
-void                 gcal_search_hit_set_title                   (GcalSearchHit      *self,
-                                                                  const gchar        *title);
+void gcal_search_hit_set_title (GcalSearchHit *self,
+                                const gchar *title);
 
-const gchar *        gcal_search_hit_get_subtitle                (GcalSearchHit      *self);
+const gchar *gcal_search_hit_get_subtitle (GcalSearchHit *self);
 
-void                 gcal_search_hit_set_subtitle                (GcalSearchHit      *self,
-                                                                  const gchar        *subtitle);
+void gcal_search_hit_set_subtitle (GcalSearchHit *self,
+                                   const gchar *subtitle);
 
-GdkPaintable *       gcal_search_hit_get_primary_icon            (GcalSearchHit      *self);
+GdkPaintable *gcal_search_hit_get_primary_icon (GcalSearchHit *self);
 
-void                 gcal_search_hit_set_primary_icon            (GcalSearchHit      *self,
-                                                                  GdkPaintable       *paintable);
+void gcal_search_hit_set_primary_icon (GcalSearchHit *self,
+                                       GdkPaintable *paintable);
 
-void                 gcal_search_hit_activate                    (GcalSearchHit      *self,
-                                                                  GtkWidget          *for_widget);
+void gcal_search_hit_activate (GcalSearchHit *self,
+                               GtkWidget *for_widget);
 
-gint                 gcal_search_hit_get_priority                (GcalSearchHit      *self);
+gint gcal_search_hit_get_priority (GcalSearchHit *self);
 
-gint                 gcal_search_hit_compare                     (GcalSearchHit      *a,
-                                                                  GcalSearchHit      *b);
+gint gcal_search_hit_compare (GcalSearchHit *a,
+                              GcalSearchHit *b);
 
 G_END_DECLS

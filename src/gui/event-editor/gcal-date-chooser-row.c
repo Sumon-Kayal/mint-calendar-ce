@@ -22,20 +22,20 @@
 #include "gcal-date-chooser.h"
 #include "gcal-view.h"
 
-#include <locale.h>
-#include <langinfo.h>
-#include <stdlib.h>
-#include <glib/gi18n.h>
 #include "gcal-utils.h"
+#include <glib/gi18n.h>
+#include <langinfo.h>
+#include <locale.h>
+#include <stdlib.h>
 
 struct _GcalDateChooserRow
 {
-  AdwEntryRow      parent;
+  AdwEntryRow parent;
 
   /* widgets */
   GcalDateChooser *date_chooser;
 
-  GDBusProxy      *settings_portal;
+  GDBusProxy *settings_portal;
 };
 
 G_DEFINE_TYPE (GcalDateChooserRow, gcal_date_chooser_row, ADW_TYPE_ENTRY_ROW);
@@ -47,8 +47,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec* properties[N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 static void
 update_entry (GcalDateChooserRow *self)
@@ -87,7 +88,7 @@ parse_date (GcalDateChooserRow *self)
 
 static void
 set_show_weekdate_from_variant (GcalDateChooserRow *self,
-                                GVariant           *variant)
+                                GVariant *variant)
 {
   g_assert (g_variant_type_equal (g_variant_get_type (variant), "b"));
 
@@ -122,21 +123,20 @@ read_show_weekdate (GcalDateChooserRow *self)
   return TRUE;
 }
 
-
 /*
  * Callbacks
  */
 
 static void
 on_contains_focus_changed_cb (GtkEventControllerFocus *focus_controller,
-                              GParamSpec              *pspec,
-                              GcalDateChooserRow      *self)
+                              GParamSpec *pspec,
+                              GcalDateChooserRow *self)
 {
- parse_date (self);
+  parse_date (self);
 }
 
 static void
-on_date_selected_changed_cb (GcalDateChooser    *selector,
+on_date_selected_changed_cb (GcalDateChooser *selector,
                              GcalDateChooserRow *self)
 {
   update_entry (self);
@@ -145,17 +145,17 @@ on_date_selected_changed_cb (GcalDateChooser    *selector,
 }
 
 static void
-on_date_popover_shown_cb (GtkPopover         *popover,
+on_date_popover_shown_cb (GtkPopover *popover,
                           GcalDateChooserRow *self)
 {
   parse_date (self);
 }
 
 static void
-on_portal_proxy_signal_cb (GDBusProxy         *proxy,
-                           const char         *sender_name,
-                           const char         *signal_name,
-                           GVariant           *parameters,
+on_portal_proxy_signal_cb (GDBusProxy *proxy,
+                           const char *sender_name,
+                           const char *signal_name,
+                           GVariant *parameters,
                            GcalDateChooserRow *self)
 {
   g_autoptr (GVariant) value = NULL;
@@ -174,7 +174,6 @@ on_portal_proxy_signal_cb (GDBusProxy         *proxy,
     }
 }
 
-
 /*
  * GObject overrides
  */
@@ -190,9 +189,9 @@ gcal_date_chooser_row_dispose (GObject *object)
 }
 
 static void
-gcal_date_chooser_row_get_property (GObject    *object,
-                                    guint       prop_id,
-                                    GValue     *value,
+gcal_date_chooser_row_get_property (GObject *object,
+                                    guint prop_id,
+                                    GValue *value,
                                     GParamSpec *pspec)
 {
   GcalDateChooserRow *self = GCAL_DATE_CHOOSER_ROW (object);
@@ -200,7 +199,7 @@ gcal_date_chooser_row_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_DATE:
-      g_value_set_boxed (value, gcal_date_chooser_row_get_date(self));
+      g_value_set_boxed (value, gcal_date_chooser_row_get_date (self));
       break;
 
     default:
@@ -209,10 +208,10 @@ gcal_date_chooser_row_get_property (GObject    *object,
 }
 
 static void
-gcal_date_chooser_row_set_property (GObject      *object,
-                                    guint         prop_id,
+gcal_date_chooser_row_set_property (GObject *object,
+                                    guint prop_id,
                                     const GValue *value,
-                                    GParamSpec   *pspec)
+                                    GParamSpec *pspec)
 {
   GcalDateChooserRow *self = GCAL_DATE_CHOOSER_ROW (object);
 
@@ -296,7 +295,7 @@ gcal_date_chooser_row_init (GcalDateChooserRow *self)
  */
 void
 gcal_date_chooser_row_set_date (GcalDateChooserRow *self,
-                                GDateTime          *date)
+                                GDateTime *date)
 {
   g_autoptr (GDateTime) date_utc = NULL;
 
@@ -322,7 +321,7 @@ gcal_date_chooser_row_set_date (GcalDateChooserRow *self,
  *
  * Returns: (transfer none): the date of the selector.
  */
-GDateTime*
+GDateTime *
 gcal_date_chooser_row_get_date (GcalDateChooserRow *self)
 {
   g_return_val_if_fail (GCAL_IS_DATE_CHOOSER_ROW (self), NULL);

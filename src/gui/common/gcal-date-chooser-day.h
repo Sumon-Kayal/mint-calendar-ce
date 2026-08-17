@@ -22,30 +22,30 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_DATE_CHOOSER_DAY (gcal_date_chooser_day_get_type())
+#define GCAL_TYPE_DATE_CHOOSER_DAY (gcal_date_chooser_day_get_type ())
 G_DECLARE_FINAL_TYPE (GcalDateChooserDay, gcal_date_chooser_day, GCAL, DATE_CHOOSER_DAY, GtkButton)
 
-GtkWidget*           gcal_date_chooser_day_new                   (void);
+GtkWidget *gcal_date_chooser_day_new (void);
 
-GDateTime*           gcal_date_chooser_day_get_date              (GcalDateChooserDay *day);
+GDateTime *gcal_date_chooser_day_get_date (GcalDateChooserDay *day);
 
-void                 gcal_date_chooser_day_set_date              (GcalDateChooserDay *day,
-                                                                  GDateTime          *date);
+void gcal_date_chooser_day_set_date (GcalDateChooserDay *day,
+                                     GDateTime *date);
 
-gboolean             gcal_date_chooser_day_get_has_dot           (GcalDateChooserDay *day);
+gboolean gcal_date_chooser_day_get_has_dot (GcalDateChooserDay *day);
 
-void                 gcal_date_chooser_day_set_has_dot           (GcalDateChooserDay *day,
-                                                                  gboolean            has_dot);
+void gcal_date_chooser_day_set_has_dot (GcalDateChooserDay *day,
+                                        gboolean has_dot);
 
-gboolean             gcal_date_chooser_day_get_dot_visible       (GcalDateChooserDay *day);
+gboolean gcal_date_chooser_day_get_dot_visible (GcalDateChooserDay *day);
 
-void                 gcal_date_chooser_day_set_dot_visible       (GcalDateChooserDay *day,
-                                                                  gboolean            dot_visible);
+void gcal_date_chooser_day_set_dot_visible (GcalDateChooserDay *day,
+                                            gboolean dot_visible);
 
-void                 gcal_date_chooser_day_set_other_month       (GcalDateChooserDay *day,
-                                                                  gboolean            other_month);
+void gcal_date_chooser_day_set_other_month (GcalDateChooserDay *day,
+                                            gboolean other_month);
 
-void                 gcal_date_chooser_day_set_selected          (GcalDateChooserDay *day,
-                                                                  gboolean            selected);
+void gcal_date_chooser_day_set_selected (GcalDateChooserDay *day,
+                                         gboolean selected);
 
 G_END_DECLS

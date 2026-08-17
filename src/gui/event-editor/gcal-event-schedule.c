@@ -20,11 +20,11 @@
 
 #define G_LOG_DOMAIN "GcalEventSchedule"
 
+#include "gcal-event-schedule.h"
 #include "gcal-date-time-utils.h"
 #include "gcal-debug.h"
 #include "gcal-event.h"
 #include "gcal-recurrence.h"
-#include "gcal-event-schedule.h"
 
 GcalScheduleValues
 gcal_schedule_values_copy (const GcalScheduleValues *values)
@@ -74,7 +74,7 @@ gcal_event_schedule_free (GcalEventSchedule *values)
   g_free (values);
 }
 
-GcalEventSchedule*
+GcalEventSchedule *
 gcal_event_schedule_set_all_day (const GcalEventSchedule *values, gboolean all_day)
 {
   GcalEventSchedule *copy = gcal_event_schedule_copy (values);
@@ -410,8 +410,8 @@ gcal_event_schedule_set_recurrence_until (const GcalEventSchedule *values,
  * gcal_event_schedule_free().
  */
 GcalEventSchedule *
-gcal_event_schedule_from_event (GcalEvent      *event,
-                                GcalTimeFormat  time_format)
+gcal_event_schedule_from_event (GcalEvent *event,
+                                GcalTimeFormat time_format)
 {
   GcalScheduleValues values;
   memset (&values, 0, sizeof (values));
@@ -436,7 +436,7 @@ gcal_event_schedule_from_event (GcalEvent      *event,
 
   GcalEventSchedule *section_values = g_new0 (GcalEventSchedule, 1);
 
-  *section_values = (GcalEventSchedule) {
+  *section_values = (GcalEventSchedule){
     .orig = gcal_schedule_values_copy (&values),
     .curr = values,
     .time_format = time_format,
@@ -477,7 +477,7 @@ gcal_event_schedule_with_date_times (const char *start, const char *end, gboolea
 
   GcalEventSchedule *section_values = g_new0 (GcalEventSchedule, 1);
 
-  *section_values = (GcalEventSchedule) {
+  *section_values = (GcalEventSchedule){
     .orig = gcal_schedule_values_copy (&values),
     .curr = values,
     .time_format = GCAL_TIME_FORMAT_24H,
@@ -485,7 +485,6 @@ gcal_event_schedule_with_date_times (const char *start, const char *end, gboolea
 
   return section_values;
 }
-
 
 static void
 test_setting_start_date_after_end_date_resets_end_date (void)
@@ -498,9 +497,9 @@ test_setting_start_date_after_end_date_resets_end_date (void)
    *
    * We want to test that end becomes 12:00 as well.
    */
-  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times("20250303T10:00:00-06:00",
-                                                                             "20250303T11:00:00-06:00",
-                                                                             FALSE);
+  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times ("20250303T10:00:00-06:00",
+                                                                              "20250303T11:00:00-06:00",
+                                                                              FALSE);
 
   g_autoptr (GDateTime) two_hours_later = g_date_time_new_from_iso8601 ("20250303T12:00:00-06:00", NULL);
 
@@ -520,9 +519,9 @@ test_setting_end_date_before_start_date_resets_start_date (void)
    *
    * We want to test that start becomes 09:00 as well.
    */
-  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times("20250303T10:00:00-06:00",
-                                                                             "20250303T11:00:00-06:00",
-                                                                             FALSE);
+  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times ("20250303T10:00:00-06:00",
+                                                                              "20250303T11:00:00-06:00",
+                                                                              FALSE);
 
   g_autoptr (GDateTime) two_hours_earlier = g_date_time_new_from_iso8601 ("20250303T09:00:00-06:00", NULL);
 
@@ -544,9 +543,9 @@ test_setting_start_datetime_preserves_end_timezone (void)
    *
    * (imagine driving for one hour while crossing timezones)
    */
-  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times("20250303T10:00:00-06:00",
-                                                                             "20250303T11:30:00-05:00",
-                                                                             FALSE);
+  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times ("20250303T10:00:00-06:00",
+                                                                              "20250303T11:30:00-05:00",
+                                                                              FALSE);
   g_assert (g_date_time_compare (values->curr.date_start, values->curr.date_end) == -1);
 
   g_autoptr (GDateTime) new_start = g_date_time_new_from_iso8601 ("20250303T11:30:00-06:00", NULL);
@@ -571,9 +570,9 @@ test_setting_end_datetime_preserves_start_timezone (void)
    *
    * (imagine driving for one hour while crossing timezones)
    */
-  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times("20250303T10:00:00-06:00",
-                                                                             "20250303T11:30:00-05:00",
-                                                                             FALSE);
+  g_autoptr (GcalEventSchedule) values = gcal_event_schedule_with_date_times ("20250303T10:00:00-06:00",
+                                                                              "20250303T11:30:00-05:00",
+                                                                              FALSE);
   g_assert (g_date_time_compare (values->curr.date_start, values->curr.date_end) == -1);
 
   g_autoptr (GDateTime) new_end = g_date_time_new_from_iso8601 ("20250303T09:30:00-05:00", NULL);

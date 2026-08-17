@@ -20,9 +20,9 @@
 
 #define G_LOG_DOMAIN "GcalSearchButton"
 
+#include "gcal-search-button.h"
 #include "gcal-context.h"
 #include "gcal-debug.h"
-#include "gcal-search-button.h"
 #include "gcal-search-hit.h"
 
 #include <glib/gi18n.h>
@@ -32,20 +32,20 @@
 
 struct _GcalSearchButton
 {
-  AdwBin               parent;
+  AdwBin parent;
 
-  GtkEditable         *entry;
-  GtkWidget           *popover;
-  GtkListView         *results_listview;
-  GtkRevealer         *results_revealer;
-  GtkSingleSelection  *results_selection_model;
-  GtkStack            *stack;
+  GtkEditable *entry;
+  GtkWidget *popover;
+  GtkListView *results_listview;
+  GtkRevealer *results_revealer;
+  GtkSingleSelection *results_selection_model;
+  GtkStack *stack;
 
-  GCancellable        *cancellable;
-  gint                 max_width_chars;
-  GListModel          *model;
+  GCancellable *cancellable;
+  gint max_width_chars;
+  GListModel *model;
 
-  GcalContext         *context;
+  GcalContext *context;
 };
 
 G_DEFINE_TYPE (GcalSearchButton, gcal_search_button, ADW_TYPE_BIN)
@@ -57,8 +57,7 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS];
-
+static GParamSpec *properties[N_PROPS];
 
 /*
  * Auxiliary methods
@@ -91,7 +90,7 @@ quit_search_entry (GcalSearchButton *self)
 
 static inline void
 scroll_to_result (GcalSearchButton *self,
-                  guint             position)
+                  guint position)
 {
   gtk_widget_activate_action (GTK_WIDGET (self->results_listview),
                               "list.scroll-to-item",
@@ -101,7 +100,7 @@ scroll_to_result (GcalSearchButton *self,
 
 static void
 set_model (GcalSearchButton *self,
-           GListModel       *model)
+           GListModel *model)
 {
   GCAL_ENTRY;
 
@@ -115,14 +114,13 @@ set_model (GcalSearchButton *self,
   GCAL_EXIT;
 }
 
-
 /*
  * Callbacks
  */
 
 static gchar *
 escape_markup_cb (GcalSearchHit *hit,
-                  const gchar   *string)
+                  const gchar *string)
 {
   g_autofree gchar *escaped_string = NULL;
 
@@ -133,11 +131,10 @@ escape_markup_cb (GcalSearchHit *hit,
 }
 
 static void
-on_button_clicked_cb (GtkButton        *button,
+on_button_clicked_cb (GtkButton *button,
                       GcalSearchButton *self)
 {
   gint max_width_chars;
-
 
   max_width_chars = gtk_editable_get_max_width_chars (self->entry);
 
@@ -152,15 +149,15 @@ on_button_clicked_cb (GtkButton        *button,
 
 static void
 on_focus_controller_leave_cb (GtkEventControllerFocus *focus_controller,
-                              GcalSearchButton        *self)
+                              GcalSearchButton *self)
 {
   quit_search_entry (self);
 }
 
 static void
-on_search_finished_cb (GObject      *source_object,
+on_search_finished_cb (GObject *source_object,
                        GAsyncResult *result,
-                       gpointer      user_data)
+                       gpointer user_data)
 {
   g_autoptr (GListModel) model = NULL;
   g_autoptr (GError) error = NULL;
@@ -176,10 +173,7 @@ on_search_finished_cb (GObject      *source_object,
   set_model (self, model);
 
   n_results = model ? g_list_model_get_n_items (model) : 0;
-  message = n_results == 0 ? _("No results found") : g_strdup_printf (ngettext ("One result found",
-                                                                                "%u results found",
-                                                                                n_results),
-                                                                      n_results),
+  message = n_results == 0 ? _ ("No results found") : g_strdup_printf (ngettext ("One result found", "%u results found", n_results), n_results),
 
   gtk_accessible_announce (GTK_ACCESSIBLE (self), message, GTK_ACCESSIBLE_ANNOUNCEMENT_PRIORITY_MEDIUM);
 
@@ -187,7 +181,7 @@ on_search_finished_cb (GObject      *source_object,
 }
 
 static void
-on_entry_activate_cb (GtkSearchEntry   *entry,
+on_entry_activate_cb (GtkSearchEntry *entry,
                       GcalSearchButton *self)
 {
   GcalSearchHit *hit;
@@ -208,7 +202,7 @@ on_entry_activate_cb (GtkSearchEntry   *entry,
 }
 
 static void
-on_entry_next_match_cb (GtkSearchEntry   *entry,
+on_entry_next_match_cb (GtkSearchEntry *entry,
                         GcalSearchButton *self)
 {
   guint selected;
@@ -229,7 +223,7 @@ on_entry_next_match_cb (GtkSearchEntry   *entry,
 }
 
 static void
-on_entry_previous_match_cb (GtkSearchEntry   *entry,
+on_entry_previous_match_cb (GtkSearchEntry *entry,
                             GcalSearchButton *self)
 {
   guint selected;
@@ -249,7 +243,7 @@ on_entry_previous_match_cb (GtkSearchEntry   *entry,
 }
 
 static void
-on_entry_search_changed_cb (GtkSearchEntry   *entry,
+on_entry_search_changed_cb (GtkSearchEntry *entry,
                             GcalSearchButton *self)
 {
   g_autofree gchar *sexp_query = NULL;
@@ -283,7 +277,7 @@ on_entry_search_changed_cb (GtkSearchEntry   *entry,
 }
 
 static void
-on_entry_stop_search_cb (GtkSearchEntry   *search_entry,
+on_entry_stop_search_cb (GtkSearchEntry *search_entry,
                          GcalSearchButton *self)
 {
   g_debug ("Exiting search mode");
@@ -291,8 +285,8 @@ on_entry_stop_search_cb (GtkSearchEntry   *search_entry,
 }
 
 static void
-on_results_listview_activated_cb (GtkListBox       *listbox,
-                                  guint             position,
+on_results_listview_activated_cb (GtkListBox *listbox,
+                                  guint position,
                                   GcalSearchButton *self)
 {
   GcalSearchHit *search_hit;
@@ -306,8 +300,8 @@ on_results_listview_activated_cb (GtkListBox       *listbox,
 }
 
 static void
-on_results_revealer_child_reveal_state_changed_cb (GtkRevealer      *revealer,
-                                                   GParamSpec       *pspec,
+on_results_revealer_child_reveal_state_changed_cb (GtkRevealer *revealer,
+                                                   GParamSpec *pspec,
                                                    GcalSearchButton *self)
 {
   if (!gtk_revealer_get_child_revealed (revealer) && !gtk_revealer_get_reveal_child (revealer))
@@ -316,11 +310,10 @@ on_results_revealer_child_reveal_state_changed_cb (GtkRevealer      *revealer,
 
 static gboolean
 string_is_not_empty_cb (GcalSearchHit *hit,
-                        const gchar   *string)
+                        const gchar *string)
 {
   return string != NULL && *string != '\0';
 }
-
 
 /*
  * GObject overrides
@@ -329,7 +322,7 @@ string_is_not_empty_cb (GcalSearchHit *hit,
 static void
 gcal_search_button_dispose (GObject *object)
 {
-  GcalSearchButton *self = (GcalSearchButton *)object;
+  GcalSearchButton *self = (GcalSearchButton *) object;
 
   g_clear_pointer (&self->popover, gtk_widget_unparent);
 
@@ -339,7 +332,7 @@ gcal_search_button_dispose (GObject *object)
 static void
 gcal_search_button_finalize (GObject *object)
 {
-  GcalSearchButton *self = (GcalSearchButton *)object;
+  GcalSearchButton *self = (GcalSearchButton *) object;
 
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
@@ -349,9 +342,9 @@ gcal_search_button_finalize (GObject *object)
 }
 
 static void
-gcal_search_button_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
+gcal_search_button_get_property (GObject *object,
+                                 guint prop_id,
+                                 GValue *value,
                                  GParamSpec *pspec)
 {
   GcalSearchButton *self = GCAL_SEARCH_BUTTON (object);
@@ -368,10 +361,10 @@ gcal_search_button_get_property (GObject    *object,
 }
 
 static void
-gcal_search_button_set_property (GObject      *object,
-                                 guint         prop_id,
+gcal_search_button_set_property (GObject *object,
+                                 guint prop_id,
                                  const GValue *value,
-                                 GParamSpec   *pspec)
+                                 GParamSpec *pspec)
 {
   GcalSearchButton *self = GCAL_SEARCH_BUTTON (object);
 
@@ -411,7 +404,7 @@ gcal_search_button_class_init (GcalSearchButtonClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-search-button.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-search-button.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalSearchButton, entry);
   gtk_widget_class_bind_template_child (widget_class, GcalSearchButton, popover);
@@ -445,7 +438,7 @@ gcal_search_button_init (GcalSearchButton *self)
 
 void
 gcal_search_button_search (GcalSearchButton *self,
-                           const gchar      *search_text)
+                           const gchar *search_text)
 {
   g_return_if_fail (GCAL_IS_SEARCH_BUTTON (self));
 

@@ -18,16 +18,16 @@
 
 #define G_LOG_DOMAIN "GcalWeekView"
 
+#include "gcal-week-view.h"
 #include "gcal-debug.h"
 #include "gcal-enums.h"
 #include "gcal-event-widget.h"
 #include "gcal-timeline-subscriber.h"
 #include "gcal-utils.h"
 #include "gcal-view-private.h"
+#include "gcal-week-grid.h"
 #include "gcal-week-header.h"
 #include "gcal-week-hour-bar.h"
-#include "gcal-week-grid.h"
-#include "gcal-week-view.h"
 
 #include <adwaita.h>
 #include <glib/gi18n.h>
@@ -36,39 +36,39 @@
 
 struct _GcalWeekView
 {
-  GtkBox              parent;
+  GtkBox parent;
 
-  GtkWidget          *content;
-  GtkWidget          *header;
-  GcalWeekHourBar    *hours_bar;
-  GtkWidget          *scrolled_window;
-  GtkWidget          *week_grid;
+  GtkWidget *content;
+  GtkWidget *header;
+  GcalWeekHourBar *hours_bar;
+  GtkWidget *scrolled_window;
+  GtkWidget *week_grid;
 
   /* property */
-  GDateTime          *date;
-  GcalContext        *context;
+  GDateTime *date;
+  GcalContext *context;
 
-  guint               scroll_grid_timeout_id;
-  gulong              stack_page_changed_id;
+  guint scroll_grid_timeout_id;
+  gulong stack_page_changed_id;
 
-  gint                clicked_cell;
+  gint clicked_cell;
 
-  gdouble             gesture_zoom_center;
+  gdouble gesture_zoom_center;
 
-  gboolean            pointer_position_valid;
-  gdouble             pointer_position_y;
+  gboolean pointer_position_valid;
+  gdouble pointer_position_y;
 
-  gdouble             initial_zoom_level;
-  gdouble             zoom_level;
+  gdouble initial_zoom_level;
+  gdouble zoom_level;
 };
 
-static void          stack_visible_child_changed_cb              (AdwViewStack       *stack,
-                                                                  GParamSpec         *pspec,
-                                                                  GcalWeekView       *self);
+static void stack_visible_child_changed_cb (AdwViewStack *stack,
+                                            GParamSpec *pspec,
+                                            GcalWeekView *self);
 
-static void          gcal_view_interface_init                    (GcalViewInterface  *iface);
+static void gcal_view_interface_init (GcalViewInterface *iface);
 
-static void          gcal_timeline_subscriber_interface_init     (GcalTimelineSubscriberInterface *iface);
+static void gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface);
 
 enum
 {
@@ -79,11 +79,7 @@ enum
   NUM_PROPS
 };
 
-
-G_DEFINE_TYPE_WITH_CODE (GcalWeekView, gcal_week_view, GTK_TYPE_BOX,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init)
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER,
-                                                gcal_timeline_subscriber_interface_init));
+G_DEFINE_TYPE_WITH_CODE (GcalWeekView, gcal_week_view, GTK_TYPE_BOX, G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init) G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER, gcal_timeline_subscriber_interface_init));
 
 /* 60px * 1 * 48 rows + 1px * 47 lines = 2927px */
 #define HEIGHT_DEFAULT 2927
@@ -95,9 +91,9 @@ G_DEFINE_TYPE_WITH_CODE (GcalWeekView, gcal_week_view, GTK_TYPE_BOX,
 static gboolean
 update_grid_scroll_position (GcalWeekView *self)
 {
-  g_autoptr(GDateTime) week_start = NULL;
-  g_autoptr(GDateTime) week_end = NULL;
-  g_autoptr(GDateTime) now = NULL;
+  g_autoptr (GDateTime) week_start = NULL;
+  g_autoptr (GDateTime) week_end = NULL;
+  g_autoptr (GDateTime) now = NULL;
   GtkAdjustment *vadjustment;
   gdouble minutes, real_value;
   gdouble max, page, page_increment, value;
@@ -169,7 +165,7 @@ schedule_position_scroll (GcalWeekView *self)
 
 static void
 begin_zoom (GcalWeekView *self,
-            gdouble       view_center_y)
+            gdouble view_center_y)
 {
   GtkAdjustment *vadjustment;
   gdouble center, height;
@@ -186,8 +182,8 @@ begin_zoom (GcalWeekView *self,
 
 static void
 apply_zoom (GcalWeekView *self,
-            gdouble       view_center_y,
-            gdouble       scale)
+            gdouble view_center_y,
+            gdouble scale)
 {
   GtkAdjustment *vadjustment;
   gdouble height;
@@ -231,30 +227,29 @@ restore_zoom_level (GcalWeekView *self)
   apply_zoom (self, 0, 1.0);
 }
 
-
 /* Callbacks */
-static gchar*
+static gchar *
 get_header_state_tooltip (GcalWeekView *self,
-                          gboolean      expanded)
+                          gboolean expanded)
 {
   if (expanded)
-    return g_strdup (_("Hide Additional Events"));
+    return g_strdup (_ ("Hide Additional Events"));
   else
-    return g_strdup (_("Show Additional Events"));
+    return g_strdup (_ ("Show Additional Events"));
 }
 
 static void
 on_event_activated (GcalWeekView *self,
-                    GtkWidget    *widget)
+                    GtkWidget *widget)
 {
   gcal_view_event_activated (GCAL_VIEW (self), GCAL_EVENT_WIDGET (widget));
 }
 
 static void
 on_motion_controller_enter_cb (GtkEventControllerMotion *controller,
-                               gdouble                   x,
-                               gdouble                   y,
-                               GcalWeekView             *self)
+                               gdouble x,
+                               gdouble y,
+                               GcalWeekView *self)
 {
   self->pointer_position_valid = TRUE;
   self->pointer_position_y = y;
@@ -262,9 +257,9 @@ on_motion_controller_enter_cb (GtkEventControllerMotion *controller,
 
 static void
 on_motion_controller_motion_cb (GtkEventControllerMotion *controller,
-                                gdouble                   x,
-                                gdouble                   y,
-                                GcalWeekView             *self)
+                                gdouble x,
+                                gdouble y,
+                                GcalWeekView *self)
 {
   self->pointer_position_valid = TRUE;
   self->pointer_position_y = y;
@@ -272,14 +267,14 @@ on_motion_controller_motion_cb (GtkEventControllerMotion *controller,
 
 static void
 on_motion_controller_leave_cb (GtkEventControllerMotion *controller,
-                               GcalWeekView             *self)
+                               GcalWeekView *self)
 {
   self->pointer_position_valid = FALSE;
 }
 
 static void
 on_scroll_controller_scroll_begin_cb (GtkEventControllerScroll *controller,
-                                      GcalWeekView             *self)
+                                      GcalWeekView *self)
 {
   gdouble view_center_y;
 
@@ -293,9 +288,9 @@ on_scroll_controller_scroll_begin_cb (GtkEventControllerScroll *controller,
 
 static gboolean
 on_scroll_controller_scroll_cb (GtkEventControllerScroll *controller,
-                                gdouble                   dx,
-                                gdouble                   dy,
-                                GcalWeekView             *self)
+                                gdouble dx,
+                                gdouble dy,
+                                GcalWeekView *self)
 {
   GdkEvent *event;
   gboolean discrete;
@@ -344,15 +339,15 @@ on_scroll_controller_scroll_cb (GtkEventControllerScroll *controller,
 
 static void
 on_scroll_controller_scroll_end_cb (GtkEventControllerScroll *controller,
-                                    GcalWeekView             *self)
+                                    GcalWeekView *self)
 {
   save_zoom_level (self);
 }
 
 static void
 on_zoom_gesture_scale_changed_cb (GtkGestureZoom *gesture,
-                                  gdouble         scale,
-                                  GcalWeekView   *self)
+                                  gdouble scale,
+                                  GcalWeekView *self)
 {
   gdouble view_center_x, view_center_y;
 
@@ -362,9 +357,9 @@ on_zoom_gesture_scale_changed_cb (GtkGestureZoom *gesture,
 }
 
 static void
-on_zoom_gesture_begin_cb (GtkGesture       *gesture,
+on_zoom_gesture_begin_cb (GtkGesture *gesture,
                           GdkEventSequence *sequence,
-                          GcalWeekView     *self)
+                          GcalWeekView *self)
 {
   gdouble view_center_x, view_center_y;
 
@@ -374,19 +369,19 @@ on_zoom_gesture_begin_cb (GtkGesture       *gesture,
 }
 
 static void
-on_zoom_gesture_end_cb (GtkGesture       *gesture,
+on_zoom_gesture_end_cb (GtkGesture *gesture,
                         GdkEventSequence *sequence,
-                        GcalWeekView     *self)
+                        GcalWeekView *self)
 {
   save_zoom_level (self);
 }
 
 static void
 stack_visible_child_changed_cb (AdwViewStack *stack,
-                                GParamSpec   *pspec,
+                                GParamSpec *pspec,
                                 GcalWeekView *self)
 {
-  if (adw_view_stack_get_visible_child (stack) != (GtkWidget*) self)
+  if (adw_view_stack_get_visible_child (stack) != (GtkWidget *) self)
     return;
 
   schedule_position_scroll (self);
@@ -394,9 +389,8 @@ stack_visible_child_changed_cb (AdwViewStack *stack,
   g_clear_signal_handler (&self->stack_page_changed_id, stack);
 }
 
-
 /* GcalView implementation */
-static GDateTime*
+static GDateTime *
 gcal_week_view_get_date (GcalView *view)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (view);
@@ -405,7 +399,7 @@ gcal_week_view_get_date (GcalView *view)
 }
 
 static void
-gcal_week_view_set_date (GcalView  *view,
+gcal_week_view_set_date (GcalView *view,
                          GDateTime *date)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (view);
@@ -425,10 +419,10 @@ gcal_week_view_set_date (GcalView  *view,
   GCAL_EXIT;
 }
 
-static GList*
-gcal_week_view_get_children_by_uuid (GcalView              *view,
-                                     GcalRecurrenceModType  mod,
-                                     const gchar           *uuid)
+static GList *
+gcal_week_view_get_children_by_uuid (GcalView *view,
+                                     GcalRecurrenceModType mod,
+                                     const gchar *uuid)
 {
   GcalWeekView *self;
   GList *grid, *header;
@@ -451,7 +445,7 @@ gcal_week_view_clear_marks (GcalView *view)
   gcal_week_grid_clear_marks (GCAL_WEEK_GRID (self->week_grid));
 }
 
-static GDateTime*
+static GDateTime *
 gcal_week_view_get_next_date (GcalView *view)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (view);
@@ -460,8 +454,7 @@ gcal_week_view_get_next_date (GcalView *view)
   return g_date_time_add_weeks (self->date, 1);
 }
 
-
-static GDateTime*
+static GDateTime *
 gcal_week_view_get_previous_date (GcalView *view)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (view);
@@ -481,12 +474,11 @@ gcal_view_interface_init (GcalViewInterface *iface)
   iface->get_previous_date = gcal_week_view_get_previous_date;
 }
 
-
 /*
  * GcalTimelineSubscriber iface
  */
 
-static GcalRange*
+static GcalRange *
 gcal_week_view_get_range (GcalTimelineSubscriber *subscriber)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (subscriber);
@@ -498,7 +490,7 @@ gcal_week_view_get_range (GcalTimelineSubscriber *subscriber)
 
 static void
 gcal_week_view_add_event (GcalTimelineSubscriber *subscriber,
-                          GcalEvent              *event)
+                          GcalEvent *event)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (subscriber);
 
@@ -514,8 +506,8 @@ gcal_week_view_add_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_week_view_update_event (GcalTimelineSubscriber *subscriber,
-                             GcalEvent              *old_event,
-                             GcalEvent              *event)
+                             GcalEvent *old_event,
+                             GcalEvent *event)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (subscriber);
   const gchar *event_id;
@@ -533,7 +525,7 @@ gcal_week_view_update_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_week_view_remove_event (GcalTimelineSubscriber *subscriber,
-                             GcalEvent              *event)
+                             GcalEvent *event)
 {
   GcalWeekView *self = GCAL_WEEK_VIEW (subscriber);
   const gchar *uuid = gcal_event_get_uid (event);
@@ -555,13 +547,12 @@ gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface)
   iface->remove_event = gcal_week_view_remove_event;
 }
 
-
 /*
  * GObject overrides
  */
 
 static void
-gcal_week_view_finalize (GObject       *object)
+gcal_week_view_finalize (GObject *object)
 {
   GcalWeekView *self;
 
@@ -576,10 +567,10 @@ gcal_week_view_finalize (GObject       *object)
 }
 
 static void
-gcal_week_view_set_property (GObject       *object,
-                             guint          property_id,
-                             const GValue  *value,
-                             GParamSpec    *pspec)
+gcal_week_view_set_property (GObject *object,
+                             guint property_id,
+                             const GValue *value,
+                             GParamSpec *pspec)
 {
   GcalWeekView *self = (GcalWeekView *) object;
 
@@ -606,10 +597,10 @@ gcal_week_view_set_property (GObject       *object,
 }
 
 static void
-gcal_week_view_get_property (GObject       *object,
-                             guint          property_id,
-                             GValue        *value,
-                             GParamSpec    *pspec)
+gcal_week_view_get_property (GObject *object,
+                             guint property_id,
+                             GValue *value,
+                             GParamSpec *pspec)
 {
   GcalWeekView *self;
 
@@ -686,4 +677,3 @@ gcal_week_view_init (GcalWeekView *self)
 
   gtk_widget_set_size_request (self->content, -1, HEIGHT_DEFAULT);
 }
-

@@ -14,18 +14,18 @@ previously tracked upstream's `main` branch mid-development, at `51.beta` — se
 things were tried and ruled out before landing on the current approach:
 [`ppa:savoury1/gtk4`](https://launchpad.net/~savoury1/+archive/ubuntu/gtk4) doesn't work
 (confirmed via a real CI run — it 404s for the Noble suite; its actual purpose is backporting
-an *old* GTK4 to ancient LTS releases, not providing a current one for Noble), and building on
+an _old_ GTK4 to ancient LTS releases, not providing a current one for Noble), and building on
 Ubuntu 26.04 instead worked but meant the resulting `.deb` couldn't install on actual Mint 22.
 
 **Current approach: the v50.0 feature set is ported down to Mint 22 / Ubuntu 24.04's real
 libraries**, instead of chasing a newer base:
 
-| Dependency | Required    | Ships in Mint 22 / Ubuntu 24.04 (Noble)? |
-|------------|-------------|-------------------------------------------|
-| GTK4       | `>= 4.14.2` | Yes — noble ships 4.14.2, noble-updates 4.14.5 |
-| libadwaita | `>= 1.5.0`  | Yes — noble ships 1.5.0 |
-| GLib       | `>= 2.80.0` | Yes — noble ships 2.80.0 |
-| fribidi    | any (powers the attendee-list bidirectional-text support) | Yes |
+| Dependency | Required                                                  | Ships in Mint 22 / Ubuntu 24.04 (Noble)?       |
+| ---------- | --------------------------------------------------------- | ---------------------------------------------- |
+| GTK4       | `>= 4.14.2`                                               | Yes — noble ships 4.14.2, noble-updates 4.14.5 |
+| libadwaita | `>= 1.5.0`                                                | Yes — noble ships 1.5.0                        |
+| GLib       | `>= 2.80.0`                                               | Yes — noble ships 2.80.0                       |
+| fribidi    | any (powers the attendee-list bidirectional-text support) | Yes                                            |
 
 Checked directly against Ubuntu's package archive: no PPA, container, or newer base needed.
 libical, evolution-data-server (`libecal2.0-dev` and friends), gweather, and geoclue's floors
@@ -74,12 +74,13 @@ These are checked against the current source (no leftover references to the newe
 remain — verified both by search and by diffing this tree's `src/` against a clean upstream
 v50.0 checkout, file by file) and the feature-parity question was checked deliberately: every
 file that differs from upstream maps to one of the items above, so nothing else should have
-been silently dropped in the process. That said, **none of this has been confirmed by an
-actual compile yet** — see "Before opening a release" below.
+been silently dropped in the process. The compatibility port has since been exercised by CI:
+the build reached **350/350 targets with all 10 tests passing**. The remaining release gate is
+the real Mint installation/coexistence test of the generated `.deb`.
 
 ## blueprint-compiler needs to be newer than Ubuntu 24.04 ships
 
-This one isn't a library version issue like the ones above — it's the *build tool*.
+This one isn't a library version issue like the ones above — it's the _build tool_.
 Ubuntu 24.04 ships `blueprint-compiler` 0.12.0, and this codebase's `.blp` files use the
 `not-swapped` signal flag, which that version's parser doesn't recognize (`error: Expected
 ';'` right after the flag — confirmed by an actual CI run). This affects the whole codebase,
@@ -99,7 +100,7 @@ it's not actually what gets used anymore.
 
 One more knock-on fix: `debhelper`'s meson support still installs via plain `ninja install`
 rather than `meson install` (a known, still-open debhelper limitation — Debian bug #1006805),
-but it *also* tries to pass `--skip-subprojects blueprint-compiler` along with that call, to
+but it _also_ tries to pass `--skip-subprojects blueprint-compiler` along with that call, to
 keep the wrap subproject's own files out of this package. Plain `ninja` has never had that
 flag, so the combination fails outright. `debian/rules`' `override_dh_auto_install` now calls
 `meson install --skip-subprojects blueprint-compiler` directly instead of going through
@@ -109,7 +110,7 @@ One real consequence: the build now needs network access to fetch the wrap subpr
 plain `meson setup`, this happens automatically on first configure. `dpkg-buildpackage` is
 different: it runs meson with `--wrap-mode=nodownload` (a deliberate safety default, so package
 builds can't reach out to arbitrary git URLs mid-build), which blocks the automatic fetch —
-`nodownload` only blocks *downloading*, not *using* a wrap already on disk. `release-deb.yml`
+`nodownload` only blocks _downloading_, not _using_ a wrap already on disk. `release-deb.yml`
 handles this with an explicit `meson subprojects download` step before `dpkg-buildpackage` runs,
 while the job still has network access; do the same locally before a `.deb` build (`## Debian
 package build` below), or run it once and vendor the resulting `subprojects/blueprint-compiler/`
@@ -121,6 +122,65 @@ This fork uses its own GSettings schema (`org.mint.calendar.ce`, path
 `/org/mint/calendar/ce/`) instead of reusing upstream's `org.gnome.calendar`. If both this
 app and real GNOME Calendar are ever installed on the same system, they now have independent
 settings rather than silently sharing one GSettings key space.
+
+## Independent package identity and coexistence
+
+Mint Calendar CE is intended to be installable alongside Linux Mint's original
+`gnome-calendar` package. System-visible identities are deliberately separate:
+
+| Resource | Original GNOME Calendar | Mint Calendar CE |
+|---|---|---|
+| Binary | `gnome-calendar` | `mint-calendar-ce` |
+| Application ID | `org.gnome.Calendar` | `org.mint.calendar.ce` |
+| Desktop entry | `org.gnome.Calendar.desktop` | `org.mint.calendar.ce.desktop` |
+| D-Bus service | `org.gnome.Calendar.service` | `org.mint.calendar.ce.service` |
+| Search provider | `org.gnome.Calendar.search-provider.ini` | `org.mint.calendar.ce.search-provider.ini` |
+| GSettings schema | `org.gnome.Calendar` | `org.mint.calendar.ce` |
+| GSettings path | `/org/gnome/calendar/` | `/org/mint/calendar/ce/` |
+| AppStream ID | `org.gnome.Calendar` | `org.mint.calendar.ce` |
+| gettext domain | `gnome-calendar` | `mint-calendar-ce` |
+| Private data directory | `gnome-calendar` | `mint-calendar-ce` |
+
+The internal `gcal_*` C symbols and embedded `/org/gnome/calendar/...` resource
+paths are not mechanically renamed. They are internal implementation/resource
+identifiers and do not by themselves create Debian filesystem ownership conflicts.
+
+### Search-provider profile paths
+
+The search-provider object path is kept identical between the generated metadata
+and the runtime D-Bus registration code:
+
+```text
+Release:     /org/mint/calendar/ce/SearchProvider
+Development: /org/mint/calendar/ce/Devel/SearchProvider
+```
+
+Both registration and unregistration use the same development profile path, and
+the `.ini` template uses the matching `profile_path`.
+
+### Coexistence test
+
+After building the `.deb`, install the distro GNOME Calendar first, then install CE:
+
+```sh
+sudo apt install gnome-calendar
+sudo apt install ./mint-calendar-ce_*.deb
+```
+
+Compare the package file lists:
+
+```sh
+dpkg -L gnome-calendar | grep -v '/$' | sort > /tmp/gnome-calendar-sorted.txt
+dpkg -L mint-calendar-ce | grep -v '/$' | sort > /tmp/mint-calendar-ce-sorted.txt
+
+comm -12 /tmp/gnome-calendar-sorted.txt /tmp/mint-calendar-ce-sorted.txt
+```
+
+Expected output: **nothing**.
+
+Then launch both applications independently and verify desktop activation,
+D-Bus activation, search integration, and uninstalling CE without damaging the
+original GNOME Calendar package.
 
 ## Dev build (meson)
 
@@ -186,7 +246,7 @@ sudo apt install ./mint-calendar-ce_*.deb
 
 ## Icons and branding
 
-The application icon, launcher entry (`data/org.gnome.Calendar.desktop.in.in`), and app ID
+The application icon, launcher entry (`data/org.mint.calendar.ce.desktop.in.in`), and app ID
 (`org.mint.calendar.ce`, set in `meson.build`) were restyled for this fork —
 flat, Mint-Y-Dark-inspired palette in place of upstream's gradient purple. The symbolic icons
 (`data/icons/hicolor/symbolic/`) were left as generic single-fill icons deliberately: GTK
@@ -210,7 +270,7 @@ Mint 22 / Ubuntu 24.04 directly (table above, checked against Ubuntu's package a
 A real CI run (CodeQL's Analyze job, which builds the tree to trace the compile) has since
 run against this — and caught something source inspection alone couldn't have: the
 blueprint-compiler version gap above. It failed at `ninja`'s very first blueprint-compiling
-step, before a single line of C compiled, which is the *only* real compile signal this tree
+step, before a single line of C compiled, which is the _only_ real compile signal this tree
 has had so far. Not one C file has actually been built yet, and the blueprint-compiler fix
 itself (wrap + version-checked `find_program()`) hasn't been through CI yet either — treat the
 next CI run, or a local `meson setup && ninja && meson test`, as the real test. Give the

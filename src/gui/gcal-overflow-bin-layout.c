@@ -47,13 +47,13 @@ G_DEFINE_TYPE (GcalOverflowBinLayout, gcal_overflow_bin_layout, GTK_TYPE_LAYOUT_
 
 static void
 gcal_overflow_bin_layout_measure (GtkLayoutManager *layout_manager,
-                                  GtkWidget        *widget,
-                                  GtkOrientation    orientation,
-                                  gint              for_size,
-                                  gint             *minimum,
-                                  gint             *natural,
-                                  gint             *minimum_baseline,
-                                  gint             *natural_baseline)
+                                  GtkWidget *widget,
+                                  GtkOrientation orientation,
+                                  gint for_size,
+                                  gint *minimum,
+                                  gint *natural,
+                                  gint *minimum_baseline,
+                                  gint *natural_baseline)
 {
   GtkSizeRequestMode request_mode;
   GtkWidget *child;
@@ -134,10 +134,10 @@ gcal_overflow_bin_layout_measure (GtkLayoutManager *layout_manager,
 
 static void
 gcal_overflow_bin_layout_allocate (GtkLayoutManager *layout_manager,
-                                   GtkWidget        *widget,
-                                   gint              width,
-                                   gint              height,
-                                   gint              baseline)
+                                   GtkWidget *widget,
+                                   gint width,
+                                   gint height,
+                                   gint baseline)
 {
   GtkWidget *child;
 
@@ -211,7 +211,7 @@ gcal_overflow_bin_layout_allocate (GtkLayoutManager *layout_manager,
 
 static GtkSizeRequestMode
 gcal_overflow_bin_layout_get_request_mode (GtkLayoutManager *layout_manager,
-                                           GtkWidget        *widget)
+                                           GtkWidget *widget)
 {
   GcalOverflowBinLayout *self = GCAL_OVERFLOW_BIN_LAYOUT (layout_manager);
 
@@ -236,7 +236,7 @@ gcal_overflow_bin_layout_init (GcalOverflowBinLayout *self)
 
 void
 gcal_overflow_bin_layout_set_request_mode (GcalOverflowBinLayout *self,
-                                           GtkSizeRequestMode     request_mode)
+                                           GtkSizeRequestMode request_mode)
 {
   g_return_if_fail (GCAL_IS_OVERFLOW_BIN_LAYOUT (self));
   g_return_if_fail (request_mode >= GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH && request_mode <= GTK_SIZE_REQUEST_CONSTANT_SIZE);

@@ -26,17 +26,17 @@
 
 struct _GcalClock
 {
-  GObject             parent;
+  GObject parent;
 
-  guint               timeout_id;
+  guint timeout_id;
 
-  GDateTime          *current;
+  GDateTime *current;
 
-  GDBusProxy         *proxy;
-  GCancellable       *cancellable;
+  GDBusProxy *proxy;
+  GCancellable *cancellable;
 };
 
-static gboolean      timeout_cb                                  (gpointer user_data);
+static gboolean timeout_cb (gpointer user_data);
 
 G_DEFINE_TYPE (GcalClock, gcal_clock, G_TYPE_OBJECT)
 
@@ -48,7 +48,9 @@ enum
   NUM_SIGNALS
 };
 
-static guint signals[NUM_SIGNALS] = { 0, };
+static guint signals[NUM_SIGNALS] = {
+  0,
+};
 
 /*
  * Auxiliary methods
@@ -128,11 +130,11 @@ timeout_cb (gpointer user_data)
 }
 
 static void
-logind_signal_received_cb (GDBusProxy  *logind,
+logind_signal_received_cb (GDBusProxy *logind,
                            const gchar *sender,
                            const gchar *signal,
-                           GVariant    *params,
-                           GcalClock   *self)
+                           GVariant *params,
+                           GcalClock *self)
 {
   GVariant *child;
   gboolean resuming;
@@ -154,9 +156,9 @@ logind_signal_received_cb (GDBusProxy  *logind,
 }
 
 static void
-login_proxy_acquired_cb (GObject      *source,
+login_proxy_acquired_cb (GObject *source,
                          GAsyncResult *res,
-                         gpointer      user_data)
+                         gpointer user_data)
 {
   GcalClock *self;
   GError *error;
@@ -185,7 +187,7 @@ login_proxy_acquired_cb (GObject      *source,
 static void
 gcal_clock_finalize (GObject *object)
 {
-  GcalClock *self = (GcalClock *)object;
+  GcalClock *self = (GcalClock *) object;
 
   g_cancellable_cancel (self->cancellable);
 
@@ -204,19 +206,19 @@ gcal_clock_finalize (GObject *object)
 }
 
 static void
-gcal_clock_get_property (GObject    *object,
-                         guint       prop_id,
-                         GValue     *value,
+gcal_clock_get_property (GObject *object,
+                         guint prop_id,
+                         GValue *value,
                          GParamSpec *pspec)
 {
   G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 }
 
 static void
-gcal_clock_set_property (GObject      *object,
-                         guint         prop_id,
+gcal_clock_set_property (GObject *object,
+                         guint prop_id,
                          const GValue *value,
-                         GParamSpec   *pspec)
+                         GParamSpec *pspec)
 {
   G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 }
@@ -278,7 +280,7 @@ gcal_clock_init (GcalClock *self)
  *
  * Returns: (transfer full): a newly-allocated #GcalClock.
  */
-GcalClock*
+GcalClock *
 gcal_clock_new (void)
 {
   return g_object_new (GCAL_TYPE_CLOCK, NULL);

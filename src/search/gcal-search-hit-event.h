@@ -25,11 +25,11 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_SEARCH_HIT_EVENT (gcal_search_hit_event_get_type())
+#define GCAL_TYPE_SEARCH_HIT_EVENT (gcal_search_hit_event_get_type ())
 G_DECLARE_FINAL_TYPE (GcalSearchHitEvent, gcal_search_hit_event, GCAL, SEARCH_HIT_EVENT, GcalSearchHit)
 
-GcalSearchHitEvent*  gcal_search_hit_event_new                   (GcalEvent          *event);
+GcalSearchHitEvent *gcal_search_hit_event_new (GcalEvent *event);
 
-GcalEvent*           gcal_search_hit_event_get_event             (GcalSearchHitEvent *self);
+GcalEvent *gcal_search_hit_event_get_event (GcalSearchHitEvent *self);
 
 G_END_DECLS

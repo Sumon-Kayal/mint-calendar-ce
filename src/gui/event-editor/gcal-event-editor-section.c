@@ -18,8 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "gcal-context.h"
 #include "gcal-event-editor-section.h"
+#include "gcal-context.h"
 
 G_DEFINE_INTERFACE (GcalEventEditorSection, gcal_event_editor_section, GTK_TYPE_WIDGET)
 
@@ -43,8 +43,8 @@ gcal_event_editor_section_default_init (GcalEventEditorSectionInterface *iface)
  */
 void
 gcal_event_editor_section_set_event (GcalEventEditorSection *self,
-                                     GcalEvent              *event,
-                                     GcalEventEditorFlags    flags)
+                                     GcalEvent *event,
+                                     GcalEventEditorFlags flags)
 {
   g_return_if_fail (GCAL_IS_EVENT_EDITOR_SECTION (self));
   g_return_if_fail (GCAL_EVENT_EDITOR_SECTION_GET_IFACE (self)->set_event);

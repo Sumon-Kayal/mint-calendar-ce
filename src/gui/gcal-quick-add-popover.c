@@ -20,32 +20,33 @@
 
 #include <glib/gi18n.h>
 
-#include "gcal-quick-add-popover.h"
 #include "gcal-calendar-row.h"
+#include "gcal-quick-add-popover.h"
 #include "gcal-utils.h"
 
 struct _GcalQuickAddPopover
 {
-  GtkPopover          parent;
+  GtkPopover parent;
 
-  GtkWidget          *add_button;
-  GtkWidget          *calendars_list_box;
-  GtkWidget          *color_image;
-  GtkWidget          *edit_button;
-  GtkWidget          *summary_entry;
-  GtkWidget          *title_label;
+  GtkWidget *add_button;
+  GtkWidget *calendars_list_box;
+  GtkWidget *color_image;
+  GtkWidget *edit_button;
+  GtkWidget *summary_entry;
+  GtkWidget *title_label;
 
   /* Internal data */
-  GcalRange          *range;
+  GcalRange *range;
 
-  GListModel         *read_write_calendars_model;
+  GListModel *read_write_calendars_model;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 G_DEFINE_TYPE (GcalQuickAddPopover, gcal_quick_add_popover, GTK_TYPE_POPOVER)
 
-enum {
+enum
+{
   PROP_0,
   PROP_RANGE,
   PROP_CONTEXT,
@@ -58,15 +59,17 @@ enum
   NUM_SIGNALS
 };
 
-static guint signals[NUM_SIGNALS] = { 0, };
+static guint signals[NUM_SIGNALS] = {
+  0,
+};
 
 /*
  * Utility functions
  */
 
 static void
-row_selected_cb (GtkListBox          *list_box,
-                 GtkListBoxRow       *row,
+row_selected_cb (GtkListBox *list_box,
+                 GtkListBoxRow *row,
                  GcalQuickAddPopover *self)
 {
   GtkWidget *check_button;
@@ -88,7 +91,7 @@ emit_changed (GcalQuickAddPopover *self)
   gtk_filter_changed (filter, GTK_FILTER_CHANGE_DIFFERENT);
 }
 
-static GtkWidget*
+static GtkWidget *
 create_row_func (gpointer data,
                  gpointer user_data)
 {
@@ -176,7 +179,7 @@ get_number_of_days_from_today (GDateTime *day)
   return n_days;
 }
 
-static gchar*
+static gchar *
 get_date_string_for_multiday (GDateTime *start,
                               GDateTime *end)
 {
@@ -186,40 +189,40 @@ get_date_string_for_multiday (GDateTime *start,
   gint n_days;
 
   const gchar *start_date_weekdays_strings[] = {
-    N_("from next Monday"),
-    N_("from next Tuesday"),
-    N_("from next Wednesday"),
-    N_("from next Thursday"),
-    N_("from next Friday"),
-    N_("from next Saturday"),
-    N_("from next Sunday"),
+    N_ ("from next Monday"),
+    N_ ("from next Tuesday"),
+    N_ ("from next Wednesday"),
+    N_ ("from next Thursday"),
+    N_ ("from next Friday"),
+    N_ ("from next Saturday"),
+    N_ ("from next Sunday"),
     NULL
   };
 
   const gchar *end_date_weekdays_strings[] = {
-    N_("to next Monday"),
-    N_("to next Tuesday"),
-    N_("to next Wednesday"),
-    N_("to next Thursday"),
-    N_("to next Friday"),
-    N_("to next Saturday"),
-    N_("to next Sunday"),
+    N_ ("to next Monday"),
+    N_ ("to next Tuesday"),
+    N_ ("to next Wednesday"),
+    N_ ("to next Thursday"),
+    N_ ("to next Friday"),
+    N_ ("to next Saturday"),
+    N_ ("to next Sunday"),
     NULL
   };
 
   const gchar *month_names[] = {
-    N_("January"),
-    N_("February"),
-    N_("March"),
-    N_("April"),
-    N_("May"),
-    N_("June"),
-    N_("July"),
-    N_("August"),
-    N_("September"),
-    N_("October"),
-    N_("November"),
-    N_("December"),
+    N_ ("January"),
+    N_ ("February"),
+    N_ ("March"),
+    N_ ("April"),
+    N_ ("May"),
+    N_ ("June"),
+    N_ ("July"),
+    N_ ("August"),
+    N_ ("September"),
+    N_ ("October"),
+    N_ ("November"),
+    N_ ("December"),
     NULL
   };
 
@@ -227,15 +230,15 @@ get_date_string_for_multiday (GDateTime *start,
 
   if (n_days == 0)
     {
-      start_date_str = g_strdup_printf (_("from Today"));
+      start_date_str = g_strdup_printf (_ ("from Today"));
     }
   else if (n_days == -1)
     {
-      start_date_str = g_strdup_printf (_("from Tomorrow"));
+      start_date_str = g_strdup_printf (_ ("from Tomorrow"));
     }
   else if (n_days == 1)
     {
-      start_date_str = g_strdup_printf (_("from Yesterday"));
+      start_date_str = g_strdup_printf (_ ("from Yesterday"));
     }
   else if (n_days < -1 && n_days > -8)
     {
@@ -253,7 +256,7 @@ get_date_string_for_multiday (GDateTime *start,
        * this is the format string for representing a date consisting of a month
        * name and a date of month.
        */
-      start_date_str = g_strdup_printf (_("from %1$s %2$s"),
+      start_date_str = g_strdup_printf (_ ("from %1$s %2$s"),
                                         gettext (month_names[g_date_time_get_month (start) - 1]),
                                         day_number_str);
     }
@@ -262,15 +265,15 @@ get_date_string_for_multiday (GDateTime *start,
 
   if (n_days == 0)
     {
-      end_date_str = g_strdup_printf (_("to Today"));
+      end_date_str = g_strdup_printf (_ ("to Today"));
     }
   else if (n_days == -1)
     {
-      end_date_str = g_strdup_printf (_("to Tomorrow"));
+      end_date_str = g_strdup_printf (_ ("to Tomorrow"));
     }
   else if (n_days == 1)
     {
-      end_date_str = g_strdup_printf (_("to Yesterday"));
+      end_date_str = g_strdup_printf (_ ("to Yesterday"));
     }
   else if (n_days < -1 && n_days > -8)
     {
@@ -288,19 +291,19 @@ get_date_string_for_multiday (GDateTime *start,
        * this is the format string for representing a date consisting of a month
        * name and a date of month.
        */
-      end_date_str = g_strdup_printf (_("to %1$s %2$s"),
+      end_date_str = g_strdup_printf (_ ("to %1$s %2$s"),
                                       gettext (month_names[g_date_time_get_month (end) - 1]),
                                       day_number_str);
     }
 
   /* Translators: %1$s is the start date (e.g. "from Today") and %2$s is the end date (e.g. "to Tomorrow") */
-  date_string = g_strdup_printf (_("New Event %1$s %2$s"),
+  date_string = g_strdup_printf (_ ("New Event %1$s %2$s"),
                                  start_date_str,
                                  end_date_str);
   return date_string;
 }
 
-static gchar*
+static gchar *
 get_date_string_for_day (GDateTime *day)
 {
   gchar *string_for_date;
@@ -311,54 +314,54 @@ get_date_string_for_day (GDateTime *day)
 
   if (n_days == 0)
     {
-      string_for_date = g_strdup_printf (_("New Event Today"));
+      string_for_date = g_strdup_printf (_ ("New Event Today"));
     }
   else if (n_days == -1)
     {
-      string_for_date = g_strdup_printf (_("New Event Tomorrow"));
+      string_for_date = g_strdup_printf (_ ("New Event Tomorrow"));
     }
   else if (n_days == 1)
     {
-      string_for_date = g_strdup_printf (_("New Event Yesterday"));
+      string_for_date = g_strdup_printf (_ ("New Event Yesterday"));
     }
   else if (n_days < -1 && n_days > -8)
     {
-       const gchar *event_weekday;
-       const gchar *event_weekday_names[] = {
-         N_("New Event next Monday"),
-         N_("New Event next Tuesday"),
-         N_("New Event next Wednesday"),
-         N_("New Event next Thursday"),
-         N_("New Event next Friday"),
-         N_("New Event next Saturday"),
-         N_("New Event next Sunday"),
-         NULL
-       };
+      const gchar *event_weekday;
+      const gchar *event_weekday_names[] = {
+        N_ ("New Event next Monday"),
+        N_ ("New Event next Tuesday"),
+        N_ ("New Event next Wednesday"),
+        N_ ("New Event next Thursday"),
+        N_ ("New Event next Friday"),
+        N_ ("New Event next Saturday"),
+        N_ ("New Event next Sunday"),
+        NULL
+      };
 
-       event_weekday = gettext (event_weekday_names [g_date_time_get_day_of_week (day) - 1]);
-       string_for_date = g_strdup_printf ("%s", event_weekday);
+      event_weekday = gettext (event_weekday_names[g_date_time_get_day_of_week (day) - 1]);
+      string_for_date = g_strdup_printf ("%s", event_weekday);
     }
   else
     {
       const gchar *event_month;
       const gchar *event_month_names[] = {
         /* Translators: %d is the numeric day of month */
-        N_("New Event on January %d"),
-        N_("New Event on February %d"),
-        N_("New Event on March %d"),
-        N_("New Event on April %d"),
-        N_("New Event on May %d"),
-        N_("New Event on June %d"),
-        N_("New Event on July %d"),
-        N_("New Event on August %d"),
-        N_("New Event on September %d"),
-        N_("New Event on October %d"),
-        N_("New Event on November %d"),
-        N_("New Event on December %d"),
+        N_ ("New Event on January %d"),
+        N_ ("New Event on February %d"),
+        N_ ("New Event on March %d"),
+        N_ ("New Event on April %d"),
+        N_ ("New Event on May %d"),
+        N_ ("New Event on June %d"),
+        N_ ("New Event on July %d"),
+        N_ ("New Event on August %d"),
+        N_ ("New Event on September %d"),
+        N_ ("New Event on October %d"),
+        N_ ("New Event on November %d"),
+        N_ ("New Event on December %d"),
         NULL
       };
 
-      event_month = gettext (event_month_names [g_date_time_get_month (day) - 1]);
+      event_month = gettext (event_month_names[g_date_time_get_month (day) - 1]);
       string_for_date = g_strdup_printf (event_month, g_date_time_get_day_of_month (day));
     }
 
@@ -372,7 +375,6 @@ update_header (GcalQuickAddPopover *self)
   g_autoptr (GDateTime) range_end = NULL;
   g_autofree gchar *title_date = NULL;
   gboolean multiday_or_timed;
-
 
   if (!self->range)
     return;
@@ -406,9 +408,9 @@ update_header (GcalQuickAddPopover *self)
           time_format = gcal_context_get_time_format (self->context);
 
           if (time_format == GCAL_TIME_FORMAT_24H)
-              hour_format = "%R";
+            hour_format = "%R";
           else
-              hour_format = "%I:%M %P";
+            hour_format = "%I:%M %P";
 
           start_hour = g_date_time_format (range_start, hour_format);
           end_hour = g_date_time_format (range_end, hour_format);
@@ -423,12 +425,11 @@ update_header (GcalQuickAddPopover *self)
             {
               /* Translators: %1$s is the event name, %2$s is the start hour, and %3$s is the end hour.
                * To avoid spurious line wrapping, use non-breaking space characters around the en dash. */
-              title_date = g_strdup_printf (_("%1$s, %2$s – %3$s"),
+              title_date = g_strdup_printf (_ ("%1$s, %2$s – %3$s"),
                                             event_date_name,
                                             start_hour,
                                             end_hour);
             }
-
         }
     }
   else
@@ -441,14 +442,13 @@ update_header (GcalQuickAddPopover *self)
   gtk_label_set_label (GTK_LABEL (self->title_label), title_date);
 }
 
-
 /*
  * Callbacks
  */
 
 static void
 edit_or_create_event (GcalQuickAddPopover *self,
-                      GtkWidget           *button)
+                      GtkWidget *button)
 {
   g_autoptr (GDateTime) range_start = NULL;
   g_autoptr (GDateTime) range_end = NULL;
@@ -523,8 +523,8 @@ edit_or_create_event (GcalQuickAddPopover *self,
 }
 
 static void
-summary_entry_text_changed (AdwEntryRow         *entry,
-                            GParamSpec          *pspec,
+summary_entry_text_changed (AdwEntryRow *entry,
+                            GParamSpec *pspec,
                             GcalQuickAddPopover *self)
 {
   gboolean is_valid_event_name;
@@ -540,7 +540,7 @@ summary_entry_text_changed (AdwEntryRow         *entry,
 }
 
 static void
-summary_entry_activated (AdwEntryRow         *entry,
+summary_entry_activated (AdwEntryRow *entry,
                          GcalQuickAddPopover *self)
 {
   if (gcal_is_valid_event_name (gtk_editable_get_text (GTK_EDITABLE (entry))))
@@ -549,7 +549,6 @@ summary_entry_activated (AdwEntryRow         *entry,
     edit_or_create_event (self, self->edit_button);
 }
 
-
 /*
  * Overrides
  */
@@ -557,7 +556,7 @@ summary_entry_activated (AdwEntryRow         *entry,
 static void
 gcal_quick_add_popover_finalize (GObject *object)
 {
-  GcalQuickAddPopover *self = (GcalQuickAddPopover *)object;
+  GcalQuickAddPopover *self = (GcalQuickAddPopover *) object;
 
   g_clear_object (&self->context);
 
@@ -565,9 +564,9 @@ gcal_quick_add_popover_finalize (GObject *object)
 }
 
 static void
-gcal_quick_add_popover_get_property (GObject    *object,
-                                     guint       prop_id,
-                                     GValue     *value,
+gcal_quick_add_popover_get_property (GObject *object,
+                                     guint prop_id,
+                                     GValue *value,
                                      GParamSpec *pspec)
 {
   GcalQuickAddPopover *self = GCAL_QUICK_ADD_POPOVER (object);
@@ -588,10 +587,10 @@ gcal_quick_add_popover_get_property (GObject    *object,
 }
 
 static void
-gcal_quick_add_popover_set_property (GObject      *object,
-                                     guint         prop_id,
+gcal_quick_add_popover_set_property (GObject *object,
+                                     guint prop_id,
                                      const GValue *value,
-                                     GParamSpec   *pspec)
+                                     GParamSpec *pspec)
 {
   GcalQuickAddPopover *self = GCAL_QUICK_ADD_POPOVER (object);
 
@@ -602,28 +601,28 @@ gcal_quick_add_popover_set_property (GObject      *object,
       break;
 
     case PROP_CONTEXT:
-        {
-          GcalManager *manager;
+      {
+        GcalManager *manager;
 
-          g_assert (self->context == NULL);
-          self->context = g_value_dup_object (value);
+        g_assert (self->context == NULL);
+        self->context = g_value_dup_object (value);
 
-          manager = gcal_context_get_manager (self->context);
-          set_up_context (self);
+        manager = gcal_context_get_manager (self->context);
+        set_up_context (self);
 
-          /* Connect to the manager signals and keep the list updates */
-          g_signal_connect_object (manager,
-                                   "notify::default-calendar",
-                                   G_CALLBACK (bind_model),
-                                   self,
-                                   G_CONNECT_SWAPPED);
+        /* Connect to the manager signals and keep the list updates */
+        g_signal_connect_object (manager,
+                                 "notify::default-calendar",
+                                 G_CALLBACK (bind_model),
+                                 self,
+                                 G_CONNECT_SWAPPED);
 
-          g_signal_connect_object (self->context,
-                                   "notify::time-format",
-                                   G_CALLBACK (update_header),
-                                   self,
-                                   G_CONNECT_SWAPPED);
-        }
+        g_signal_connect_object (self->context,
+                                 "notify::time-format",
+                                 G_CALLBACK (update_header),
+                                 self,
+                                 G_CONNECT_SWAPPED);
+      }
       break;
 
     default:
@@ -649,6 +648,10 @@ gcal_quick_add_popover_closed (GtkPopover *popover)
   bind_model (self);
 }
 
+/**
+ * Initializes the class metadata, properties, signals, template, and callbacks
+ * for #GcalQuickAddPopover.
+ */
 static void
 gcal_quick_add_popover_class_init (GcalQuickAddPopoverClass *klass)
 {
@@ -703,7 +706,7 @@ gcal_quick_add_popover_class_init (GcalQuickAddPopoverClass *klass)
                                                         GCAL_TYPE_CONTEXT,
                                                         G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-quick-add-popover.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-quick-add-popover.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalQuickAddPopover, add_button);
   gtk_widget_class_bind_template_child (widget_class, GcalQuickAddPopover, calendars_list_box);
@@ -723,7 +726,7 @@ gcal_quick_add_popover_init (GcalQuickAddPopover *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-GtkWidget*
+GtkWidget *
 gcal_quick_add_popover_new (void)
 {
   return g_object_new (GCAL_TYPE_QUICK_ADD_POPOVER, NULL);
@@ -737,7 +740,7 @@ gcal_quick_add_popover_new (void)
  *
  * Returns: (transfer none): a #GcalRange
  */
-GcalRange*
+GcalRange *
 gcal_quick_add_popover_get_range (GcalQuickAddPopover *self)
 {
   g_return_val_if_fail (GCAL_IS_QUICK_ADD_POPOVER (self), NULL);
@@ -754,7 +757,7 @@ gcal_quick_add_popover_get_range (GcalQuickAddPopover *self)
  */
 void
 gcal_quick_add_popover_set_range (GcalQuickAddPopover *self,
-                                  GcalRange           *range)
+                                  GcalRange *range)
 {
   g_return_if_fail (GCAL_IS_QUICK_ADD_POPOVER (self));
 
@@ -770,4 +773,3 @@ gcal_quick_add_popover_set_range (GcalQuickAddPopover *self,
       g_object_notify (G_OBJECT (self), "range");
     }
 }
-

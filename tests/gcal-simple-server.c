@@ -24,21 +24,20 @@
 
 struct _GcalSimpleServer
 {
-  GObject             parent;
+  GObject parent;
 
   /* Only valid while running */
-  GThread            *thread;
-  GMainLoop          *thread_mainloop;
-  SoupServer         *server;
-  GUri               *uri;
+  GThread *thread;
+  GMainLoop *thread_mainloop;
+  SoupServer *server;
+  GUri *uri;
 
-  GMutex              running_mutex;
-  GCond               running_cond;
-  gboolean            running;
+  GMutex running_mutex;
+  GCond running_cond;
+  gboolean running;
 };
 
 G_DEFINE_TYPE (GcalSimpleServer, gcal_simple_server, G_TYPE_OBJECT)
-
 
 /*
  * Auxiliary methods
@@ -78,7 +77,7 @@ process_get (SoupServerMessage *message,
 
       bytes = g_bytes_new_with_free_func (g_mapped_file_get_contents (mapping),
                                           g_mapped_file_get_length (mapping),
-                                          (GDestroyNotify)g_mapped_file_unref,
+                                          (GDestroyNotify) g_mapped_file_unref,
                                           mapping);
       soup_message_body_append_bytes (soup_server_message_get_response_body (message), bytes);
     }
@@ -90,7 +89,6 @@ process_caldav (SoupServerMessage *message,
 {
   g_debug ("Processing CalDAV request");
 }
-
 
 /*
  * Callbacks
@@ -107,11 +105,11 @@ idle_quit_server_cb (gpointer user_data)
 }
 
 static void
-no_auth_handler_cb (SoupServer        *server,
+no_auth_handler_cb (SoupServer *server,
                     SoupServerMessage *message,
-                    const gchar       *path,
-                    GHashTable        *query,
-                    gpointer           user_data)
+                    const gchar *path,
+                    GHashTable *query,
+                    gpointer user_data)
 {
   g_debug ("No authentication needed");
 
@@ -124,11 +122,11 @@ no_auth_handler_cb (SoupServer        *server,
 }
 
 static void
-auth_handler_cb (SoupServer        *server,
+auth_handler_cb (SoupServer *server,
                  SoupServerMessage *message,
-                 const gchar       *path,
-                 GHashTable        *query,
-                 gpointer           user_data)
+                 const gchar *path,
+                 GHashTable *query,
+                 gpointer user_data)
 {
   g_debug ("Needs authentication");
 
@@ -141,13 +139,14 @@ auth_handler_cb (SoupServer        *server,
 }
 
 static gboolean
-authorize_cb (SoupAuthDomain    *domain,
+authorize_cb (SoupAuthDomain *domain,
               SoupServerMessage *message,
-              const char        *username,
-              const char        *password,
-              gpointer           user_data)
+              const char *username,
+              const char *password,
+              gpointer user_data)
 {
-  const struct {
+  const struct
+  {
     const gchar *username;
     const gchar *password;
   } valid_credentials[] = {
@@ -237,7 +236,6 @@ run_server_in_thread (gpointer data)
   return NULL;
 }
 
-
 /*
  * GObject overrides
  */
@@ -245,7 +243,7 @@ run_server_in_thread (gpointer data)
 static void
 gcal_simple_server_finalize (GObject *object)
 {
-  GcalSimpleServer *self = (GcalSimpleServer *)object;
+  GcalSimpleServer *self = (GcalSimpleServer *) object;
 
   if (self->thread)
     gcal_simple_server_stop (self);
@@ -322,7 +320,7 @@ gcal_simple_server_stop (GcalSimpleServer *self)
   self->thread = NULL;
 }
 
-GUri*
+GUri *
 gcal_simple_server_get_uri (GcalSimpleServer *self)
 {
   g_return_val_if_fail (GCAL_IS_SIMPLE_SERVER (self), NULL);

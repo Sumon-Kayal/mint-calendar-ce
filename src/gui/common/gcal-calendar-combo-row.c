@@ -21,14 +21,14 @@
 #include "gcal-calendar-combo-row.h"
 #include "gcal-calendar-row.h"
 
-#include <locale.h>
-#include <langinfo.h>
-#include <stdlib.h>
 #include <glib/gi18n.h>
+#include <langinfo.h>
+#include <locale.h>
+#include <stdlib.h>
 
 struct _GcalCalendarComboRow
 {
-  AdwComboRow         parent;
+  AdwComboRow parent;
 };
 
 G_DEFINE_TYPE (GcalCalendarComboRow, gcal_calendar_combo_row, ADW_TYPE_COMBO_ROW);
@@ -40,8 +40,9 @@ enum
   N_PROPS
 };
 
-static GParamSpec* properties[N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Callbacks
@@ -49,7 +50,7 @@ static GParamSpec* properties[N_PROPS] = { NULL, };
 
 static void
 on_calendar_selected_cb (AdwComboRow *row,
-                         GParamSpec  *pspec,
+                         GParamSpec *pspec,
                          GtkListItem *item)
 {
   GtkWidget *checkmark = g_object_get_data (G_OBJECT (item), "checkmark");
@@ -62,7 +63,7 @@ on_calendar_selected_cb (AdwComboRow *row,
 
 static void
 calendar_item_setup_cb (GtkSignalListItemFactory *factory,
-                        GtkListItem              *item)
+                        GtkListItem *item)
 {
   GtkWidget *box, *checkmark;
 
@@ -82,8 +83,8 @@ calendar_item_setup_cb (GtkSignalListItemFactory *factory,
 
 static void
 calendar_item_bind_cb (GtkSignalListItemFactory *factory,
-                       GtkListItem              *item,
-                       GcalCalendarComboRow     *self)
+                       GtkListItem *item,
+                       GcalCalendarComboRow *self)
 {
   AdwComboRow *row = ADW_COMBO_ROW (self);
   GtkWidget *box, *calendar_row, *checkmark;
@@ -112,28 +113,26 @@ calendar_item_bind_cb (GtkSignalListItemFactory *factory,
       gtk_box_set_spacing (GTK_BOX (box), 6);
       gtk_widget_set_visible (checkmark, FALSE);
     }
-
 }
 
 static void
 calendar_item_unbind_cb (GtkSignalListItemFactory *factory,
-                         GtkListItem              *item,
-                         GcalCalendarComboRow     *self)
+                         GtkListItem *item,
+                         GcalCalendarComboRow *self)
 {
   AdwComboRow *row = ADW_COMBO_ROW (self);
 
   g_signal_handlers_disconnect_by_func (row, on_calendar_selected_cb, item);
 }
 
-
 /*
  * GObject overrides
  */
 
 static void
-gcal_calendar_combo_row_get_property (GObject    *object,
-                                      guint       prop_id,
-                                      GValue     *value,
+gcal_calendar_combo_row_get_property (GObject *object,
+                                      guint prop_id,
+                                      GValue *value,
                                       GParamSpec *pspec)
 {
   GcalCalendarComboRow *self = GCAL_CALENDAR_COMBO_ROW (object);
@@ -150,10 +149,10 @@ gcal_calendar_combo_row_get_property (GObject    *object,
 }
 
 static void
-gcal_calendar_combo_row_set_property (GObject      *object,
-                                      guint         prop_id,
+gcal_calendar_combo_row_set_property (GObject *object,
+                                      guint prop_id,
                                       const GValue *value,
-                                      GParamSpec   *pspec)
+                                      GParamSpec *pspec)
 {
   GcalCalendarComboRow *self = GCAL_CALENDAR_COMBO_ROW (object);
 
@@ -210,7 +209,7 @@ gcal_calendar_combo_row_init (GcalCalendarComboRow *self)
  *
  * Returns: the newly created `CalendarComboRow`
  */
-GtkWidget*
+GtkWidget *
 gcal_calendar_combo_row_new (void)
 {
   return g_object_new (GCAL_TYPE_CALENDAR_COMBO_ROW, NULL);
@@ -225,7 +224,7 @@ gcal_calendar_combo_row_new (void)
  */
 void
 gcal_calendar_combo_row_set_calendar (GcalCalendarComboRow *self,
-                                      GcalCalendar         *calendar)
+                                      GcalCalendar *calendar)
 {
   GListModel *model;
 
@@ -257,7 +256,7 @@ gcal_calendar_combo_row_set_calendar (GcalCalendarComboRow *self,
  *
  * Returns: (nullable) (transfer none): The selected calendar
  */
-GcalCalendar*
+GcalCalendar *
 gcal_calendar_combo_row_get_calendar (GcalCalendarComboRow *self)
 {
   g_return_val_if_fail (GCAL_IS_CALENDAR_COMBO_ROW (self), NULL);

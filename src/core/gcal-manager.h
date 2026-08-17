@@ -30,54 +30,54 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_MANAGER (gcal_manager_get_type ())
 G_DECLARE_FINAL_TYPE (GcalManager, gcal_manager, GCAL, MANAGER, GObject)
 
-GcalManager*         gcal_manager_new                            (GcalContext        *context);
+GcalManager *gcal_manager_new (GcalContext *context);
 
-ESource*             gcal_manager_get_source                     (GcalManager        *self,
-                                                                  const gchar        *uid);
+ESource *gcal_manager_get_source (GcalManager *self,
+                                  const gchar *uid);
 
-GList*               gcal_manager_get_calendars                  (GcalManager        *self);
+GList *gcal_manager_get_calendars (GcalManager *self);
 
-GListModel*          gcal_manager_get_calendars_model            (GcalManager        *self);
+GListModel *gcal_manager_get_calendars_model (GcalManager *self);
 
-GcalCalendar*        gcal_manager_get_default_calendar           (GcalManager        *self);
+GcalCalendar *gcal_manager_get_default_calendar (GcalManager *self);
 
-void                 gcal_manager_set_default_calendar           (GcalManager        *self,
-                                                                  GcalCalendar       *calendar);
+void gcal_manager_set_default_calendar (GcalManager *self,
+                                        GcalCalendar *calendar);
 
-GcalTimeline*        gcal_manager_get_timeline                   (GcalManager        *self);
+GcalTimeline *gcal_manager_get_timeline (GcalManager *self);
 
-void                 gcal_manager_refresh                        (GcalManager        *self);
+void gcal_manager_refresh (GcalManager *self);
 
-void                 gcal_manager_create_event                   (GcalManager        *self,
-                                                                  GcalEvent          *event);
+void gcal_manager_create_event (GcalManager *self,
+                                GcalEvent *event);
 
-void                 gcal_manager_update_event                   (GcalManager           *self,
-                                                                  GcalEvent             *event,
-                                                                  GcalRecurrenceModType  mod);
+void gcal_manager_update_event (GcalManager *self,
+                                GcalEvent *event,
+                                GcalRecurrenceModType mod);
 
-void                 gcal_manager_remove_event                   (GcalManager           *self,
-                                                                  GcalEvent             *event,
-                                                                  GcalRecurrenceModType  mod);
+void gcal_manager_remove_event (GcalManager *self,
+                                GcalEvent *event,
+                                GcalRecurrenceModType mod);
 
-void                 gcal_manager_move_event_to_source           (GcalManager        *self,
-                                                                  GcalEvent          *event,
-                                                                  ESource            *dest);
+void gcal_manager_move_event_to_source (GcalManager *self,
+                                        GcalEvent *event,
+                                        ESource *dest);
 
-gchar*               gcal_manager_add_source                     (GcalManager        *self,
-                                                                  const gchar        *name,
-                                                                  const gchar        *backend,
-                                                                  const gchar        *color);
+gchar *gcal_manager_add_source (GcalManager *self,
+                                const gchar *name,
+                                const gchar *backend,
+                                const gchar *color);
 
-void                 gcal_manager_save_source                    (GcalManager        *self,
-                                                                  ESource            *source);
+void gcal_manager_save_source (GcalManager *self,
+                               ESource *source);
 
-GPtrArray*           gcal_manager_get_events                     (GcalManager        *self,
-                                                                  GDateTime          *range_start,
-                                                                  GDateTime          *range_end);
+GPtrArray *gcal_manager_get_events (GcalManager *self,
+                                    GDateTime *range_start,
+                                    GDateTime *range_end);
 
-gboolean             gcal_manager_get_synchronizing              (GcalManager        *self);
+gboolean gcal_manager_get_synchronizing (GcalManager *self);
 
-void                 gcal_manager_startup                        (GcalManager        *self);
+void gcal_manager_startup (GcalManager *self);
 
 G_END_DECLS
 

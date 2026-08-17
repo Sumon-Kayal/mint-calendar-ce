@@ -23,7 +23,7 @@
 
 #include <adwaita.h>
 
-GtkWidget*
+GtkWidget *
 gcal_create_selection_widget (void)
 {
   return g_object_new (ADW_TYPE_BIN,
@@ -31,7 +31,7 @@ gcal_create_selection_widget (void)
                        NULL);
 }
 
-GtkWidget*
+GtkWidget *
 gcal_create_drop_target_widget (void)
 {
   return g_object_new (ADW_TYPE_BIN,

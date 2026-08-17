@@ -14,15 +14,15 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_FADING_LABEL (gcal_fading_label_get_type())
+#define GCAL_TYPE_FADING_LABEL (gcal_fading_label_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalFadingLabel, gcal_fading_label, GCAL, FADING_LABEL, GtkWidget)
 
 const gchar *gcal_fading_label_get_label (GcalFadingLabel *self);
-void         gcal_fading_label_set_label (GcalFadingLabel *self,
-                                          const gchar     *label);
-gfloat       gcal_fading_label_get_align (GcalFadingLabel *self);
-void         gcal_fading_label_set_align (GcalFadingLabel *self,
-                                          gfloat           align);
+void gcal_fading_label_set_label (GcalFadingLabel *self,
+                                  const gchar *label);
+gfloat gcal_fading_label_get_align (GcalFadingLabel *self);
+void gcal_fading_label_set_align (GcalFadingLabel *self,
+                                  gfloat align);
 
 G_END_DECLS

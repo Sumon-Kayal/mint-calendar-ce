@@ -20,8 +20,8 @@
 
 #define G_LOG_DOMAIN "GcalCalendarManagementPage"
 
-#include "gcal-calendar-management-dialog.h"
 #include "gcal-calendar-management-page.h"
+#include "gcal-calendar-management-dialog.h"
 #include "gcal-context.h"
 
 G_DEFINE_INTERFACE (GcalCalendarManagementPage, gcal_calendar_management_page, ADW_TYPE_NAVIGATION_PAGE)
@@ -32,7 +32,9 @@ enum
   N_SIGNALS,
 };
 
-static guint signals[N_SIGNALS] = { 0, };
+static guint signals[N_SIGNALS] = {
+  0,
+};
 
 static void
 gcal_calendar_management_page_default_init (GcalCalendarManagementPageInterface *iface)
@@ -57,7 +59,7 @@ gcal_calendar_management_page_default_init (GcalCalendarManagementPageInterface 
 
 void
 gcal_calendar_management_page_activate (GcalCalendarManagementPage *self,
-                                        GcalCalendar               *calendar)
+                                        GcalCalendar *calendar)
 {
   g_return_if_fail (GCAL_IS_CALENDAR_MANAGEMENT_PAGE (self));
 
@@ -82,8 +84,8 @@ gcal_calendar_management_page_deactivate (GcalCalendarManagementPage *self)
 
 void
 gcal_calendar_management_page_switch_page (GcalCalendarManagementPage *self,
-                                           const gchar                *page_name,
-                                           GcalCalendar               *calendar)
+                                           const gchar *page_name,
+                                           GcalCalendar *calendar)
 {
   g_return_if_fail (GCAL_IS_CALENDAR_MANAGEMENT_PAGE (self));
 

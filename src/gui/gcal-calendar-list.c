@@ -27,11 +27,11 @@
 
 struct _GcalCalendarList
 {
-  AdwBin              parent;
+  AdwBin parent;
 
-  GtkWidget          *calendar_listbox;
+  GtkWidget *calendar_listbox;
 
-  GcalContext        *context;
+  GcalContext *context;
 };
 
 G_DEFINE_TYPE (GcalCalendarList, gcal_calendar_list, ADW_TYPE_BIN)
@@ -43,25 +43,24 @@ enum
   N_PROPS
 };
 
-static GParamSpec *properties [N_PROPS];
-
+static GParamSpec *properties[N_PROPS];
 
 /*
  * Auxiliary methods
  */
 
 static gboolean
-paintable_from_gdk_rgb (GBinding     *binding,
+paintable_from_gdk_rgb (GBinding *binding,
                         const GValue *from_value,
-                        GValue       *to_value,
-                        gpointer      user_data)
+                        GValue *to_value,
+                        gpointer user_data)
 {
   GdkRGBA *rgba = g_value_get_boxed (from_value);
   g_value_take_object (to_value, get_circle_paintable_from_color (rgba, 16));
   return TRUE;
 }
 
-static GtkWidget*
+static GtkWidget *
 create_row_func (gpointer data,
                  gpointer user_data)
 {
@@ -88,7 +87,6 @@ create_row_func (gpointer data,
                                NULL,
                                NULL,
                                NULL);
-
 
   /* source name label */
   label = gtk_label_new (gcal_calendar_get_name (calendar));
@@ -119,7 +117,7 @@ create_row_func (gpointer data,
   return row;
 }
 
-static GListModel*
+static GListModel *
 create_sorted_calendars_model (GcalCalendarList *self)
 {
   g_autoptr (GtkSortListModel) sort_model = NULL;
@@ -138,7 +136,6 @@ create_sorted_calendars_model (GcalCalendarList *self)
 
   return G_LIST_MODEL (g_steal_pointer (&sort_model));
 }
-
 
 /*
  * Callbacks
@@ -161,7 +158,7 @@ on_listbox_row_activated_cb (GtkListBox *listbox,
 static void
 update_header_func (GtkListBoxRow *row,
                     GtkListBoxRow *before,
-                    gpointer       user_data)
+                    gpointer user_data)
 {
   GcalCalendar *calendar;
   GtkWidget *header = NULL;
@@ -182,7 +179,7 @@ update_header_func (GtkListBoxRow *row,
         {
           header = g_object_new (GTK_TYPE_LABEL,
                                  "label", e_source_get_display_name (parent),
-                                 "css-classes", (const gchar * const []) { "heading", NULL },
+                                 "css-classes", (const gchar *const[]){ "heading", NULL },
                                  "ellipsize", PANGO_ELLIPSIZE_END,
                                  "xalign", 0.0,
                                  "margin-top", 18,
@@ -196,7 +193,7 @@ update_header_func (GtkListBoxRow *row,
     {
       header = g_object_new (GTK_TYPE_LABEL,
                              "label", e_source_get_display_name (parent),
-                             "css-classes", (const gchar * const []) { "heading", NULL },
+                             "css-classes", (const gchar *const[]){ "heading", NULL },
                              "xalign", 0.0,
                              "margin-top", 18,
                              "margin-bottom", 6,
@@ -207,7 +204,6 @@ update_header_func (GtkListBoxRow *row,
 
   gtk_list_box_row_set_header (row, header);
 }
-
 
 /*
  * GObject overrides
@@ -300,7 +296,7 @@ gcal_calendar_list_class_init (GcalCalendarListClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/calendar/ui/gui/gcal-calendar-list.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/mint/calendar/ce/ui/gui/gcal-calendar-list.ui");
 
   gtk_widget_class_bind_template_child (widget_class, GcalCalendarList, calendar_listbox);
 
@@ -312,4 +308,3 @@ gcal_calendar_list_init (GcalCalendarList *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 }
-

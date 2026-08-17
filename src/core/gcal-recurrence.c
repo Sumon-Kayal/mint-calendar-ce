@@ -17,8 +17,8 @@
  */
 
 #include "gcal-recurrence.h"
-#include "gcal-utils.h"
 #include "gcal-event.h"
+#include "gcal-utils.h"
 
 #include <glib.h>
 
@@ -41,7 +41,7 @@ gcal_recurrence_free (GcalRecurrence *self)
  *
  * Returns: (transfer full): a #GcalRecurrence
  */
-GcalRecurrence*
+GcalRecurrence *
 gcal_recurrence_new (void)
 {
   GcalRecurrence *new_recur;
@@ -67,7 +67,7 @@ gcal_recurrence_new (void)
  *
  * Returns: (transfer full): a #GcalRecurrence
  */
-GcalRecurrence*
+GcalRecurrence *
 gcal_recurrence_copy (GcalRecurrence *recur)
 {
   GcalRecurrence *new_recur;
@@ -156,7 +156,7 @@ gcal_recurrence_is_equal (GcalRecurrence *recur1,
  *
  * Returns: (transfer full): a #GcalRecurrence
  */
-GcalRecurrence*
+GcalRecurrence *
 gcal_recurrence_parse_recurrence_rules (ECalComponent *comp)
 {
   GcalRecurrence *recur;
@@ -179,39 +179,39 @@ gcal_recurrence_parse_recurrence_rules (ECalComponent *comp)
 
   switch (i_cal_recurrence_get_freq (rrule))
     {
-      case I_CAL_DAILY_RECURRENCE:
-        recur->frequency = GCAL_RECURRENCE_DAILY;
+    case I_CAL_DAILY_RECURRENCE:
+      recur->frequency = GCAL_RECURRENCE_DAILY;
+      break;
+
+    case I_CAL_WEEKLY_RECURRENCE:
+      {
+        if (i_cal_recurrence_get_by_day (rrule, 0) == I_CAL_MONDAY_WEEKDAY &&
+            i_cal_recurrence_get_by_day (rrule, 1) == I_CAL_TUESDAY_WEEKDAY &&
+            i_cal_recurrence_get_by_day (rrule, 2) == I_CAL_WEDNESDAY_WEEKDAY &&
+            i_cal_recurrence_get_by_day (rrule, 3) == I_CAL_THURSDAY_WEEKDAY &&
+            i_cal_recurrence_get_by_day (rrule, 4) == I_CAL_FRIDAY_WEEKDAY &&
+            i_cal_recurrence_get_by_day (rrule, 5) != I_CAL_SATURDAY_WEEKDAY &&
+            i_cal_recurrence_get_by_day (rrule, 6) != I_CAL_SUNDAY_WEEKDAY)
+          {
+            recur->frequency = GCAL_RECURRENCE_MON_FRI;
+          }
+        else
+          {
+            recur->frequency = GCAL_RECURRENCE_WEEKLY;
+          }
         break;
+      }
 
-      case I_CAL_WEEKLY_RECURRENCE:
-        {
-          if (i_cal_recurrence_get_by_day (rrule, 0) == I_CAL_MONDAY_WEEKDAY &&
-              i_cal_recurrence_get_by_day (rrule, 1) == I_CAL_TUESDAY_WEEKDAY &&
-              i_cal_recurrence_get_by_day (rrule, 2) == I_CAL_WEDNESDAY_WEEKDAY &&
-              i_cal_recurrence_get_by_day (rrule, 3) == I_CAL_THURSDAY_WEEKDAY &&
-              i_cal_recurrence_get_by_day (rrule, 4) == I_CAL_FRIDAY_WEEKDAY &&
-              i_cal_recurrence_get_by_day (rrule, 5) != I_CAL_SATURDAY_WEEKDAY &&
-              i_cal_recurrence_get_by_day (rrule, 6) != I_CAL_SUNDAY_WEEKDAY)
-            {
-              recur->frequency = GCAL_RECURRENCE_MON_FRI;
-            }
-          else
-            {
-              recur->frequency = GCAL_RECURRENCE_WEEKLY;
-            }
-          break;
-        }
+    case I_CAL_MONTHLY_RECURRENCE:
+      recur->frequency = GCAL_RECURRENCE_MONTHLY;
+      break;
 
-      case I_CAL_MONTHLY_RECURRENCE:
-        recur->frequency = GCAL_RECURRENCE_MONTHLY;
-        break;
+    case I_CAL_YEARLY_RECURRENCE:
+      recur->frequency = GCAL_RECURRENCE_YEARLY;
+      break;
 
-      case I_CAL_YEARLY_RECURRENCE:
-        recur->frequency = GCAL_RECURRENCE_YEARLY;
-        break;
-
-      default:
-        recur->frequency = GCAL_RECURRENCE_OTHER;
+    default:
+      recur->frequency = GCAL_RECURRENCE_OTHER;
     }
 
   if (i_cal_recurrence_get_count (rrule) > 0)
@@ -253,7 +253,7 @@ gcal_recurrence_parse_recurrence_rules (ECalComponent *comp)
  *
  * Returns: (transfer full): an #ICalRecurrence
  */
-ICalRecurrence*
+ICalRecurrence *
 gcal_recurrence_to_rrule (GcalRecurrence *recur)
 {
   ICalRecurrence *rrule;

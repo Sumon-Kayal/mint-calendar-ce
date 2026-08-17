@@ -60,8 +60,8 @@ range_tree_insert (void)
 
 /*********************************************************************************************************************/
 
-
-static struct {
+static struct
+{
   const gchar *start;
   const gchar *end;
 } ranges[] = {
@@ -76,8 +76,8 @@ static struct {
 
 static gboolean
 traverse_func (GcalRange *range,
-               gpointer   data,
-               gpointer   user_data)
+               gpointer data,
+               gpointer user_data)
 {
   g_assert_cmpint (GPOINTER_TO_INT (data), >=, 0);
   g_assert_cmpint (GPOINTER_TO_INT (data), <, G_N_ELEMENTS (ranges));
@@ -186,7 +186,7 @@ range_tree_remove_data (void)
 /*********************************************************************************************************************/
 
 gint
-main (gint   argc,
+main (gint argc,
       gchar *argv[])
 {
   g_setenv ("TZ", "UTC", TRUE);

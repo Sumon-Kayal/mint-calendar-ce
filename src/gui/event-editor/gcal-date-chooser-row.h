@@ -25,8 +25,8 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_DATE_CHOOSER_ROW (gcal_date_chooser_row_get_type ())
 G_DECLARE_FINAL_TYPE (GcalDateChooserRow, gcal_date_chooser_row, GCAL, DATE_CHOOSER_ROW, AdwEntryRow)
 
-GDateTime*           gcal_date_chooser_row_get_date              (GcalDateChooserRow *self);
-void                 gcal_date_chooser_row_set_date              (GcalDateChooserRow *self,
-                                                                  GDateTime          *date);
+GDateTime *gcal_date_chooser_row_get_date (GcalDateChooserRow *self);
+void gcal_date_chooser_row_set_date (GcalDateChooserRow *self,
+                                     GDateTime *date);
 
 G_END_DECLS

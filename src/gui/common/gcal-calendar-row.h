@@ -20,25 +20,25 @@
 
 #pragma once
 
-#include <adwaita.h>
 #include "gcal-calendar.h"
+#include <adwaita.h>
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_CALENDAR_ROW (gcal_calendar_row_get_type())
+#define GCAL_TYPE_CALENDAR_ROW (gcal_calendar_row_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalCalendarRow, gcal_calendar_row, GCAL, CALENDAR_ROW, AdwPreferencesRow)
 
-GtkWidget*           gcal_calendar_row_new            (GcalCalendar      *calendar);
+GtkWidget *gcal_calendar_row_new (GcalCalendar *calendar);
 
-GcalCalendar*        gcal_calendar_row_get_calendar              (GcalCalendarRow   *self);
+GcalCalendar *gcal_calendar_row_get_calendar (GcalCalendarRow *self);
 
-void                 gcal_calendar_row_add_suffix                (GcalCalendarRow   *self,
-                                                                  GtkWidget         *widget);
+void gcal_calendar_row_add_suffix (GcalCalendarRow *self,
+                                   GtkWidget *widget);
 
-GtkWidget*           gcal_calendar_row_get_first_suffix_child    (GcalCalendarRow *self);
+GtkWidget *gcal_calendar_row_get_first_suffix_child (GcalCalendarRow *self);
 
-void                 gcal_calendar_row_add_header_class          (GcalCalendarRow *self);
+void gcal_calendar_row_add_header_class (GcalCalendarRow *self);
 
-void                 gcal_calendar_row_remove_header_class       (GcalCalendarRow *self);
+void gcal_calendar_row_remove_header_class (GcalCalendarRow *self);
 
 G_END_DECLS

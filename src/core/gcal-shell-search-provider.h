@@ -19,27 +19,27 @@
 #ifndef GCAL_SHELL_SEARCH_PROVIDER_H
 #define GCAL_SHELL_SEARCH_PROVIDER_H
 
-#include <glib-object.h>
 #include <gio/gio.h>
+#include <glib-object.h>
 
 #include "gcal-context.h"
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_SHELL_SEARCH_PROVIDER (gcal_shell_search_provider_get_type())
+#define GCAL_TYPE_SHELL_SEARCH_PROVIDER (gcal_shell_search_provider_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalShellSearchProvider, gcal_shell_search_provider, GCAL, SHELL_SEARCH_PROVIDER, GObject)
 
-GcalShellSearchProvider* gcal_shell_search_provider_new           (GcalContext             *context);
+GcalShellSearchProvider *gcal_shell_search_provider_new (GcalContext *context);
 
-gboolean                 gcal_shell_search_provider_dbus_export   (GcalShellSearchProvider *search_provider,
-                                                                   GDBusConnection         *connection,
-                                                                   const gchar             *object_path,
-                                                                   GError                 **error);
+gboolean gcal_shell_search_provider_dbus_export (GcalShellSearchProvider *search_provider,
+                                                 GDBusConnection *connection,
+                                                 const gchar *object_path,
+                                                 GError **error);
 
-void                     gcal_shell_search_provider_dbus_unexport (GcalShellSearchProvider *search_provider,
-                                                                   GDBusConnection         *connection,
-                                                                   const gchar             *object_path);
+void gcal_shell_search_provider_dbus_unexport (GcalShellSearchProvider *search_provider,
+                                               GDBusConnection *connection,
+                                               const gchar *object_path);
 
 G_END_DECLS
 

@@ -34,23 +34,23 @@ struct _GcalCalendarManagementPageInterface
 {
   GTypeInterface parent;
 
-  void               (*activate)                                 (GcalCalendarManagementPage *self,
-                                                                  GcalCalendar               *calendar);
+  void (*activate) (GcalCalendarManagementPage *self,
+                    GcalCalendar *calendar);
 
-  void               (*deactivate)                               (GcalCalendarManagementPage *self);
+  void (*deactivate) (GcalCalendarManagementPage *self);
 
-  void               (*switch_page)                              (GcalCalendarManagementPage *self,
-                                                                  const gchar                *page_name,
-                                                                  GcalCalendar               *calendar);
+  void (*switch_page) (GcalCalendarManagementPage *self,
+                       const gchar *page_name,
+                       GcalCalendar *calendar);
 };
 
-void                 gcal_calendar_management_page_activate      (GcalCalendarManagementPage *self,
-                                                                  GcalCalendar               *calendar);
+void gcal_calendar_management_page_activate (GcalCalendarManagementPage *self,
+                                             GcalCalendar *calendar);
 
-void                 gcal_calendar_management_page_deactivate    (GcalCalendarManagementPage *self);
+void gcal_calendar_management_page_deactivate (GcalCalendarManagementPage *self);
 
-void                 gcal_calendar_management_page_switch_page   (GcalCalendarManagementPage *self,
-                                                                  const gchar                *page_name,
-                                                                  GcalCalendar               *calendar);
+void gcal_calendar_management_page_switch_page (GcalCalendarManagementPage *self,
+                                                const gchar *page_name,
+                                                GcalCalendar *calendar);
 
 G_END_DECLS

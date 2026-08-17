@@ -33,9 +33,9 @@ struct _GcalAttendeeRow
 
   GcalEventAttendee *attendee;
 
-  GtkWidget         *role;
-  GtkWidget         *context_menu;
-  GtkGestureClick   *gesture_click;
+  GtkWidget *role;
+  GtkWidget *context_menu;
+  GtkGestureClick *gesture_click;
 
   GSimpleActionGroup *action_group;
 };
@@ -55,8 +55,8 @@ static GParamSpec *properties[N_PROPS];
 
 static void
 on_copy_email_cb (GSimpleAction *action,
-                  GVariant      *param,
-                  gpointer       user_data)
+                  GVariant *param,
+                  gpointer user_data)
 {
   GcalAttendeeRow *self = GCAL_ATTENDEE_ROW (user_data);
 
@@ -64,16 +64,16 @@ on_copy_email_cb (GSimpleAction *action,
   GdkClipboard *clipboard = gdk_display_get_clipboard (display);
 
   g_autofree const gchar *email =
-    gcal_get_email_from_mailto_uri (gcal_event_attendee_get_uri (self->attendee));
+      gcal_get_email_from_mailto_uri (gcal_event_attendee_get_uri (self->attendee));
 
   gdk_clipboard_set_text (clipboard, email);
 }
 
 static void
 show_context_menu (GcalAttendeeRow *self,
-                   guint            npress,
-                   double           x,
-                   double           y)
+                   guint npress,
+                   double x,
+                   double y)
 {
   g_assert (GCAL_IS_ATTENDEE_ROW (self));
 
@@ -151,10 +151,10 @@ gcal_attendee_row_dispose (GObject *object)
 }
 
 static void
-gcal_attendee_row_set_property (GObject      *object,
-                                guint         property_id,
+gcal_attendee_row_set_property (GObject *object,
+                                guint property_id,
                                 const GValue *value,
-                                GParamSpec   *pspec)
+                                GParamSpec *pspec)
 {
   GcalAttendeeRow *self = GCAL_ATTENDEE_ROW (object);
 
@@ -171,9 +171,9 @@ gcal_attendee_row_set_property (GObject      *object,
 }
 
 static void
-gcal_attendee_row_get_property (GObject    *object,
-                                guint       property_id,
-                                GValue     *value,
+gcal_attendee_row_get_property (GObject *object,
+                                guint property_id,
+                                GValue *value,
                                 GParamSpec *pspec)
 {
   GcalAttendeeRow *self = GCAL_ATTENDEE_ROW (object);
@@ -205,9 +205,9 @@ gcal_attendee_row_class_init (GcalAttendeeRowClass *klass)
    * A reference to a #GcalEventAttendee for which this row is displayed.
    */
   properties[PROP_ATTENDEE] =
-    g_param_spec_object ("attendee", NULL, NULL,
-                         GCAL_TYPE_EVENT_ATTENDEE,
-                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
+      g_param_spec_object ("attendee", NULL, NULL,
+                           GCAL_TYPE_EVENT_ATTENDEE,
+                           G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -241,7 +241,6 @@ gcal_attendee_row_init (GcalAttendeeRow *instance)
 
   g_signal_connect_swapped (instance->gesture_click, "pressed", G_CALLBACK (show_context_menu), instance);
 }
-
 
 /**
  * gcal_attendee_row_new:

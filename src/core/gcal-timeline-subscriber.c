@@ -28,7 +28,9 @@ enum
   N_SIGNALS,
 };
 
-static guint signals[N_SIGNALS] = { 0, };
+static guint signals[N_SIGNALS] = {
+  0,
+};
 
 static void
 gcal_timeline_subscriber_default_init (GcalTimelineSubscriberInterface *iface)
@@ -55,7 +57,7 @@ gcal_timeline_subscriber_default_init (GcalTimelineSubscriberInterface *iface)
  *
  * Returns: (transfer full): a #GcalRange
  */
-GcalRange*
+GcalRange *
 gcal_timeline_subscriber_get_range (GcalTimelineSubscriber *self)
 {
   g_return_val_if_fail (GCAL_IS_TIMELINE_SUBSCRIBER (self), NULL);

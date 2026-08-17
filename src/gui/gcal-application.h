@@ -31,15 +31,15 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_APPLICATION (gcal_application_get_type ())
 G_DECLARE_FINAL_TYPE (GcalApplication, gcal_application, GCAL, APPLICATION, AdwApplication)
 
-GcalApplication*     gcal_application_new                        (void);
+GcalApplication *gcal_application_new (void);
 
-GcalContext*         gcal_application_get_context                (GcalApplication    *self);
+GcalContext *gcal_application_get_context (GcalApplication *self);
 
-void                 gcal_application_set_uuid                   (GcalApplication    *self,
-                                                                  const gchar        *app_uuid);
+void gcal_application_set_uuid (GcalApplication *self,
+                                const gchar *app_uuid);
 
-void                 gcal_application_set_initial_date           (GcalApplication    *self,
-                                                                  GDateTime          *initial_date);
+void gcal_application_set_initial_date (GcalApplication *self,
+                                        GDateTime *initial_date);
 
 G_END_DECLS
 

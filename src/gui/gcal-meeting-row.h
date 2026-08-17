@@ -24,10 +24,10 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_MEETING_ROW (gcal_meeting_row_get_type())
+#define GCAL_TYPE_MEETING_ROW (gcal_meeting_row_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalMeetingRow, gcal_meeting_row, GCAL, MEETING_ROW, AdwActionRow)
 
-GtkWidget*           gcal_meeting_row_new                        (const gchar        *url);
+GtkWidget *gcal_meeting_row_new (const gchar *url);
 
 G_END_DECLS

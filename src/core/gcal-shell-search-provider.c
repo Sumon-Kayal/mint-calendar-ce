@@ -24,37 +24,35 @@
 #include "gcal-application.h"
 #include "gcal-debug.h"
 #include "gcal-event.h"
-#include "gcal-timeline.h"
 #include "gcal-timeline-subscriber.h"
-#include "gcal-window.h"
+#include "gcal-timeline.h"
 #include "gcal-utils.h"
+#include "gcal-window.h"
 
 typedef struct
 {
-  GDBusMethodInvocation    *invocation;
-  gchar                   **terms;
+  GDBusMethodInvocation *invocation;
+  gchar **terms;
 } PendingSearch;
 
 struct _GcalShellSearchProvider
 {
-  GObject             parent;
+  GObject parent;
 
   GcalShellSearchProvider2 *skel;
-  GcalContext        *context;
+  GcalContext *context;
 
-  PendingSearch      *pending_search;
-  GHashTable         *events;
+  PendingSearch *pending_search;
+  GHashTable *events;
 
-  GDateTime          *range_start;
-  GDateTime          *range_end;
-  GcalTimeline       *timeline;
+  GDateTime *range_start;
+  GDateTime *range_end;
+  GcalTimeline *timeline;
 };
 
-static void          gcal_timeline_subscriber_interface_init     (GcalTimelineSubscriberInterface *iface);
+static void gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalShellSearchProvider, gcal_shell_search_provider, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER,
-                                                gcal_timeline_subscriber_interface_init));
+G_DEFINE_TYPE_WITH_CODE (GcalShellSearchProvider, gcal_shell_search_provider, G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER, gcal_timeline_subscriber_interface_init));
 
 enum
 {
@@ -63,14 +61,15 @@ enum
   N_PROPS
 };
 
-static GParamSpec* properties[N_PROPS] = { NULL, };
-
+static GParamSpec *properties[N_PROPS] = {
+  NULL,
+};
 
 /*
  * Auxiliary methods
  */
 
-GdkTexture*
+GdkTexture *
 paintable_to_texture (GdkPaintable *paintable)
 {
   g_autoptr (GtkSnapshot) snapshot = NULL;
@@ -106,7 +105,7 @@ paintable_to_texture (GdkPaintable *paintable)
 static gint
 sort_event_data (GcalEvent *a,
                  GcalEvent *b,
-                 gpointer   user_data)
+                 gpointer user_data)
 {
   return gcal_event_compare_with_current (a, b, GPOINTER_TO_INT (user_data));
 }
@@ -169,7 +168,7 @@ execute_search (GcalShellSearchProvider *self)
       search_query = g_steal_pointer (&complete_query);
     }
 
-  gcal_timeline_set_filter (self->timeline,  search_query);
+  gcal_timeline_set_filter (self->timeline, search_query);
   g_application_hold (g_application_get_default ());
 
   GCAL_RETURN (FALSE);
@@ -177,8 +176,8 @@ execute_search (GcalShellSearchProvider *self)
 
 static void
 schedule_search (GcalShellSearchProvider *self,
-                 GDBusMethodInvocation   *invocation,
-                 gchar                  **terms)
+                 GDBusMethodInvocation *invocation,
+                 gchar **terms)
 {
   GCAL_ENTRY;
 
@@ -209,15 +208,14 @@ schedule_search (GcalShellSearchProvider *self,
   GCAL_EXIT;
 }
 
-
 /*
  * Callbacks
  */
 
 static gboolean
-get_initial_result_set_cb (GcalShellSearchProvider  *self,
-                           GDBusMethodInvocation    *invocation,
-                           gchar                   **terms,
+get_initial_result_set_cb (GcalShellSearchProvider *self,
+                           GDBusMethodInvocation *invocation,
+                           gchar **terms,
                            GcalShellSearchProvider2 *skel)
 {
   schedule_search (self, invocation, terms);
@@ -225,10 +223,10 @@ get_initial_result_set_cb (GcalShellSearchProvider  *self,
 }
 
 static gboolean
-get_subsearch_result_set_cb (GcalShellSearchProvider  *self,
-                             GDBusMethodInvocation    *invocation,
-                             gchar                   **previous_results,
-                             gchar                   **terms,
+get_subsearch_result_set_cb (GcalShellSearchProvider *self,
+                             GDBusMethodInvocation *invocation,
+                             gchar **previous_results,
+                             gchar **terms,
                              GcalShellSearchProvider2 *skel)
 {
   schedule_search (self, invocation, terms);
@@ -236,9 +234,9 @@ get_subsearch_result_set_cb (GcalShellSearchProvider  *self,
 }
 
 static gboolean
-get_result_metas_cb (GcalShellSearchProvider  *self,
-                     GDBusMethodInvocation    *invocation,
-                     gchar                   **results,
+get_result_metas_cb (GcalShellSearchProvider *self,
+                     GDBusMethodInvocation *invocation,
+                     gchar **results,
                      GcalShellSearchProvider2 *skel)
 {
   GDateTime *local_datetime;
@@ -286,11 +284,11 @@ get_result_metas_cb (GcalShellSearchProvider  *self,
 }
 
 static gboolean
-activate_result_cb (GcalShellSearchProvider  *self,
-                    GDBusMethodInvocation    *invocation,
-                    gchar                    *result,
-                    gchar                   **terms,
-                    guint32                   timestamp,
+activate_result_cb (GcalShellSearchProvider *self,
+                    GDBusMethodInvocation *invocation,
+                    gchar *result,
+                    gchar **terms,
+                    guint32 timestamp,
                     GcalShellSearchProvider2 *skel)
 {
   g_autoptr (GcalEvent) event = NULL;
@@ -313,10 +311,10 @@ activate_result_cb (GcalShellSearchProvider  *self,
 }
 
 static gboolean
-launch_search_cb (GcalShellSearchProvider  *self,
-                  GDBusMethodInvocation    *invocation,
-                  gchar                   **terms,
-                  guint32                   timestamp,
+launch_search_cb (GcalShellSearchProvider *self,
+                  GDBusMethodInvocation *invocation,
+                  gchar **terms,
+                  guint32 timestamp,
                   GcalShellSearchProvider2 *skel)
 {
   g_autofree gchar *terms_joined = NULL;
@@ -337,8 +335,8 @@ launch_search_cb (GcalShellSearchProvider  *self,
 }
 
 static void
-on_timeline_completed_cb (GcalTimeline            *timeline,
-                          GParamSpec              *pspec,
+on_timeline_completed_cb (GcalTimeline *timeline,
+                          GParamSpec *pspec,
                           GcalShellSearchProvider *self)
 {
   GVariantBuilder builder;
@@ -391,8 +389,8 @@ out:
 }
 
 static void
-on_manager_calendar_added_cb (GcalManager             *manager,
-                              GcalCalendar            *calendar,
+on_manager_calendar_added_cb (GcalManager *manager,
+                              GcalCalendar *calendar,
                               GcalShellSearchProvider *self)
 {
   GCAL_ENTRY;
@@ -403,8 +401,8 @@ on_manager_calendar_added_cb (GcalManager             *manager,
 }
 
 static void
-on_manager_calendar_removed_cb (GcalManager             *manager,
-                                GcalCalendar            *calendar,
+on_manager_calendar_removed_cb (GcalManager *manager,
+                                GcalCalendar *calendar,
                                 GcalShellSearchProvider *self)
 {
   GCAL_ENTRY;
@@ -418,7 +416,7 @@ on_manager_calendar_removed_cb (GcalManager             *manager,
  * GcalTimelineSubscriber iface
  */
 
-static GcalRange*
+static GcalRange *
 gcal_shell_search_provider_get_range (GcalTimelineSubscriber *subscriber)
 {
   GcalShellSearchProvider *self = GCAL_SHELL_SEARCH_PROVIDER (subscriber);
@@ -428,7 +426,7 @@ gcal_shell_search_provider_get_range (GcalTimelineSubscriber *subscriber)
 
 static void
 gcal_shell_search_provider_add_event (GcalTimelineSubscriber *subscriber,
-                                      GcalEvent              *event)
+                                      GcalEvent *event)
 {
   GcalShellSearchProvider *self = GCAL_SHELL_SEARCH_PROVIDER (subscriber);
 
@@ -443,14 +441,14 @@ gcal_shell_search_provider_add_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_shell_search_provider_update_event (GcalTimelineSubscriber *subscriber,
-                                         GcalEvent              *old_event,
-                                         GcalEvent              *event)
+                                         GcalEvent *old_event,
+                                         GcalEvent *event)
 {
 }
 
 static void
 gcal_shell_search_provider_remove_event (GcalTimelineSubscriber *subscriber,
-                                         GcalEvent              *event)
+                                         GcalEvent *event)
 {
   GcalShellSearchProvider *self = GCAL_SHELL_SEARCH_PROVIDER (subscriber);
 
@@ -470,7 +468,6 @@ gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface)
   iface->remove_event = gcal_shell_search_provider_remove_event;
 }
 
-
 /*
  * GObject overrides
  */
@@ -488,9 +485,9 @@ gcal_shell_search_provider_finalize (GObject *object)
 }
 
 static void
-gcal_shell_search_provider_get_property (GObject    *object,
-                                         guint       property_id,
-                                         GValue     *value,
+gcal_shell_search_provider_get_property (GObject *object,
+                                         guint property_id,
+                                         GValue *value,
                                          GParamSpec *pspec)
 {
   GcalShellSearchProvider *self = GCAL_SHELL_SEARCH_PROVIDER (object);
@@ -507,10 +504,10 @@ gcal_shell_search_provider_get_property (GObject    *object,
 }
 
 static void
-gcal_shell_search_provider_set_property (GObject      *object,
-                                         guint         property_id,
+gcal_shell_search_provider_set_property (GObject *object,
+                                         guint property_id,
                                          const GValue *value,
-                                         GParamSpec   *pspec)
+                                         GParamSpec *pspec)
 {
   GcalShellSearchProvider *self = GCAL_SHELL_SEARCH_PROVIDER (object);
 
@@ -570,7 +567,7 @@ gcal_shell_search_provider_init (GcalShellSearchProvider *self)
   g_signal_connect_object (self->skel, "handle-launch-search", G_CALLBACK (launch_search_cb), self, G_CONNECT_SWAPPED);
 }
 
-GcalShellSearchProvider*
+GcalShellSearchProvider *
 gcal_shell_search_provider_new (GcalContext *context)
 {
   return g_object_new (GCAL_TYPE_SHELL_SEARCH_PROVIDER,
@@ -579,18 +576,18 @@ gcal_shell_search_provider_new (GcalContext *context)
 }
 
 gboolean
-gcal_shell_search_provider_dbus_export (GcalShellSearchProvider  *self,
-                                        GDBusConnection          *connection,
-                                        const gchar              *object_path,
-                                        GError                  **error)
+gcal_shell_search_provider_dbus_export (GcalShellSearchProvider *self,
+                                        GDBusConnection *connection,
+                                        const gchar *object_path,
+                                        GError **error)
 {
   return g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->skel), connection, object_path, error);
 }
 
 void
 gcal_shell_search_provider_dbus_unexport (GcalShellSearchProvider *self,
-                                          GDBusConnection         *connection,
-                                          const gchar             *object_path)
+                                          GDBusConnection *connection,
+                                          const gchar *object_path)
 {
   if (g_dbus_interface_skeleton_has_connection (G_DBUS_INTERFACE_SKELETON (self->skel), connection))
     g_dbus_interface_skeleton_unexport_from_connection (G_DBUS_INTERFACE_SKELETON (self->skel), connection);

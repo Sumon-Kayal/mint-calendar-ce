@@ -26,32 +26,32 @@
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_TIMELINE (gcal_timeline_get_type())
+#define GCAL_TYPE_TIMELINE (gcal_timeline_get_type ())
 G_DECLARE_FINAL_TYPE (GcalTimeline, gcal_timeline, GCAL, TIMELINE, GObject)
 
-GcalTimeline*        gcal_timeline_new                           (GcalContext        *context);
+GcalTimeline *gcal_timeline_new (GcalContext *context);
 
-void                 gcal_timeline_add_calendar                  (GcalTimeline       *self,
-                                                                  GcalCalendar       *calendar);
+void gcal_timeline_add_calendar (GcalTimeline *self,
+                                 GcalCalendar *calendar);
 
-void                 gcal_timeline_remove_calendar               (GcalTimeline       *self,
-                                                                  GcalCalendar       *calendar);
+void gcal_timeline_remove_calendar (GcalTimeline *self,
+                                    GcalCalendar *calendar);
 
-void                 gcal_timeline_add_subscriber                (GcalTimeline           *self,
-                                                                  GcalTimelineSubscriber *subscriber);
+void gcal_timeline_add_subscriber (GcalTimeline *self,
+                                   GcalTimelineSubscriber *subscriber);
 
-void                 gcal_timeline_remove_subscriber             (GcalTimeline           *self,
-                                                                  GcalTimelineSubscriber *subscriber);
+void gcal_timeline_remove_subscriber (GcalTimeline *self,
+                                      GcalTimelineSubscriber *subscriber);
 
-GPtrArray*           gcal_timeline_get_events_at_range           (GcalTimeline       *self,
-                                                                  GDateTime          *range_start,
-                                                                  GDateTime          *range_end);
+GPtrArray *gcal_timeline_get_events_at_range (GcalTimeline *self,
+                                              GDateTime *range_start,
+                                              GDateTime *range_end);
 
-const gchar*         gcal_timeline_get_filter                    (GcalTimeline       *self);
+const gchar *gcal_timeline_get_filter (GcalTimeline *self);
 
-void                 gcal_timeline_set_filter                    (GcalTimeline       *self,
-                                                                  const gchar        *filter);
+void gcal_timeline_set_filter (GcalTimeline *self,
+                               const gchar *filter);
 
-gboolean             gcal_timeline_is_complete                   (GcalTimeline       *self);
+gboolean gcal_timeline_is_complete (GcalTimeline *self);
 
 G_END_DECLS

@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 #define GCAL_TYPE_ATTENDEE_ROW (gcal_attendee_row_get_type ())
 G_DECLARE_FINAL_TYPE (GcalAttendeeRow, gcal_attendee_row, GCAL, ATTENDEE_ROW, AdwActionRow)
 
-GtkWidget         *gcal_attendee_row_new          (GcalEventAttendee *attendee);
-GcalEventAttendee *gcal_attendee_row_get_attendee (GcalAttendeeRow   *self);
+GtkWidget *gcal_attendee_row_new (GcalEventAttendee *attendee);
+GcalEventAttendee *gcal_attendee_row_get_attendee (GcalAttendeeRow *self);
 
 G_END_DECLS

@@ -22,22 +22,21 @@
 
 struct _GcalStubCalendar
 {
-  GcalCalendar        parent;
+  GcalCalendar parent;
 };
 
-static void          g_initable_iface_init                       (GInitableIface     *iface);
+static void g_initable_iface_init (GInitableIface *iface);
 
-G_DEFINE_TYPE_WITH_CODE (GcalStubCalendar, gcal_stub_calendar, GCAL_TYPE_CALENDAR,
-                         G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, g_initable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (GcalStubCalendar, gcal_stub_calendar, GCAL_TYPE_CALENDAR, G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, g_initable_iface_init))
 
 /*
  * GInitable iface
  */
 
 static gboolean
-gcal_stub_calendar_initable_init (GInitable     *initable,
-                                  GCancellable  *cancellable,
-                                  GError       **error)
+gcal_stub_calendar_initable_init (GInitable *initable,
+                                  GCancellable *cancellable,
+                                  GError **error)
 {
   return TRUE;
 }
@@ -58,9 +57,9 @@ gcal_stub_calendar_init (GcalStubCalendar *self)
 {
 }
 
-GcalCalendar*
-gcal_stub_calendar_new (GCancellable  *cancellable,
-                        GError       **error)
+GcalCalendar *
+gcal_stub_calendar_new (GCancellable *cancellable,
+                        GError **error)
 {
   g_autoptr (ESource) source = NULL;
 

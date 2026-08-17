@@ -2,8 +2,8 @@ appdata_conf = configuration_data()
 appdata_conf.set('appid', application_id)
 appdata = i18n.merge_file(
   input: configure_file(
-    input: files('org.gnome.Calendar.metainfo.xml.in.in'),
-    output: 'org.gnome.Calendar.metainfo.xml.in',
+    input: files('org.mint.calendar.ce.metainfo.xml.in.in'),
+    output: 'org.mint.calendar.ce.metainfo.xml.in',
     configuration: appdata_conf
   ),
   output: '@0@.metainfo.xml'.format(application_id),

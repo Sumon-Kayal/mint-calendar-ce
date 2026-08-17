@@ -28,11 +28,11 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (GcalCalendarComboRow, gcal_calendar_combo_row, GCAL, CALENDAR_COMBO_ROW, AdwComboRow)
 
-GtkWidget*           gcal_calendar_combo_row_new                 (void);
+GtkWidget *gcal_calendar_combo_row_new (void);
 
-GcalCalendar*        gcal_calendar_combo_row_get_calendar        (GcalCalendarComboRow *self);
+GcalCalendar *gcal_calendar_combo_row_get_calendar (GcalCalendarComboRow *self);
 
-void                 gcal_calendar_combo_row_set_calendar        (GcalCalendarComboRow *self,
-                                                                  GcalCalendar         *calendar);
+void gcal_calendar_combo_row_set_calendar (GcalCalendarComboRow *self,
+                                           GcalCalendar *calendar);
 
 G_END_DECLS

@@ -18,49 +18,49 @@
 #ifndef GCAL_MULTI_CHOICE_H
 #define GCAL_MULTI_CHOICE_H
 
-#include <gtk/gtk.h>
 #include <glib-object.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-#define GCAL_TYPE_MULTI_CHOICE (gcal_multi_choice_get_type())
+#define GCAL_TYPE_MULTI_CHOICE (gcal_multi_choice_get_type ())
 
 G_DECLARE_FINAL_TYPE (GcalMultiChoice, gcal_multi_choice, GCAL, MULTI_CHOICE, GtkBox)
 
-GtkWidget*           gcal_multi_choice_new                       (void);
+GtkWidget *gcal_multi_choice_new (void);
 
-gint                 gcal_multi_choice_get_value                 (GcalMultiChoice    *self);
+gint gcal_multi_choice_get_value (GcalMultiChoice *self);
 
-void                 gcal_multi_choice_set_value                 (GcalMultiChoice    *self,
-                                                                  gint                value);
+void gcal_multi_choice_set_value (GcalMultiChoice *self,
+                                  gint value);
 
-GtkPopover*          gcal_multi_choice_get_popover               (GcalMultiChoice    *self);
+GtkPopover *gcal_multi_choice_get_popover (GcalMultiChoice *self);
 
-void                 gcal_multi_choice_set_popover               (GcalMultiChoice    *self,
-                                                                  GtkWidget          *popover);
+void gcal_multi_choice_set_popover (GcalMultiChoice *self,
+                                    GtkWidget *popover);
 
-const gchar*         gcal_multi_choice_get_category              (GcalMultiChoice    *self);
+const gchar *gcal_multi_choice_get_category (GcalMultiChoice *self);
 
-void                 gcal_multi_choice_set_category              (GcalMultiChoice    *self,
-                                                                  const gchar        *category);
+void gcal_multi_choice_set_category (GcalMultiChoice *self,
+                                     const gchar *category);
 
-void                 gcal_multi_choice_set_choices               (GcalMultiChoice     *self,
-                                                                  const gchar        **selfs);
+void gcal_multi_choice_set_choices (GcalMultiChoice *self,
+                                    const gchar **selfs);
 
-typedef gchar*       (*GcalMultiChoiceFormatCallback)            (GcalMultiChoice     *self,
-                                                                  gint                 value,
-                                                                  gpointer             user_data);
+typedef gchar *(*GcalMultiChoiceFormatCallback) (GcalMultiChoice *self,
+                                                 gint value,
+                                                 gpointer user_data);
 
-void                 gcal_multi_choice_set_format_callback       (GcalMultiChoice     *self,
-                                                                  GcalMultiChoiceFormatCallback  callback,
-                                                                  gpointer             user_data,
-                                                                  GDestroyNotify       notify);
+void gcal_multi_choice_set_format_callback (GcalMultiChoice *self,
+                                            GcalMultiChoiceFormatCallback callback,
+                                            gpointer user_data,
+                                            GDestroyNotify notify);
 
-typedef gint         (*GcalMultiChoiceValueCallback)             (gint                 value);
+typedef gint (*GcalMultiChoiceValueCallback) (gint value);
 
-void                 gcal_multi_choice_set_value_callbacks       (GcalMultiChoice     *self,
-                                                                  GcalMultiChoiceValueCallback  prev_cb,
-                                                                  GcalMultiChoiceValueCallback  next_cb);
+void gcal_multi_choice_set_value_callbacks (GcalMultiChoice *self,
+                                            GcalMultiChoiceValueCallback prev_cb,
+                                            GcalMultiChoiceValueCallback next_cb);
 
 G_END_DECLS
 

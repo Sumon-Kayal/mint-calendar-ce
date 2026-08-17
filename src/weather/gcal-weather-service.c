@@ -16,22 +16,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define G_LOG_DOMAIN      "GcalWeatherService"
+#define G_LOG_DOMAIN "GcalWeatherService"
 
 #include <geoclue.h>
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 #include "config.h"
 #include "gcal-debug.h"
 #include "gcal-timer.h"
 #include "gcal-weather-service.h"
 
-
-#define GCAL_WEATHER_CHECK_INTERVAL_RENEW_DEFAULT (3 * 60 * 60)  /* seconds */
-#define GCAL_WEATHER_CHECK_INTERVAL_NEW_DEFAULT   (5 * 60)       /* seconds */
-#define GCAL_WEATHER_VALID_TIMESPAN_DEFAULT       (24 * 60 * 60) /* seconds */
-#define GCAL_WEATHER_FORECAST_MAX_DAYS_DEFAULT     5
+#define GCAL_WEATHER_CHECK_INTERVAL_RENEW_DEFAULT (3 * 60 * 60) /* seconds */
+#define GCAL_WEATHER_CHECK_INTERVAL_NEW_DEFAULT (5 * 60)        /* seconds */
+#define GCAL_WEATHER_VALID_TIMESPAN_DEFAULT (24 * 60 * 60)      /* seconds */
+#define GCAL_WEATHER_FORECAST_MAX_DAYS_DEFAULT 5
 
 #define DAY_SECONDS (24 * 60 * 60)
 
@@ -41,10 +40,9 @@
  */
 typedef struct
 {
-  gchar              *name;
-  gboolean            night_support;
+  gchar *name;
+  gboolean night_support;
 } GcalWeatherIconInfo;
-
 
 /* GcalWeatherService:
  *
@@ -81,40 +79,40 @@ typedef struct
  */
 struct _GcalWeatherService
 {
-  GObjectClass        parent;
+  GObjectClass parent;
 
-  GTimeZone          *timezone;            /* owned, nullable */
+  GTimeZone *timezone; /* owned, nullable */
 
-  guint               use_counter;
+  guint use_counter;
 
   /* timer: */
-  guint               check_interval_new;
-  guint               check_interval_renew;
-  GcalTimer          *duration_timer;
-  GcalTimer          *midnight_timer;
+  guint check_interval_new;
+  guint check_interval_renew;
+  GcalTimer *duration_timer;
+  GcalTimer *midnight_timer;
 
   /* network monitoring */
-  gulong              network_changed_sid;
+  gulong network_changed_sid;
 
   /* locations: */
-  GWeatherLocation   *location;             /* owned, nullable */
-  GClueSimple        *location_service;     /* owned, nullable */
-  GCancellable       *location_cancellable; /* owned, non-null */
-  gboolean            location_service_running;
+  GWeatherLocation *location;         /* owned, nullable */
+  GClueSimple *location_service;      /* owned, nullable */
+  GCancellable *location_cancellable; /* owned, non-null */
+  gboolean location_service_running;
 
   /* weather: */
-  GPtrArray          *weather_infos;        /* owned[owned] */
-  gint64              weather_infos_upated;
-  gint64              valid_timespan;
-  GWeatherInfo       *gweather_info;        /* owned, nullable */
-  guint               max_days;
-  gboolean            weather_service_active;
-  gboolean            weather_service_running;
-  gboolean            weather_is_stale;
+  GPtrArray *weather_infos; /* owned[owned] */
+  gint64 weather_infos_upated;
+  gint64 valid_timespan;
+  GWeatherInfo *gweather_info; /* owned, nullable */
+  guint max_days;
+  gboolean weather_service_active;
+  gboolean weather_service_running;
+  gboolean weather_is_stale;
 };
 
-static void          on_gweather_update_cb                       (GWeatherInfo       *info,
-                                                                  GcalWeatherService *self);
+static void on_gweather_update_cb (GWeatherInfo *info,
+                                   GcalWeatherService *self);
 
 G_DEFINE_TYPE (GcalWeatherService, gcal_weather_service, G_TYPE_OBJECT)
 
@@ -133,7 +131,6 @@ enum
 };
 
 static guint signals[N_SIGNALS] = { 0 };
-
 
 /*
  * Auxiliary methods
@@ -164,9 +161,9 @@ get_normalized_icon_name_len (const gchar *str)
   return str_len;
 }
 
-static gchar*
-get_normalized_icon_name (GWeatherInfo* wi,
-                          gboolean      is_night_icon)
+static gchar *
+get_normalized_icon_name (GWeatherInfo *wi,
+                          gboolean is_night_icon)
 {
   const gchar night_pfx[] = "-night";
   const gsize night_pfx_size = G_N_ELEMENTS (night_pfx) - 1;
@@ -238,7 +235,7 @@ update_timeout_interval (GcalWeatherService *self)
 }
 
 static void
-schedule_midnight (GcalWeatherService  *self)
+schedule_midnight (GcalWeatherService *self)
 {
   g_autoptr (GTimeZone) zone = NULL;
   g_autoptr (GDateTime) now = NULL;
@@ -265,7 +262,7 @@ schedule_midnight (GcalWeatherService  *self)
 }
 
 static void
-start_timer (GcalWeatherService  *self)
+start_timer (GcalWeatherService *self)
 {
   GNetworkMonitor *monitor;
 
@@ -282,7 +279,7 @@ start_timer (GcalWeatherService  *self)
 }
 
 static void
-stop_timer (GcalWeatherService  *self)
+stop_timer (GcalWeatherService *self)
 {
   gcal_timer_stop (self->duration_timer);
   gcal_timer_stop (self->midnight_timer);
@@ -290,22 +287,20 @@ stop_timer (GcalWeatherService  *self)
 
 static gint
 get_icon_name_sortkey (const gchar *icon_name,
-                       gboolean    *supports_night_icon)
+                       gboolean *supports_night_icon)
 {
   gssize normalized_name_len;
   guint i;
 
-  const GcalWeatherIconInfo icons[] =
-    { {"weather-clear",             TRUE},
-      {"weather-few-clouds",        TRUE},
-      {"weather-overcast",          FALSE},
-      {"weather-fog",               FALSE},
-      {"weather-showers-scattered", FALSE},
-      {"weather-showers",           FALSE},
-      {"weather-snow",              FALSE},
-      {"weather-storm",             FALSE},
-      {"weather-severe-alert",      FALSE}
-    };
+  const GcalWeatherIconInfo icons[] = { { "weather-clear", TRUE },
+                                        { "weather-few-clouds", TRUE },
+                                        { "weather-overcast", FALSE },
+                                        { "weather-fog", FALSE },
+                                        { "weather-showers-scattered", FALSE },
+                                        { "weather-showers", FALSE },
+                                        { "weather-snow", FALSE },
+                                        { "weather-storm", FALSE },
+                                        { "weather-severe-alert", FALSE } };
 
   g_return_val_if_fail (icon_name != NULL, -1);
   g_return_val_if_fail (supports_night_icon != NULL, -1);
@@ -332,9 +327,9 @@ get_icon_name_sortkey (const gchar *icon_name,
 
 static gboolean
 get_time_day_start (GcalWeatherService *self,
-                    GDate              *ret_date,
-                    gint64             *ret_unix,
-                    gint64             *ret_unix_exact)
+                    GDate *ret_date,
+                    gint64 *ret_unix,
+                    gint64 *ret_unix_exact)
 {
   g_autoptr (GTimeZone) zone = NULL;
   g_autoptr (GDateTime) now = NULL;
@@ -367,10 +362,10 @@ get_time_day_start (GcalWeatherService *self,
 
 static inline gboolean
 get_gweather_temperature (GWeatherInfo *gwi,
-                          gdouble      *temp)
+                          gdouble *temp)
 {
   gboolean valid;
-  gdouble  value;
+  gdouble value;
 
   *temp = NAN;
 
@@ -395,10 +390,10 @@ get_gweather_temperature (GWeatherInfo *gwi,
 }
 
 static gboolean
-compute_weather_info_data (GSList    *samples,
-                           gboolean   is_today,
-                           gchar    **icon_name,
-                           gchar    **temperature)
+compute_weather_info_data (GSList *samples,
+                           gboolean is_today,
+                           gchar **icon_name,
+                           gchar **temperature)
 {
   GWeatherInfo *phenomenon_gwi = NULL;
   GWeatherInfo *temp_gwi = NULL;
@@ -426,7 +421,7 @@ compute_weather_info_data (GSList    *samples,
 
   for (iter = samples; iter; iter = iter->next)
     {
-      GWeatherInfo  *gwi;
+      GWeatherInfo *gwi;
       const gchar *icon_name;
       gboolean supports_night_icon;
       gboolean valid_temp;
@@ -476,14 +471,14 @@ compute_weather_info_data (GSList    *samples,
     }
 }
 
-static GPtrArray*
+static GPtrArray *
 preprocess_gweather_reports (GcalWeatherService *self,
-                             GSList             *samples)
+                             GSList *samples)
 {
   GWeatherInfo *first_tomorrow = NULL; /* unowned */
   GPtrArray *result = NULL;
-  GSList **days = NULL;   /* owned[owned[unowned]] */
-  GSList *iter = NULL;    /* unowned */
+  GSList **days = NULL; /* owned[owned[unowned]] */
+  GSList *iter = NULL;  /* unowned */
   GDate cur_gdate;
   glong first_tomorrow_dtime = -1;
   gint64 today_unix;
@@ -505,7 +500,7 @@ preprocess_gweather_reports (GcalWeatherService *self,
     return NULL;
 
   result = g_ptr_array_new_full (self->max_days, g_object_unref);
-  days = g_malloc0 (sizeof (GSList*) * self->max_days);
+  days = g_malloc0 (sizeof (GSList *) * self->max_days);
 
   /* Split samples to max_days buckets: */
   for (iter = samples; iter != NULL; iter = iter->next)
@@ -520,12 +515,12 @@ preprocess_gweather_reports (GcalWeatherService *self,
       if (!valid_date)
         continue;
 
-      #if PRINT_WEATHER_DATA
+#if PRINT_WEATHER_DATA
       {
-        g_autofree gchar* dbg_str = gwc2str (gwi);
+        g_autofree gchar *dbg_str = gwc2str (gwi);
         g_message ("WEATHER READING POINT: %s", dbg_str);
       }
-      #endif
+#endif
 
       if (gwi_dtime >= 0 && gwi_dtime >= today_unix)
         {
@@ -581,8 +576,8 @@ preprocess_gweather_reports (GcalWeatherService *self,
 
 static void
 update_weather (GcalWeatherService *self,
-                GWeatherInfo       *info,
-                gboolean            reuse_old_on_error)
+                GWeatherInfo *info,
+                gboolean reuse_old_on_error)
 {
   GSList *gwforecast = NULL; /* unowned */
 
@@ -598,7 +593,7 @@ update_weather (GcalWeatherService *self,
     }
   else
     {
-      g_autofree gchar* location_name = gweather_info_get_location_name (info);
+      g_autofree gchar *location_name = gweather_info_get_location_name (info);
       g_debug ("Could not retrieve valid weather for location '%s'", location_name);
     }
 
@@ -622,9 +617,15 @@ update_weather (GcalWeatherService *self,
     }
 }
 
+/**
+ * Updates the weather location and refreshes the associated forecast data.
+ *
+ * @param self The weather service.
+ * @param location The new weather location, or `NULL` when unavailable.
+ */
 static void
-update_location (GcalWeatherService  *self,
-                 GWeatherLocation    *location)
+update_location (GcalWeatherService *self,
+                 GWeatherLocation *location)
 {
   if (gcal_timer_is_running (self->duration_timer))
     stop_timer (self);
@@ -647,12 +648,12 @@ update_location (GcalWeatherService  *self,
 
       self->gweather_info = gweather_info_new (location);
       gweather_info_set_contact_info (self->gweather_info,
-                                      "https://gitlab.gnome.org/GNOME/gnome-calendar/-/raw/master/gnome-calendar.doap");
+                                      "https://github.com/Sumon-Kayal/mint-calendar-ce");
 
       gweather_info_set_enabled_providers (self->gweather_info,
                                            GWEATHER_PROVIDER_METAR |
-                                           GWEATHER_PROVIDER_MET_NO |
-                                           GWEATHER_PROVIDER_OWM);
+                                               GWEATHER_PROVIDER_MET_NO |
+                                               GWEATHER_PROVIDER_OWM);
       g_signal_connect_object (self->gweather_info, "updated", (GCallback) on_gweather_update_cb, self, 0);
 
       /*
@@ -671,8 +672,8 @@ update_location (GcalWeatherService  *self,
 }
 
 static void
-update_gclue_location (GcalWeatherService  *self,
-                       GClueLocation       *location)
+update_gclue_location (GcalWeatherService *self,
+                       GClueLocation *location)
 {
   g_autoptr (GWeatherLocation) wlocation = NULL; /* owned */
 
@@ -702,14 +703,13 @@ start_or_stop_weather_service (GcalWeatherService *self)
     gcal_weather_service_stop (self);
 }
 
-
 /*
  * Callbacks
  */
 
 static void
-on_network_changed_cb (GNetworkMonitor    *monitor,
-                       gboolean            available,
+on_network_changed_cb (GNetworkMonitor *monitor,
+                       gboolean available,
                        GcalWeatherService *self)
 {
   gboolean is_running;
@@ -730,14 +730,14 @@ on_network_changed_cb (GNetworkMonitor    *monitor,
 }
 
 static void
-on_gclue_location_changed_cb (GClueLocation      *location,
+on_gclue_location_changed_cb (GClueLocation *location,
                               GcalWeatherService *self)
 {
   update_gclue_location (self, location);
 }
 
 static void
-on_gclue_client_activity_changed_cb (GClueClient        *client,
+on_gclue_client_activity_changed_cb (GClueClient *client,
                                      GcalWeatherService *self)
 {
   /* Notify listeners about unknown locations: */
@@ -745,8 +745,8 @@ on_gclue_client_activity_changed_cb (GClueClient        *client,
 }
 
 static void
-on_gclue_simple_creation_cb (GClueSimple        *_source,
-                             GAsyncResult       *result,
+on_gclue_simple_creation_cb (GClueSimple *_source,
+                             GAsyncResult *result,
                              GcalWeatherService *self)
 {
   g_autoptr (GError) error = NULL;
@@ -793,9 +793,9 @@ on_gclue_simple_creation_cb (GClueSimple        *_source,
 }
 
 static void
-on_gclue_client_stopped_cb (GClueClient  *client,
+on_gclue_client_stopped_cb (GClueClient *client,
                             GAsyncResult *res,
-                            GClueSimple  *simple)
+                            GClueSimple *simple)
 {
   g_autoptr (GError) error = NULL;
   gboolean stopped;
@@ -811,14 +811,14 @@ on_gclue_client_stopped_cb (GClueClient  *client,
 }
 
 static void
-on_gweather_update_cb (GWeatherInfo       *info,
+on_gweather_update_cb (GWeatherInfo *info,
                        GcalWeatherService *self)
 {
   update_weather (self, info, TRUE);
 }
 
 static void
-on_duration_timer_timeout (GcalTimer          *timer,
+on_duration_timer_timeout (GcalTimer *timer,
                            GcalWeatherService *self)
 {
   if (self->gweather_info)
@@ -826,7 +826,7 @@ on_duration_timer_timeout (GcalTimer          *timer,
 }
 
 static void
-on_midnight_timer_timeout (GcalTimer          *timer,
+on_midnight_timer_timeout (GcalTimer *timer,
                            GcalWeatherService *self)
 {
   if (self->gweather_info)
@@ -839,32 +839,31 @@ on_midnight_timer_timeout (GcalTimer          *timer,
 }
 
 #if PRINT_WEATHER_DATA
-static gchar*
+static gchar *
 gwc2str (GWeatherInfo *gwi)
 {
-    g_autoptr (GDateTime) date = NULL;
-    g_autofree gchar *date_str = NULL;
-    glong update;
+  g_autoptr (GDateTime) date = NULL;
+  g_autofree gchar *date_str = NULL;
+  glong update;
 
-    gchar *icon_name; /* unowned */
-    gdouble temp;
+  gchar *icon_name; /* unowned */
+  gdouble temp;
 
-    if (!gweather_info_get_value_update (gwi, &update))
-      return g_strdup ("<null>");
+  if (!gweather_info_get_value_update (gwi, &update))
+    return g_strdup ("<null>");
 
-    date = g_date_time_new_from_unix_local (update);
-    date_str = g_date_time_format (date, "%F %T"),
+  date = g_date_time_new_from_unix_local (update);
+  date_str = g_date_time_format (date, "%F %T"),
 
-    get_gweather_temperature (gwi, &temp);
-    icon_name = gweather_info_get_symbolic_icon_name (gwi);
+  get_gweather_temperature (gwi, &temp);
+  icon_name = gweather_info_get_symbolic_icon_name (gwi);
 
-    return g_strdup_printf ("(%s: t:%f, w:%s)",
-                            date_str,
-                            temp,
-                            icon_name);
+  return g_strdup_printf ("(%s: t:%f, w:%s)",
+                          date_str,
+                          temp,
+                          icon_name);
 }
 #endif
-
 
 /*
  * GObject overrides
@@ -893,9 +892,9 @@ gcal_weather_service_finalize (GObject *object)
 }
 
 static void
-gcal_weather_service_get_property (GObject    *object,
-                                   guint       prop_id,
-                                   GValue     *value,
+gcal_weather_service_get_property (GObject *object,
+                                   guint prop_id,
+                                   GValue *value,
                                    GParamSpec *pspec)
 {
   GcalWeatherService *self = (GcalWeatherService *) object;
@@ -917,10 +916,10 @@ gcal_weather_service_get_property (GObject    *object,
 }
 
 static void
-gcal_weather_service_set_property (GObject      *object,
-                                   guint         prop_id,
+gcal_weather_service_set_property (GObject *object,
+                                   guint prop_id,
                                    const GValue *value,
-                                   GParamSpec   *pspec)
+                                   GParamSpec *pspec)
 {
   GcalWeatherService *self = (GcalWeatherService *) object;
 
@@ -1025,7 +1024,7 @@ gcal_weather_service_init (GcalWeatherService *self)
  *
  * Returns: (transfer full): A newly created #GcalWeatherService.
  */
-GcalWeatherService*
+GcalWeatherService *
 gcal_weather_service_new (void)
 {
   return g_object_new (GCAL_TYPE_WEATHER_SERVICE, NULL);
@@ -1037,7 +1036,7 @@ gcal_weather_service_new (void)
  *
  * Getter for #GcalWeatherService:location.
  */
-GWeatherLocation*
+GWeatherLocation *
 gcal_weather_service_get_location (GcalWeatherService *self)
 {
   g_return_val_if_fail (GCAL_IS_WEATHER_SERVICE (self), NULL);
@@ -1054,7 +1053,7 @@ gcal_weather_service_get_location (GcalWeatherService *self)
  */
 void
 gcal_weather_service_set_location (GcalWeatherService *self,
-                                   GWeatherLocation   *value)
+                                   GWeatherLocation *value)
 {
   g_return_if_fail (GCAL_IS_WEATHER_SERVICE (self));
 
@@ -1074,7 +1073,7 @@ gcal_weather_service_set_location (GcalWeatherService *self,
  *
  * Getter for #GcalWeatherService:time-zone.
  */
-GTimeZone*
+GTimeZone *
 gcal_weather_service_get_time_zone (GcalWeatherService *self)
 {
   g_return_val_if_fail (GCAL_IS_WEATHER_SERVICE (self), NULL);
@@ -1091,7 +1090,7 @@ gcal_weather_service_get_time_zone (GcalWeatherService *self)
  */
 void
 gcal_weather_service_set_time_zone (GcalWeatherService *self,
-                                    GTimeZone          *value)
+                                    GTimeZone *value)
 {
   g_return_if_fail (GCAL_IS_WEATHER_SERVICE (self));
 
@@ -1119,9 +1118,9 @@ gcal_weather_service_set_time_zone (GcalWeatherService *self,
  *
  * Returns: (transfer none)(nullable): a #GcalWeatherInfo
  */
-GcalWeatherInfo*
+GcalWeatherInfo *
 gcal_weather_service_get_weather_info_for_date (GcalWeatherService *self,
-                                                GDate              *date)
+                                                GDate *date)
 {
   g_return_val_if_fail (GCAL_IS_WEATHER_SERVICE (self), NULL);
 
@@ -1147,7 +1146,7 @@ gcal_weather_service_get_weather_info_for_date (GcalWeatherService *self,
  *
  * Returns: (transfer none): list of known weather reports.
  */
-GPtrArray*
+GPtrArray *
 gcal_weather_service_get_weather_infos (GcalWeatherService *self)
 {
   g_return_val_if_fail (GCAL_IS_WEATHER_SERVICE (self), NULL);
@@ -1163,7 +1162,7 @@ gcal_weather_service_get_weather_infos (GcalWeatherService *self)
  *
  * Returns: (nullable) (transfer none): Text to display.
  */
-const gchar*
+const gchar *
 gcal_weather_service_get_attribution (GcalWeatherService *self)
 {
   g_return_val_if_fail (GCAL_IS_WEATHER_SERVICE (self), NULL);
@@ -1204,7 +1203,6 @@ gcal_weather_service_update (GcalWeatherService *self)
         gcal_timer_reset (self->duration_timer);
     }
 }
-
 
 /**
  * gcal_weather_service_activate:

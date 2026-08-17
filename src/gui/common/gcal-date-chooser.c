@@ -20,12 +20,12 @@
 
 #define G_LOG_DOMAIN "GcalDateChooser"
 
-#include "gcal-utils.h"
-#include "gcal-date-chooser.h"
 #include "gcal-date-chooser-day.h"
+#include "gcal-date-chooser.h"
 #include "gcal-multi-choice.h"
 #include "gcal-range-tree.h"
 #include "gcal-timeline-subscriber.h"
+#include "gcal-utils.h"
 #include "gcal-view.h"
 
 #include <glib/gi18n.h>
@@ -34,55 +34,52 @@
 #include <stdlib.h>
 
 #define ROWS 6
-#define DAYS ROWS * N_WEEKDAYS
+#define DAYS ROWS *N_WEEKDAYS
 
 struct _GcalDateChooser
 {
-  AdwBin              parent;
+  AdwBin parent;
 
-  GtkWidget          *month_choice;
-  GtkWidget          *popover_month_choice;
-  GtkWidget          *year_choice;
-  GtkWidget          *combined_choice;
-  GtkWidget          *grid;
+  GtkWidget *month_choice;
+  GtkWidget *popover_month_choice;
+  GtkWidget *year_choice;
+  GtkWidget *combined_choice;
+  GtkWidget *grid;
 
-  GtkWidget          *day_grid;
-  GtkWidget          *corner;
-  GtkWidget          *cols[N_WEEKDAYS];
-  GtkWidget          *rows[ROWS];
-  GtkWidget          *days[ROWS][N_WEEKDAYS];
-  GtkWidget          *week[ROWS];
+  GtkWidget *day_grid;
+  GtkWidget *corner;
+  GtkWidget *cols[N_WEEKDAYS];
+  GtkWidget *rows[ROWS];
+  GtkWidget *days[ROWS][N_WEEKDAYS];
+  GtkWidget *week[ROWS];
 
-  GDateTime          *date;
-  GcalContext        *context;
+  GDateTime *date;
+  GcalContext *context;
 
-  gint                this_year;
-  gint                week_start;
+  gint this_year;
+  gint week_start;
 
-  gboolean            show_heading;
-  gboolean            show_day_names;
-  gboolean            show_week_numbers;
-  gboolean            show_selected_week;
-  gboolean            show_events;
-  gboolean            split_month_year;
+  gboolean show_heading;
+  gboolean show_day_names;
+  gboolean show_week_numbers;
+  gboolean show_selected_week;
+  gboolean show_events;
+  gboolean split_month_year;
 
-  GcalRangeTree      *events;
+  GcalRangeTree *events;
 
-  gulong              update_indicators_idle_id;
+  gulong update_indicators_idle_id;
 };
 
-static void          gcal_view_interface_init                    (GcalViewInterface  *iface);
+static void gcal_view_interface_init (GcalViewInterface *iface);
 
-static void          gcal_timeline_subscriber_interface_init     (GcalTimelineSubscriberInterface *iface);
-static gboolean      update_event_indicators_in_idle_cb          (gpointer           data);
+static void gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface);
+static gboolean update_event_indicators_in_idle_cb (gpointer data);
 
-static void          gcal_date_chooser_set_date                  (GcalView  *view,
-                                                                  GDateTime *date);
+static void gcal_date_chooser_set_date (GcalView *view,
+                                        GDateTime *date);
 
-G_DEFINE_TYPE_WITH_CODE (GcalDateChooser, gcal_date_chooser, ADW_TYPE_BIN,
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init)
-                         G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER,
-                                                gcal_timeline_subscriber_interface_init));
+G_DEFINE_TYPE_WITH_CODE (GcalDateChooser, gcal_date_chooser, ADW_TYPE_BIN, G_IMPLEMENT_INTERFACE (GCAL_TYPE_VIEW, gcal_view_interface_init) G_IMPLEMENT_INTERFACE (GCAL_TYPE_TIMELINE_SUBSCRIBER, gcal_timeline_subscriber_interface_init));
 
 enum
 {
@@ -105,11 +102,14 @@ enum
   NUM_PROPERTIES = PROP_SPLIT_MONTH_YEAR + 1,
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
-static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
+static guint signals[LAST_SIGNAL] = {
+  0,
+};
+static GParamSpec *properties[NUM_PROPERTIES] = {
+  NULL,
+};
 
-static const guint month_length[2][13] =
-{
+static const guint month_length[2][13] = {
   { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
   { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 };
@@ -131,7 +131,7 @@ get_split_choice_visible (gpointer user_data,
 }
 
 static void
-decode_combined_choice_value (gint  value,
+decode_combined_choice_value (gint value,
                               gint *year,
                               gint *month,
                               gint *day)
@@ -333,37 +333,37 @@ calendar_get_weekday_name (gint i)
        * Please make sure these abbreviations match GNOME Shell's
        * abbreviations for your language.
        */
-      res = C_("grid sunday", "S");
+      res = C_ ("grid sunday", "S");
       break;
 
     case 1:
       /* Translators: Calendar grid abbreviation for Monday */
-      res = C_("grid monday", "M");
+      res = C_ ("grid monday", "M");
       break;
 
     case 2:
       /* Translators: Calendar grid abbreviation for Tuesday */
-      res = C_("grid tuesday", "T");
+      res = C_ ("grid tuesday", "T");
       break;
 
     case 3:
       /* Translators: Calendar grid abbreviation for Wednesday */
-      res = C_("grid wednesday", "W");
+      res = C_ ("grid wednesday", "W");
       break;
 
     case 4:
       /* Translators: Calendar grid abbreviation for Thursday */
-      res = C_("grid thursday", "T");
+      res = C_ ("grid thursday", "T");
       break;
 
     case 5:
       /* Translators: Calendar grid abbreviation for Friday */
-      res = C_("grid friday", "F");
+      res = C_ ("grid friday", "F");
       break;
 
     case 6:
       /* Translators: Calendar grid abbreviation for Saturday */
-      res = C_("grid saturday", "S");
+      res = C_ ("grid saturday", "S");
       break;
 
     default:
@@ -390,16 +390,16 @@ calendar_init_weekday_display (GcalDateChooser *self)
 
 static gchar *
 format_month (GcalMultiChoice *choice,
-              gint             value,
-              gpointer         data)
+              gint value,
+              gpointer data)
 {
   return g_strdup (gcal_get_month_name (value));
 }
 
 static gchar *
 format_month_year (GcalMultiChoice *choice,
-                   gint             value,
-                   gpointer         data)
+                   gint value,
+                   gpointer data)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (data);
   g_autoptr (GDateTime) now = g_date_time_new_now (g_date_time_get_timezone (self->date));
@@ -429,9 +429,9 @@ calendar_init_month_display (GcalDateChooser *self)
   months[12] = NULL;
 
   gcal_multi_choice_set_choices (GCAL_MULTI_CHOICE (self->month_choice),
-                                (const gchar**) months);
+                                 (const gchar **) months);
   gcal_multi_choice_set_choices (GCAL_MULTI_CHOICE (self->popover_month_choice),
-                                (const gchar**) months);
+                                 (const gchar **) months);
 
   for (i = 0; i < 12; i++)
     g_free (months[i]);
@@ -463,15 +463,15 @@ calendar_update_selected_day_display (GcalDateChooser *self)
       gboolean row_selected = FALSE;
 
       for (col = 0; col < N_WEEKDAYS; col++)
-      {
-        gboolean day_selected;
+        {
+          gboolean day_selected;
 
-        d = GCAL_DATE_CHOOSER_DAY (self->days[row][col]);
-        date = gcal_date_chooser_day_get_date (d);
-        day_selected = gcal_date_time_compare_date (date, self->date) == 0;
-        gcal_date_chooser_day_set_selected (d, day_selected);
-        row_selected |= day_selected;
-      }
+          d = GCAL_DATE_CHOOSER_DAY (self->days[row][col]);
+          date = gcal_date_chooser_day_get_date (d);
+          day_selected = gcal_date_time_compare_date (date, self->date) == 0;
+          gcal_date_chooser_day_set_selected (d, day_selected);
+          row_selected |= day_selected;
+        }
 
       gtk_widget_set_visible (self->week[row], row_selected && self->show_selected_week);
     }
@@ -508,7 +508,7 @@ update_event_indicators (GcalDateChooser *self)
   for (row = 0; row < ROWS; row++)
     {
       for (col = 0; col < N_WEEKDAYS; col++)
-      {
+        {
           GDateTime *date;
           g_autoptr (GcalRange) range = NULL;
 
@@ -519,7 +519,7 @@ update_event_indicators (GcalDateChooser *self)
 
           gcal_date_chooser_day_set_dot_visible (GCAL_DATE_CHOOSER_DAY (self->days[row][col]),
                                                  gcal_range_tree_count_entries_at_range (self->events, range) > 0);
-      }
+        }
     }
 }
 
@@ -537,7 +537,7 @@ queue_update_event_indicators (GcalDateChooser *self)
 
 static void
 day_selected_cb (GcalDateChooserDay *d,
-                 GcalDateChooser    *self)
+                 GcalDateChooser *self)
 {
   gcal_date_chooser_set_date (GCAL_VIEW (self), gcal_date_chooser_day_get_date (d));
 }
@@ -564,7 +564,7 @@ update_event_indicators_in_idle_cb (gpointer data)
  */
 
 static void
-gcal_date_chooser_set_date (GcalView  *view,
+gcal_date_chooser_set_date (GcalView *view,
                             GDateTime *date)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (view);
@@ -599,7 +599,7 @@ gcal_date_chooser_set_date (GcalView  *view,
   g_object_thaw_notify (G_OBJECT (self));
 }
 
-static GDateTime*
+static GDateTime *
 gcal_date_chooser_get_date (GcalView *view)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (view);
@@ -607,15 +607,15 @@ gcal_date_chooser_get_date (GcalView *view)
   return self->date;
 }
 
-static GList*
-gcal_date_chooser_get_children_by_uuid (GcalView              *view,
-                                        GcalRecurrenceModType  mod,
-                                        const gchar           *uuid)
+static GList *
+gcal_date_chooser_get_children_by_uuid (GcalView *view,
+                                        GcalRecurrenceModType mod,
+                                        const gchar *uuid)
 {
   return NULL;
 }
 
-static GDateTime*
+static GDateTime *
 gcal_date_chooser_get_next_date (GcalView *view)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (view);
@@ -624,7 +624,7 @@ gcal_date_chooser_get_next_date (GcalView *view)
   return g_date_time_add_months (self->date, 1);
 }
 
-static GDateTime*
+static GDateTime *
 gcal_date_chooser_get_previous_date (GcalView *view)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (view);
@@ -643,12 +643,11 @@ gcal_view_interface_init (GcalViewInterface *iface)
   iface->get_previous_date = gcal_date_chooser_get_previous_date;
 }
 
-
 /*
  * GcalTimelineSubscriber implementation
  */
 
-static GcalRange*
+static GcalRange *
 gcal_date_chooser_get_range (GcalTimelineSubscriber *subscriber)
 {
   GcalDateChooser *self;
@@ -664,7 +663,7 @@ gcal_date_chooser_get_range (GcalTimelineSubscriber *subscriber)
 
 static void
 gcal_date_chooser_add_event (GcalTimelineSubscriber *subscriber,
-                             GcalEvent              *event)
+                             GcalEvent *event)
 {
   GcalDateChooser *self;
 
@@ -678,7 +677,7 @@ gcal_date_chooser_add_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_date_chooser_remove_event (GcalTimelineSubscriber *subscriber,
-                                GcalEvent              *event)
+                                GcalEvent *event)
 {
   GcalDateChooser *self;
 
@@ -692,8 +691,8 @@ gcal_date_chooser_remove_event (GcalTimelineSubscriber *subscriber,
 
 static void
 gcal_date_chooser_update_event (GcalTimelineSubscriber *subscriber,
-                                GcalEvent              *old_event,
-                                GcalEvent              *event)
+                                GcalEvent *old_event,
+                                GcalEvent *event)
 {
   gcal_date_chooser_remove_event (subscriber, old_event);
   gcal_date_chooser_add_event (subscriber, event);
@@ -709,10 +708,10 @@ gcal_timeline_subscriber_interface_init (GcalTimelineSubscriberInterface *iface)
 }
 
 static void
-calendar_set_property (GObject      *obj,
-                       guint         property_id,
+calendar_set_property (GObject *obj,
+                       guint property_id,
                        const GValue *value,
-                       GParamSpec   *pspec)
+                       GParamSpec *pspec)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (obj);
 
@@ -764,9 +763,9 @@ calendar_set_property (GObject      *obj,
 }
 
 static void
-calendar_get_property (GObject    *obj,
-                       guint       property_id,
-                       GValue     *value,
+calendar_get_property (GObject *obj,
+                       guint property_id,
+                       GValue *value,
                        GParamSpec *pspec)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (obj);
@@ -817,9 +816,9 @@ calendar_get_property (GObject    *obj,
 
 static void
 multi_choice_changed (GcalDateChooser *self,
-                      gint             year,
-                      gint             month,
-                      gint             day)
+                      gint year,
+                      gint month,
+                      gint day)
 {
   g_autoptr (GDateTime) date = NULL;
 
@@ -855,10 +854,10 @@ split_multi_choice_changed (GcalDateChooser *self)
 }
 
 static gboolean
-on_drop_target_drop_cb (GtkDropTarget   *target,
-                        const GValue    *value,
-                        double           x,
-                        double           y,
+on_drop_target_drop_cb (GtkDropTarget *target,
+                        const GValue *value,
+                        double x,
+                        double y,
                         GcalDateChooser *self)
 {
   g_autoptr (GDateTime) date = NULL;
@@ -901,8 +900,8 @@ gcal_date_chooser_finalize (GObject *object)
 }
 
 static gboolean
-gcal_date_chooser_child_focus (GtkWidget        *widget,
-                               GtkDirectionType  direction)
+gcal_date_chooser_child_focus (GtkWidget *widget,
+                               GtkDirectionType direction)
 {
   GcalDateChooser *self = GCAL_DATE_CHOOSER (widget);
   GtkRoot *root;
@@ -1051,30 +1050,27 @@ gcal_date_chooser_class_init (GcalDateChooserClass *class)
   gtk_widget_class_set_css_name (widget_class, "datechooser");
 }
 
-
 static gboolean
-show_week_number_to_column_cb (GBinding     *binding,
+show_week_number_to_column_cb (GBinding *binding,
                                const GValue *from_value,
-                               GValue       *to_value,
-                               gpointer      user_data)
+                               GValue *to_value,
+                               gpointer user_data)
 {
   g_value_set_int (to_value, g_value_get_boolean (from_value) ? -1 : 0);
 
   return TRUE;
 }
 
-
 static gboolean
-show_week_number_to_column_span_cb (GBinding     *binding,
+show_week_number_to_column_span_cb (GBinding *binding,
                                     const GValue *from_value,
-                                    GValue       *to_value,
-                                    gpointer      user_data)
+                                    GValue *to_value,
+                                    gpointer user_data)
 {
   g_value_set_int (to_value, g_value_get_boolean (from_value) ? N_WEEKDAYS + 1 : N_WEEKDAYS);
 
   return TRUE;
 }
-
 
 static void
 gcal_date_chooser_init (GcalDateChooser *self)
@@ -1227,7 +1223,6 @@ gcal_date_chooser_init (GcalDateChooser *self)
   gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (drop_target));
 }
 
-
 /*
  * Public API
  */
@@ -1239,7 +1234,7 @@ gcal_date_chooser_init (GcalDateChooser *self)
  *
  * Returns: the newly created `DateChooser`
  */
-GtkWidget*
+GtkWidget *
 gcal_date_chooser_new (void)
 {
   return g_object_new (GCAL_TYPE_DATE_CHOOSER, NULL);
@@ -1247,7 +1242,7 @@ gcal_date_chooser_new (void)
 
 void
 gcal_date_chooser_set_show_heading (GcalDateChooser *self,
-                                    gboolean         setting)
+                                    gboolean setting)
 {
   if (self->show_heading == setting)
     return;
@@ -1265,7 +1260,7 @@ gcal_date_chooser_get_show_heading (GcalDateChooser *self)
 
 void
 gcal_date_chooser_set_show_day_names (GcalDateChooser *self,
-                                      gboolean         setting)
+                                      gboolean setting)
 {
   if (self->show_day_names == setting)
     return;
@@ -1285,7 +1280,7 @@ gcal_date_chooser_get_show_day_names (GcalDateChooser *self)
 
 void
 gcal_date_chooser_set_show_week_numbers (GcalDateChooser *self,
-                                         gboolean         setting)
+                                         gboolean setting)
 {
   if (self->show_week_numbers == setting)
     return;
@@ -1312,7 +1307,7 @@ gcal_date_chooser_get_show_week_numbers (GcalDateChooser *self)
  */
 void
 gcal_date_chooser_set_show_selected_week (GcalDateChooser *self,
-                                          gboolean         setting)
+                                          gboolean setting)
 {
   if (self->show_selected_week == setting)
     return;
@@ -1338,7 +1333,7 @@ gcal_date_chooser_get_show_selected_week (GcalDateChooser *self)
 
 void
 gcal_date_chooser_set_show_events (GcalDateChooser *self,
-                                   gboolean         setting)
+                                   gboolean setting)
 {
   if (self->show_events == setting)
     return;
@@ -1358,7 +1353,7 @@ gcal_date_chooser_get_show_events (GcalDateChooser *self)
 
 void
 gcal_date_chooser_set_split_month_year (GcalDateChooser *self,
-                                        gboolean         setting)
+                                        gboolean setting)
 {
   if (self->split_month_year == setting)
     return;
