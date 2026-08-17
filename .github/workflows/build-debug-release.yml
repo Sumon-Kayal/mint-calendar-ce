@@ -79,7 +79,15 @@ jobs:
         run: |
           set -euo pipefail
 
-          deb="$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+          deb=""
+          for d in dist/*.deb; do
+            pkg_name="$(dpkg-deb -f "$d" Package)"
+            if [ "$pkg_name" = "mint-calendar-ce" ]; then
+              deb="$d"
+              break
+            fi
+          done
+          
           test -n "$deb"
 
           echo "Installing distro GNOME Calendar metadata for comparison..."
@@ -116,7 +124,16 @@ jobs:
         run: |
           set -euo pipefail
 
-          deb="$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+          deb=""
+          for d in dist/*.deb; do
+            pkg_name="$(dpkg-deb -f "$d" Package)"
+            if [ "$pkg_name" = "mint-calendar-ce" ]; then
+              deb="$d"
+              break
+            fi
+          done
+
+          test -n "$deb"
 
           contents="$(dpkg-deb -c "$deb")"
 
@@ -142,7 +159,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          deb="$(find dist -maxdepth 1 -type f -name '*.deb' -print -quit)"
+          deb=""
+          for d in dist/*.deb; do
+            pkg_name="$(dpkg-deb -f "$d" Package)"
+            if [ "$pkg_name" = "mint-calendar-ce" ]; then
+              deb="$d"
+              break
+            fi
+          done
+
+          test -n "$deb"
+          
           contents="$(dpkg-deb -c "$deb")"
 
           forbidden_paths=(
