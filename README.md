@@ -8,9 +8,9 @@
 
 [![CodeQL](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml/badge.svg)](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml)
 
-<img src="<image>https://raw.githubusercontent.com/Sumon-Kayal/mint-calendar-ce/main/Screenshots/month-view.png" width="922" alt="Mint Calendar CE">
+<img src="https://raw.githubusercontent.com/Sumon-Kayal/mint-calendar-ce/main/Screenshots/month-view.png" width="922" alt="Mint Calendar CE">
 
- Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
+Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
 GNOME Calendar applied on top.
 
 </div>
