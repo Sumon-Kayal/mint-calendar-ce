@@ -58,8 +58,8 @@ CE inherits the newer attendee/organizer functionality from GNOME Calendar 50, i
 
 New components include:
 
-gcal-event-attendee.*
-gcal-event-organizer.*
+gcal-event-attendee._
+gcal-event-organizer._
 gcal-attendee-row
 gcal-attendee-summary-row
 gcal-attendee-details-page
@@ -133,12 +133,12 @@ The challenge is that GNOME Calendar 50 expects newer GTK4 and libadwaita versio
 
 GNOME Calendar 50 expects approximately:
 
-GTK4       >= 4.21.2
+GTK4 >= 4.21.2
 libadwaita >= 1.8~alpha
 
 Linux Mint 22 / Ubuntu 24.04 provide approximately:
 
-GTK4       4.14.x
+GTK4 4.14.x
 libadwaita 1.5.0
 
 Instead of requiring users to upgrade their desktop libraries, CE ports the v50 functionality down to the Mint 22 stack.
@@ -249,12 +249,10 @@ The implementation was compared directly with Mint's "48.1+mint1" source and ret
 
 So CE is effectively:
 
-Mint Calendar 48.1
-        +
-GNOME Calendar 50 feature set
-        +
+Mint Calendar 48.1 +
+GNOME Calendar 50 feature set +
 CE compatibility work
-        =
+=
 Mint Calendar CE 1.0
 
 ---
@@ -323,8 +321,7 @@ The independent identity is important because CE is not intended to replace Mint
 
 The target is:
 
-Linux Mint GNOME Calendar
-        +
+Linux Mint GNOME Calendar +
 Mint Calendar CE
 
 on the same system.
@@ -467,20 +464,20 @@ It is an independent/community-maintained fork that:
 The relationship is therefore:
 
 Linux Mint
-   │
-   └── gnome-calendar 48.1+mint1
-              │
-              │  CE uses this as its Mint baseline
-              ▼
-       GNOME Calendar v50
-              │
-              │  newer upstream features
-              ▼
-       Compatibility port
-              │
-              │  GTK4 4.14 / libadwaita 1.5
-              ▼
-       Mint Calendar CE 1.0
+│
+└── gnome-calendar 48.1+mint1
+│
+│ CE uses this as its Mint baseline
+▼
+GNOME Calendar v50
+│
+│ newer upstream features
+▼
+Compatibility port
+│
+│ GTK4 4.14 / libadwaita 1.5
+▼
+Mint Calendar CE 1.0
 
 ---
 
