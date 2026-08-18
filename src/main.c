@@ -31,6 +31,7 @@ main (gint argc,
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
   textdomain (GETTEXT_PACKAGE);
 
+  g_set_prgname (APPLICATION_ID);
   g_set_application_name (_ ("Calendar"));
 
   app = gcal_application_new ();
