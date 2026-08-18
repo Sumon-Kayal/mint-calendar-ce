@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/calendar/icons/scalable/emblems/">
+  <gresource prefix="/org/mint/calendar/ce/icons/scalable/emblems/">
     <file compressed="true">add-reminder-symbolic.svg</file>
     <file compressed="true">calendar-agenda-symbolic.svg</file>
     <file compressed="true">calendar-month-symbolic.svg</file>

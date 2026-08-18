@@ -4,6 +4,7 @@ Comment=Access and manage your calendars
 Exec=mint-calendar-ce %U
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=@icon@
+StartupWMClass=@startup_wm_class@
 Terminal=false
 Type=Application
 StartupNotify=true
