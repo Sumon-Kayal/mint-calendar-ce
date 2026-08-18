@@ -18,6 +18,7 @@ enums_xml = gnome.mkenums(
 # Desktop files
 # Note: This name is registered in gcal-weather-service.c.
 desktop_conf = configuration_data()
+desktop_conf.set('icon', application_id)
 desktop_conf.set('startup_wm_class', application_id)
 desktop = i18n.merge_file(
   type: 'desktop',
