@@ -104,16 +104,16 @@ Mint Calendar CE does not require the original GNOME Calendar package to be remo
 
 Its system-visible identities are kept separate:
 
-| Component | Mint Calendar CE |
-|---|---|
-| Package | `mint-calendar-ce` |
-| Binary | `mint-calendar-ce` |
-| Application ID | `org.mint.calendar.ce` |
-| Desktop entry | `org.mint.calendar.ce.desktop` |
-| D-Bus service | `org.mint.calendar.ce.service` |
-| GSettings schema | `org.mint.calendar.ce` |
-| AppStream ID | `org.mint.calendar.ce` |
-| Private data directory | `mint-calendar-ce` |
+| Component              | Mint Calendar CE               |
+| ---------------------- | ------------------------------ |
+| Package                | `mint-calendar-ce`             |
+| Binary                 | `mint-calendar-ce`             |
+| Application ID         | `org.mint.calendar.ce`         |
+| Desktop entry          | `org.mint.calendar.ce.desktop` |
+| D-Bus service          | `org.mint.calendar.ce.service` |
+| GSettings schema       | `org.mint.calendar.ce`         |
+| AppStream ID           | `org.mint.calendar.ce`         |
+| Private data directory | `mint-calendar-ce`             |
 
 The development search-provider path is `/org/mint/calendar/ce/Devel/SearchProvider`;
 release builds use `/org/mint/calendar/ce/SearchProvider`.

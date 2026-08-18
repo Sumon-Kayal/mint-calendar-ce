@@ -128,18 +128,18 @@ settings rather than silently sharing one GSettings key space.
 Mint Calendar CE is intended to be installable alongside Linux Mint's original
 `gnome-calendar` package. System-visible identities are deliberately separate:
 
-| Resource | Original GNOME Calendar | Mint Calendar CE |
-|---|---|---|
-| Binary | `gnome-calendar` | `mint-calendar-ce` |
-| Application ID | `org.gnome.Calendar` | `org.mint.calendar.ce` |
-| Desktop entry | `org.gnome.Calendar.desktop` | `org.mint.calendar.ce.desktop` |
-| D-Bus service | `org.gnome.Calendar.service` | `org.mint.calendar.ce.service` |
-| Search provider | `org.gnome.Calendar.search-provider.ini` | `org.mint.calendar.ce.search-provider.ini` |
-| GSettings schema | `org.gnome.Calendar` | `org.mint.calendar.ce` |
-| GSettings path | `/org/gnome/calendar/` | `/org/mint/calendar/ce/` |
-| AppStream ID | `org.gnome.Calendar` | `org.mint.calendar.ce` |
-| gettext domain | `gnome-calendar` | `mint-calendar-ce` |
-| Private data directory | `gnome-calendar` | `mint-calendar-ce` |
+| Resource               | Original GNOME Calendar                  | Mint Calendar CE                           |
+| ---------------------- | ---------------------------------------- | ------------------------------------------ |
+| Binary                 | `gnome-calendar`                         | `mint-calendar-ce`                         |
+| Application ID         | `org.gnome.Calendar`                     | `org.mint.calendar.ce`                     |
+| Desktop entry          | `org.gnome.Calendar.desktop`             | `org.mint.calendar.ce.desktop`             |
+| D-Bus service          | `org.gnome.Calendar.service`             | `org.mint.calendar.ce.service`             |
+| Search provider        | `org.gnome.Calendar.search-provider.ini` | `org.mint.calendar.ce.search-provider.ini` |
+| GSettings schema       | `org.gnome.Calendar`                     | `org.mint.calendar.ce`                     |
+| GSettings path         | `/org/gnome/calendar/`                   | `/org/mint/calendar/ce/`                   |
+| AppStream ID           | `org.gnome.Calendar`                     | `org.mint.calendar.ce`                     |
+| gettext domain         | `gnome-calendar`                         | `mint-calendar-ce`                         |
+| Private data directory | `gnome-calendar`                         | `mint-calendar-ce`                         |
 
 The internal `gcal_*` C symbols and embedded `/org/gnome/calendar/...` resource
 paths are not mechanically renamed. They are internal implementation/resource
