@@ -10,7 +10,7 @@
 
 <img src="https://static.gnome.org/appdata/gnome-50/org.gnome.Calendar/month-view.png" width="922" alt="Mint Calendar CE">
 
-Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
+ Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
 GNOME Calendar applied on top.
 
 </div>
