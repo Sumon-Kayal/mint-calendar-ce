@@ -64,6 +64,21 @@
     <keyword>Google Calendar</keyword>
   </keywords>
 
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/Sumon-Kayal/mint-calendar-ce/main/Screenshots/day-view.jpg</image>
+      <caption>Day view</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/Sumon-Kayal/mint-calendar-ce/main/Screenshots/month-view.png</image>
+      <caption>Month view</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/Sumon-Kayal/mint-calendar-ce/main/Screenshots/week-view.png</image>
+      <caption>Week view</caption>
+    </screenshot>
+  </screenshots>
+
   <branding>
     <color type="primary" scheme_preference="light">#c5e1a5</color>
     <color type="primary" scheme_preference="dark">#33691e</color>
