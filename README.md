@@ -6,8 +6,7 @@
 
 **v1.0**
 
-[![CodeQL](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml/badge.svg)](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml)
-
+[![CodeQL](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml/badge.svg?branch=Finishing-touch)](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml)
 <img src="https://raw.githubusercontent.com/Sumon-Kayal/mint-calendar-ce/main/Screenshots/month-view.png" width="922" alt="Mint Calendar CE">
 
 Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
