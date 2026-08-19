@@ -74,9 +74,8 @@ These are checked against the current source (no leftover references to the newe
 remain — verified both by search and by diffing this tree's `src/` against a clean upstream
 v50.0 checkout, file by file) and the feature-parity question was checked deliberately: every
 file that differs from upstream maps to one of the items above, so nothing else should have
-been silently dropped in the process. The compatibility port has since been exercised by CI:
-the build reached **350/350 targets with all 10 tests passing**. The remaining release gate is
-the real Mint installation/coexistence test of the generated `.deb`.
+been silently dropped in the process. See [Before opening a
+release](#before-opening-a-release) for what CI currently verifies and what's still manual.
 
 ## blueprint-compiler needs to be newer than Ubuntu 24.04 ships
 
@@ -267,13 +266,38 @@ v50.0 checkout to confirm the compatibility fixes above are complete and nothing
 dropped in the process. The GTK4/libadwaita version floor is now confirmed satisfiable on
 Mint 22 / Ubuntu 24.04 directly (table above, checked against Ubuntu's package archive).
 
-A real CI run (CodeQL's Analyze job, which builds the tree to trace the compile) has since
-run against this — and caught something source inspection alone couldn't have: the
-blueprint-compiler version gap above. It failed at `ninja`'s very first blueprint-compiling
-step, before a single line of C compiled, which is the _only_ real compile signal this tree
-has had so far. Not one C file has actually been built yet, and the blueprint-compiler fix
-itself (wrap + version-checked `find_program()`) hasn't been through CI yet either — treat the
-next CI run, or a local `meson setup && ninja && meson test`, as the real test. Give the
-`gtk_filter_list_model_set_watch_items()` backport in `gcal-utils.c` particular scrutiny once
-it does build, since that's new code written for this port rather than a straight widget
-substitution like the rest of the compatibility list above.
+### What CI actually verifies
+
+Three workflows build this tree; each covers different ground:
+
+- **`build-debug-release.yml`** (every push/PR) and **`release-deb.yml`** (tag pushes) both run
+  the full `dpkg-buildpackage -us -uc -b` path. `debian/rules` defines
+  `override_dh_auto_test: xvfb-run -a dh_auto_test -- --no-suite blueprint-compiler`, so this
+  implicitly runs the project's `meson test` suite (under a virtual display, so the GTK4 tests
+  that need one still run headless) as part of that same build step — excluding only the
+  vendored blueprint-compiler subproject's own tests. A green "Build binary package" step means
+  the build compiled *and* the test suite passed; a test failure fails that step. Neither
+  workflow currently breaks the test result out into its own labeled step, so it isn't
+  independently visible in the Actions UI the way the checks below are — worth adding as an
+  explicit step if that visibility matters.
+- **`build-debug-release.yml`** additionally runs, as distinct labeled steps after the build:
+  package metadata inspection, a real ownership-conflict check against an installed
+  `gnome-calendar` package (`dpkg-query -L` diffed against the built `.deb`'s contents), a check
+  that every expected CE identity path is present, a check that no `org.gnome.Calendar`-named
+  path leaked into the package, and `lintian`.
+- **`codeql.yml`** runs a separate, simpler `meson setup && ninja` build — no
+  `dpkg-buildpackage`, no tests, no packaging, just enough of a build for CodeQL to trace C
+  compilation. This is the job that first caught the blueprint-compiler version gap during
+  development, failing at the very first `.blp`-compiling step before any C had compiled. That
+  gap is fixed now (the wrap + version-checked `find_program()` above), and all three workflows
+  pre-fetch the wrap via `meson subprojects download` before it's needed.
+
+### What's still manual
+
+All three workflows run on GitHub-hosted `ubuntu-24.04` runners, not a real Linux Mint 22
+system. The remaining release gate is exercising the built `.deb` there: install it alongside a
+real `gnome-calendar` package and confirm desktop/D-Bus activation, search integration, and a
+clean uninstall, per [Coexistence test](#coexistence-test) above. Give the
+`gtk_filter_list_model_set_watch_items()` backport in `gcal-utils.c` particular attention during
+that pass — it's new code written for this port, not a straight widget substitution like the
+rest of the compatibility list above, so it hasn't had real-world exercise yet.

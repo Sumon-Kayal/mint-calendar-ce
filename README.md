@@ -29,7 +29,7 @@ distributed independently — not an official Linux Mint or GNOME project.
 | Based on                         | GNOME Calendar 48             | GNOME Calendar 50      | GNOME Calendar 50                                                                        |
 | Linux Mint's compatibility patch | Yes                           | No                     | Yes                                                                                      |
 | Branding                         | Stock GNOME                   | Stock GNOME            | Mint-branded, Mint-Y-Dark icon                                                           |
-| Official Mint project            | Yes                           | —                      | No — independent/community                                                               |
+| Official Mint project            | Yes                           | —                       | No — independent/community                                                               |
 | Where to get it                  | Mint's own repos              | GNOME / Flathub        | This project's [Releases page](https://github.com/Sumon-Kayal/mint-calendar-ce/releases) |
 
 In short: Mint Calendar CE brings the newer GNOME Calendar 50 feature base to Linux Mint 22,
@@ -105,7 +105,7 @@ Mint Calendar CE does not require the original GNOME Calendar package to be remo
 Its system-visible identities are kept separate:
 
 | Component              | Mint Calendar CE               |
-| ---------------------- | ------------------------------ |
+| ----------------------- | ------------------------------- |
 | Package                | `mint-calendar-ce`             |
 | Binary                 | `mint-calendar-ce`             |
 | Application ID         | `org.mint.calendar.ce`         |
@@ -128,6 +128,7 @@ alongside the distro package and checking for overlapping installed paths.
 - Releases: <https://github.com/Sumon-Kayal/mint-calendar-ce/releases>
 - Build guide: [BUILD.md](BUILD.md)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
+- Development history: [DEVELOPMENT_HISTORY.md](DEVELOPMENT_HISTORY.md)
 - Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Report an issue: <https://github.com/Sumon-Kayal/mint-calendar-ce/issues>
 - Contact: <sumankayalsuman4@proton.me>
