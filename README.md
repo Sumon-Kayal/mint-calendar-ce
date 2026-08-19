@@ -6,8 +6,7 @@
 
 **v1.0**
 
-[![CodeQL](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml/badge.svg)](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml)
-
+[![CodeQL](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml/badge.svg?branch=Finishing-touch)](https://github.com/Sumon-Kayal/mint-calendar-ce/actions/workflows/codeql.yml)
 <img src="https://raw.githubusercontent.com/Sumon-Kayal/mint-calendar-ce/main/Screenshots/month-view.png" width="922" alt="Mint Calendar CE">
 
 Using the latest stable GNOME release as a base, with patches from Linux Mint's version of
@@ -29,7 +28,7 @@ distributed independently — not an official Linux Mint or GNOME project.
 | Based on                         | GNOME Calendar 48             | GNOME Calendar 50      | GNOME Calendar 50                                                                        |
 | Linux Mint's compatibility patch | Yes                           | No                     | Yes                                                                                      |
 | Branding                         | Stock GNOME                   | Stock GNOME            | Mint-branded, Mint-Y-Dark icon                                                           |
-| Official Mint project            | Yes                           | —                      | No — independent/community                                                               |
+| Official Mint project            | Yes                           | —                       | No — independent/community                                                               |
 | Where to get it                  | Mint's own repos              | GNOME / Flathub        | This project's [Releases page](https://github.com/Sumon-Kayal/mint-calendar-ce/releases) |
 
 In short: Mint Calendar CE brings the newer GNOME Calendar 50 feature base to Linux Mint 22,
@@ -105,7 +104,7 @@ Mint Calendar CE does not require the original GNOME Calendar package to be remo
 Its system-visible identities are kept separate:
 
 | Component              | Mint Calendar CE               |
-| ---------------------- | ------------------------------ |
+| ----------------------- | ------------------------------- |
 | Package                | `mint-calendar-ce`             |
 | Binary                 | `mint-calendar-ce`             |
 | Application ID         | `org.mint.calendar.ce`         |
@@ -128,6 +127,7 @@ alongside the distro package and checking for overlapping installed paths.
 - Releases: <https://github.com/Sumon-Kayal/mint-calendar-ce/releases>
 - Build guide: [BUILD.md](BUILD.md)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
+- Development history: [DEVELOPMENT_HISTORY.md](DEVELOPMENT_HISTORY.md)
 - Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Report an issue: <https://github.com/Sumon-Kayal/mint-calendar-ce/issues>
 - Contact: <sumankayalsuman4@proton.me>
