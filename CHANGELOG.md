@@ -12,12 +12,14 @@ stack, and packaged to install alongside Mint's original `gnome-calendar`.
   attendee/organizer details in the event editor
 - **Refreshed interface** — newer calendar sidebar, toolbar, and shared date/calendar-picker
   widgets
-- **Runs on Mint 22 as-is** — no PPA, container, or newer Ubuntu base needed; the newer feature
-  set was ported down to Mint 22's own GTK4/libadwaita versions
+- **Runs on Mint 22 / Ubuntu 24.04 as-is** — no PPA, container, or newer Ubuntu base needed; the
+  newer feature set was ported down to Mint 22 / Ubuntu 24.04's own GTK4/libadwaita versions
+  (not yet manually validated on real Mint 22, validated on Ubuntu 24.04 CI runners)
 - **Installs alongside the original package** — separate binary, application ID, D-Bus
   service, GSettings schema, search provider, and data directory (see table below)
 - **Mint Calendar CE branding** — new name, new Mint-Y-Dark-inspired icon
-- **Automated builds** — GitHub Actions CI with CodeQL security scanning on every change
+- **Automated builds** — GitHub Actions CI with CodeQL security scanning on pushes/PRs to main,
+  weekly schedule, and manual dispatch
 
 ### Kept
 

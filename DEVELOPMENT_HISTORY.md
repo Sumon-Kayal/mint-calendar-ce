@@ -84,9 +84,11 @@ of sync (a `DevelDevel`/`ceDevel` mismatch). Both now consistently use
 `/org/mint/calendar/ce/SearchProvider` (release) and `/org/mint/calendar/ce/Devel/SearchProvider`
 (development).
 
-A `dpkg -L` file-list comparison against an installed `gnome-calendar` package, confirming zero
-overlapping paths, is planned as part of release validation — see BUILD.md's
-[coexistence test](BUILD.md#coexistence-test).
+CI includes an automated `dpkg-query -L` file-list comparison against an installed
+`gnome-calendar` package, verifying zero overlapping paths (see BUILD.md's
+[coexistence test](BUILD.md#coexistence-test)). However, this CI validation runs on Ubuntu 24.04
+runners — runtime validation on a real Linux Mint 22 system is still planned for release
+validation.
 
 ## Known issues / outstanding cleanup
 
