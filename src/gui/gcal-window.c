@@ -1202,6 +1202,7 @@ gcal_window_constructed (GObject *object)
   self = GCAL_WINDOW (object);
 
   G_OBJECT_CLASS (gcal_window_parent_class)->constructed (object);
+  gtk_window_set_icon_name (GTK_WINDOW (self), APPLICATION_ID);
 
   /* Load saved geometry *after* the construct-time properties are set */
   settings = gcal_context_get_settings (self->context);
